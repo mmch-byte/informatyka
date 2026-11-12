@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Статистичні та логічні функції</title>
+<style>
+:root{
+  --bg:#f4f6f3; --card:#ffffff; --ink:#1c2a24; --muted:#5d6b64; --line:#cfd8d2;
+  --green:#157a45; --green-soft:#e3f3ea; --blue:#1f66c1; --blue-soft:#e2edfb;
+  --orange:#c9650a; --orange-soft:#fdeeda; --red:#b3261e; --red-soft:#fbe6e4; --head:#eef1ee;
+  --mono:Consolas,"Cascadia Mono","Courier New",monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.5 "Segoe UI",Calibri,Arial,sans-serif}
+header{background:var(--green);color:#fff;padding:18px 24px}
+header h1{margin:0;font-size:28px;line-height:1.2}
+header p{margin:4px 0 0;opacity:.9}
+nav{display:flex;flex-wrap:wrap;gap:8px;padding:14px 24px 0;max-width:1200px;margin:0 auto}
+nav button{font:inherit;font-weight:600;padding:10px 16px;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--green);border-color:var(--green);color:#fff}
+main{max-width:1200px;margin:0 auto;padding:16px 24px 40px}
+section{display:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+section.on{display:block}
+h2{margin:0 0 6px;font-size:24px}
+.lead{margin:0 0 16px;color:var(--muted)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+.chip{font:600 18px var(--mono);padding:8px 14px;border-radius:999px;border:2px solid var(--line);background:#fff;cursor:pointer;color:var(--ink)}
+.chip.on{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.fbar{display:flex;align-items:center;gap:10px;border:2px solid var(--line);border-radius:10px;padding:8px 14px;font:600 22px var(--mono);background:#fff;margin:12px 0;overflow-x:auto;white-space:nowrap}
+.fbar .fx{white-space:nowrap;flex:none;font-style:italic;color:var(--muted);font-family:Georgia,serif}
+.fbar .eq{margin-left:auto;padding-left:18px;color:var(--green)}
+.n{color:var(--green)} .a1{color:var(--blue)} .a2{color:var(--green)} .a3{color:var(--red)} .a4{color:var(--orange)}
+/* bars */
+.bars{display:flex;align-items:flex-end;gap:10px;height:300px;border-bottom:3px solid var(--ink);position:relative;margin:34px 0 0;padding:0 6px}
+.bar{flex:1;min-width:36px;background:#b9c9c0;border-radius:8px 8px 0 0;position:relative;transition:height .3s,background .3s}
+.bar.hi{background:var(--green)} .bar.lo{background:#dfe6e2}
+.bar b{position:absolute;top:-30px;left:0;right:0;text-align:center;font:700 18px var(--mono)}
+.bar i{position:absolute;bottom:8px;left:0;right:0;text-align:center;font:700 22px var(--mono);font-style:normal;color:#fff}
+.avg{position:absolute;left:0;right:0;border-top:3px dashed var(--orange);display:none}
+.avg span{position:absolute;right:0;top:-30px;font:700 18px var(--mono);color:var(--orange);background:#fff;padding:0 6px}
+.cells{display:flex;gap:10px;padding:8px 6px 0}
+.cells label{flex:1;min-width:36px;text-align:center;font:600 14px var(--mono);color:var(--muted)}
+.cells input{width:100%;font:600 17px var(--mono);text-align:center;border:1px solid var(--line);border-radius:6px;padding:4px 0;margin-top:2px}
+/* slider */
+.sl{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin:12px 0}
+.sl label{font:700 22px var(--mono);color:var(--blue)}
+.sl input[type=range]{flex:1;min-width:200px;accent-color:var(--blue);height:30px}
+.sl input[type=number]{font:700 24px var(--mono);width:110px;padding:6px 10px;border:2px solid var(--blue);border-radius:10px;color:var(--blue);background:var(--blue-soft)}
+/* flow */
+.flow{display:grid;grid-template-columns:1fr auto 1fr;gap:14px 18px;align-items:center;max-width:820px;margin:20px auto 6px}
+.cond{text-align:center;font:700 24px var(--mono);padding:18px 26px;border:3px solid var(--blue);background:var(--blue-soft);color:var(--blue);border-radius:14px}
+.br{text-align:center;padding:16px;border:3px solid var(--line);border-radius:14px;color:#9aa39e;background:#fafbfa;transition:all .25s}
+.br small{display:block;font-size:15px;font-weight:600}
+.br b{font:700 26px var(--mono)}
+.br.on.t{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.br.on.f{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.out{grid-column:1/4;text-align:center;font-size:18px;color:var(--muted)}
+.out output{display:inline-block;font:700 30px var(--mono);padding:6px 18px;border-radius:12px;border:3px solid var(--ink);margin-left:10px;color:var(--ink);background:#fff;min-width:160px}
+/* logic table */
+table.lg{border-collapse:collapse;width:100%;max-width:820px;margin:16px auto 0;font:600 22px var(--mono)}
+.lg td{border:1px solid var(--line);padding:10px 14px}
+.lg td:last-child{text-align:center;width:150px;font-weight:700;transition:all .2s}
+.lg tr.sep td{border-top:3px solid var(--ink)}
+.T{background:var(--green-soft);color:var(--green)} .F{background:var(--red-soft);color:var(--red)}
+.axis{position:relative;height:54px;max-width:820px;margin:6px auto 0}
+.axis .ln{position:absolute;left:0;right:0;top:20px;height:6px;background:#dfe6e2;border-radius:3px}
+.axis .ok{position:absolute;top:20px;height:6px;background:var(--green);border-radius:3px}
+.axis .pt{position:absolute;top:9px;width:28px;height:28px;margin-left:-14px;border-radius:50%;background:var(--blue);border:4px solid #fff;box-shadow:0 0 0 2px var(--blue)}
+.axis span{position:absolute;top:32px;font:600 14px var(--mono);color:var(--muted);transform:translateX(-50%)}
+/* chain */
+.chain{max-width:860px;margin:18px auto 0;display:flex;flex-direction:column;gap:10px}
+.step{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center}
+.step .q{font:700 20px var(--mono);padding:14px;border:3px solid var(--line);border-radius:14px;text-align:center;color:#9aa39e;background:#fafbfa;transition:all .25s}
+.step .q.on{border-color:var(--blue);background:var(--blue-soft);color:var(--blue)}
+.step .ar{font:700 18px "Segoe UI",Arial,sans-serif;color:#9aa39e}
+.step .ar.on{color:var(--green)}
+.step .r{font:700 22px var(--mono);padding:14px;border:3px solid var(--line);border-radius:14px;text-align:center;color:#9aa39e;background:#fafbfa;transition:all .25s}
+.step .r.on{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.down{text-align:left;padding-left:22%;font:700 18px "Segoe UI",Arial,sans-serif;color:#9aa39e}
+.down.on{color:var(--red)}
+.two{display:flex;flex-wrap:wrap;gap:24px}
+@media (max-width:640px){body{font-size:16px}header h1{font-size:22px}.fbar{font-size:16px}main,nav{padding-left:16px;padding-right:16px}section{padding:16px}
+  .flow{grid-template-columns:1fr 1fr}.cond{grid-column:1/3;order:-1;font-size:20px}.out{grid-column:1/3}.br b{font-size:20px}
+  .lg{font-size:16px}.lg td:last-child{width:90px}.step{grid-template-columns:1fr}.step .ar{text-align:center}.down{padding-left:0;text-align:center}.bars{height:220px;gap:4px}.cells{gap:4px}.bar b{font-size:13px}.bar i{font-size:15px}.cells input{font-size:13px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Статистичні та логічні функції</h1>
+  <p>Інформатика, 8 клас · RANK, IF, AND, OR, NOT</p>
+</header>
+<nav role="tablist">
+  <button data-t="t1" aria-selected="true">1. Статистичні функції</button>
+  <button data-t="t2" aria-selected="false">2. IF - розгалуження</button>
+  <button data-t="t3" aria-selected="false">3. AND, OR, NOT</button>
+  <button data-t="t4" aria-selected="false">4. IF усередині IF</button>
+</nav>
+<main>
+
+<section id="t1" class="on">
+  <h2>Статистичні функції дивляться на весь діапазон одразу</h2>
+  <p class="lead">Це бали учасників олімпіади в клітинках B2:B9. Обери функцію та змінюй числа під стовпчиками.</p>
+  <div class="row" id="st_chips"></div>
+  <div class="fbar"><span class="fx">fx</span><span id="st_formula"></span><span class="eq" id="st_res"></span></div>
+  <div class="bars" id="st_bars"><div class="avg" id="st_avg"><span></span></div></div>
+  <div class="cells" id="st_cells"></div>
+</section>
+
+<section id="t2">
+  <h2>IF перевіряє умову й обирає одне з двох значень</h2>
+  <p class="lead">У клітинці B2 записано зріст учня. Змінюй зріст і дивись, якою гілкою піде функція.</p>
+  <div class="sl"><label for="if_r">B2 =</label><input type="range" id="if_r" min="130" max="190" value="145"><input type="number" id="if_n" min="130" max="190" value="145" aria-label="Зріст"></div>
+  <div class="fbar"><span class="fx">fx</span><span>=<span class="n">IF</span>(<span class="a1">B2&lt;=160</span>;<span class="a3">"Червоне"</span>;<span class="a2">"Зелене"</span>)</span></div>
+  <div class="flow">
+    <div class="br t" id="if_t"><small>⟵ істина (TRUE)</small><b>"Червоне"</b></div>
+    <div class="cond" id="if_cond"></div>
+    <div class="br f" id="if_f"><small>хибність (FALSE) ⟶</small><b>"Зелене"</b></div>
+    <div class="out">у клітинці C2 з'явиться<output id="if_out"></output></div>
+  </div>
+</section>
+
+<section id="t3">
+  <h2>AND, OR, NOT складають прості умови у складену</h2>
+  <p class="lead">У клітинці A1 записано число. Змінюй його й дивись, які вирази стають істинними, а які хибними.</p>
+  <div class="sl"><label for="lg_r">A1 =</label><input type="range" id="lg_r" min="0" max="120" value="45"><input type="number" id="lg_n" min="0" max="120" value="45" aria-label="Число"></div>
+  <div class="axis"><div class="ln"></div><div class="ok" id="lg_ok"></div><div class="pt" id="lg_pt"></div><span style="left:0">0</span><span id="lg_m1">10</span><span id="lg_m2">100</span><span style="left:100%">120</span></div>
+  <table class="lg" id="lg_tbl"></table>
+</section>
+
+<section id="t4">
+  <h2>IF усередині IF: вибір із трьох варіантів</h2>
+  <p class="lead">Рівняння ax = b. Змінюй коефіцієнти в клітинках A4 і B4 та стеж, яким шляхом іде формула.</p>
+  <div class="two">
+    <div class="sl" style="flex:1"><label for="eq_a">A4 (a) =</label><input type="number" id="eq_a" value="4" step="1"></div>
+    <div class="sl" style="flex:1"><label for="eq_b">B4 (b) =</label><input type="number" id="eq_b" value="28" step="1"></div>
+  </div>
+  <div class="fbar" style="white-space:normal;font-size:19px;word-break:break-word"><span class="fx">fx</span><span>=<span class="n">IF</span>(<span class="a1">AND(A4=0;B4=0)</span>; <span class="a2">"Безліч розв'язків"</span>; <span class="n">IF</span>(<span class="a1">AND(A4=0;B4&lt;&gt;0)</span>; <span class="a2">"Жодного розв'язку"</span>; <span class="a4">B4/A4</span>))</span></div>
+  <div class="chain">
+    <div class="step"><div class="q" id="eq_q1">AND(A4=0;B4=0)</div><div class="ar" id="eq_y1">так ➜</div><div class="r" id="eq_r1">"Безліч розв'язків"</div></div>
+    <div class="down" id="eq_n1">ні ⬇</div>
+    <div class="step"><div class="q" id="eq_q2">AND(A4=0;B4&lt;&gt;0)</div><div class="ar" id="eq_y2">так ➜</div><div class="r" id="eq_r2">"Жодного розв'язку"</div></div>
+    <div class="down" id="eq_n2">ні ⬇</div>
+    <div class="step"><div class="q" id="eq_q3" style="visibility:hidden"></div><div class="ar"></div><div class="r" id="eq_r3">B4/A4</div></div>
+  </div>
+  <div class="flow" style="margin-top:14px"><div class="out">у клітинці D4 з'явиться<output id="eq_out"></output></div></div>
+</section>
+
+</main>
+<script>
+const $=s=>document.querySelector(s);
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t));
+});
+const fmt=x=>String(Math.round(x*100)/100).replace('.',',');
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+
+// ---------- 1. statistics
+const V=[212,100,200,206,226,200,244,180];
+let stFn='MAX', stSel=0;
+const rank=i=>1+V.filter(v=>v>V[i]).length;
+function mode(){const c={};let best=null,bc=1;V.forEach(v=>{c[v]=(c[v]||0)+1});V.forEach(v=>{if(c[v]>bc){bc=c[v];best=v}});return best}
+const ST={
+  AVERAGE:()=>({f:'=<span class="n">AVERAGE</span>(<span class="a1">B2:B9</span>)',r:fmt(V.reduce((a,b)=>a+b,0)/V.length),hi:[],avg:true}),
+  MAX:()=>{const m=Math.max(...V);return {f:'=<span class="n">MAX</span>(<span class="a1">B2:B9</span>)',r:m,hi:V.map((v,i)=>v===m?i:-1)}},
+  MIN:()=>{const m=Math.min(...V);return {f:'=<span class="n">MIN</span>(<span class="a1">B2:B9</span>)',r:m,hi:V.map((v,i)=>v===m?i:-1)}},
+  COUNT:()=>({f:'=<span class="n">COUNT</span>(<span class="a1">B2:B9</span>)',r:V.length,hi:V.map((v,i)=>i)}),
+  MODE:()=>{const m=mode();return {f:'=<span class="n">MODE</span>(<span class="a1">B2:B9</span>)',r:m===null?'#N/A':m,hi:V.map((v,i)=>v===m?i:-1)}},
+  RANK:()=>({f:'=<span class="n">RANK</span>(<span class="a4">B'+(stSel+2)+'</span>;<span class="a1">$B$2:$B$9</span>;0)',r:rank(stSel),hi:[stSel],rank:true})
+};
+function stBuild(){
+  Object.keys(ST).forEach(k=>{const b=document.createElement('button');b.className='chip';b.textContent=k;b.onclick=()=>{stFn=k;stDraw()};$('#st_chips').append(b)});
+  V.forEach((v,i)=>{
+    const bar=document.createElement('div');bar.className='bar';bar.id='st_b'+i;bar.innerHTML='<b></b><i></i>';bar.onclick=()=>{stSel=i;stDraw()};$('#st_bars').append(bar);
+    const l=document.createElement('label');l.innerHTML='B'+(i+2)+'<input inputmode="numeric" value="'+v+'" aria-label="B'+(i+2)+'">';
+    l.querySelector('input').oninput=e=>{V[i]=clamp(parseFloat(e.target.value)||0,0,300);stDraw()};$('#st_cells').append(l);
+  });
+  stDraw();
+}
+function stDraw(){
+  const o=ST[stFn](), top=Math.max(300,...V);
+  document.querySelectorAll('#st_chips .chip').forEach(c=>c.classList.toggle('on',c.textContent===stFn));
+  $('#st_formula').innerHTML=o.f; $('#st_res').textContent='= '+o.r;
+  V.forEach((v,i)=>{const b=$('#st_b'+i);b.style.height=(v/top*100)+'%';b.style.cursor=o.rank?'pointer':'default';
+    b.classList.toggle('hi',o.hi.includes(i)); b.classList.toggle('lo',!o.hi.includes(i)&&!o.avg);
+    b.querySelector('b').textContent=v; b.querySelector('i').textContent=o.rank?rank(i):'';});
+  const a=$('#st_avg'); a.style.display=o.avg?'block':'none';
+  if(o.avg){const m=V.reduce((x,y)=>x+y,0)/V.length;a.style.bottom=(m/top*100)+'%';a.querySelector('span').textContent=fmt(m)}
+}
+stBuild();
+
+// ---------- 2. IF
+function ifDraw(v){
+  v=clamp(Math.round(v)||0,130,190); $('#if_r').value=v; if(document.activeElement!==$('#if_n')) $('#if_n').value=v;
+  const t=v<=160;
+  $('#if_cond').textContent=v+' <= 160 ?';
+  $('#if_t').classList.toggle('on',t); $('#if_f').classList.toggle('on',!t);
+  const o=$('#if_out'); o.textContent=t?'Червоне':'Зелене'; o.style.color=t?'var(--red)':'var(--green)'; o.style.borderColor=t?'var(--red)':'var(--green)';
+}
+$('#if_r').oninput=e=>ifDraw(+e.target.value); $('#if_n').oninput=e=>ifDraw(+e.target.value); $('#if_n').onblur=e=>ifDraw(+$('#if_r').value);
+ifDraw(145);
+
+// ---------- 3. logic
+const LG=[
+ ['A1&gt;9',x=>x>9],['A1&lt;100',x=>x<100],
+ ['AND(A1&gt;9;A1&lt;100)',x=>x>9&&x<100,1],['OR(A1&lt;10;A1&gt;99)',x=>x<10||x>99],['NOT(A1&gt;9)',x=>!(x>9)]
+];
+$('#lg_tbl').innerHTML=LG.map((r,i)=>'<tr'+(r[2]?' class="sep"':'')+'><td>'+(i>1?'<span class="n">'+r[0].replace('(','</span>('):r[0])+'</td><td id="lg_'+i+'"></td></tr>').join('');
+$('#lg_m1').style.left=(10/120*100)+'%'; $('#lg_m2').style.left=(100/120*100)+'%';
+$('#lg_ok').style.left=(10/120*100)+'%'; $('#lg_ok').style.width=(89/120*100)+'%';
+function lgDraw(v){
+  v=clamp(Math.round(v)||0,0,120); $('#lg_r').value=v; if(document.activeElement!==$('#lg_n')) $('#lg_n').value=v;
+  $('#lg_pt').style.left=(v/120*100)+'%';
+  LG.forEach((r,i)=>{const t=r[1](v),c=$('#lg_'+i);c.textContent=t?'TRUE':'FALSE';c.className=t?'T':'F'});
+}
+$('#lg_r').oninput=e=>lgDraw(+e.target.value); $('#lg_n').oninput=e=>lgDraw(+e.target.value); $('#lg_n').onblur=e=>lgDraw(+$('#lg_r').value);
+lgDraw(45);
+
+// ---------- 4. nested IF
+function eqDraw(){
+  const a=parseFloat($('#eq_a').value.replace(',','.'))||0, b=parseFloat($('#eq_b').value.replace(',','.'))||0;
+  const c1=a===0&&b===0, c2=a===0&&b!==0, path=c1?1:c2?2:3;
+  $('#eq_q1').classList.add('on'); $('#eq_y1').classList.toggle('on',path===1); $('#eq_r1').classList.toggle('on',path===1);
+  $('#eq_n1').classList.toggle('on',path>1);
+  $('#eq_q2').classList.toggle('on',path>1); $('#eq_y2').classList.toggle('on',path===2); $('#eq_r2').classList.toggle('on',path===2);
+  $('#eq_n2').classList.toggle('on',path===3); $('#eq_r3').classList.toggle('on',path===3);
+  $('#eq_r3').textContent=path===3?(fmt(b)+' / '+fmt(a)):'B4/A4';
+  $('#eq_out').textContent=path===1?'Безліч розв\'язків':path===2?'Жодного розв\'язку':fmt(b/a);
+}
+$('#eq_a').oninput=eqDraw; $('#eq_b').oninput=eqDraw; eqDraw();
+</script>
+</body>
+</html>
