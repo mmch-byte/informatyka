@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Цифровий слід і безпека в мережі</title>
+<style>
+  :root {
+    --dark: #1E5E3A; --green: #2E8B57; --light: #F2F8F4; --mid: #CFE8D8;
+    --text: #1d2b22; --muted: #5b6e62; --warn: #E0A100; --bad: #C0392B; --white: #fff; --sand: #f3e2b8;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Segoe UI", Calibri, Arial, sans-serif; background: var(--light); color: var(--text); font-size: 20px; }
+  header { background: var(--dark); color: var(--white); padding: 16px; text-align: center; }
+  header h1 { margin: 0; font-size: 1.45em; }
+  nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 14px 16px 0; }
+  nav button { font: inherit; font-size: .9em; font-weight: 600; border: 2px solid var(--green); background: var(--white); color: var(--dark);
+    padding: 9px 16px; border-radius: 999px; cursor: pointer; }
+  nav button.active { background: var(--green); color: var(--white); }
+  main { max-width: 1150px; margin: 0 auto; padding: 16px; }
+  section { display: none; }
+  section.active { display: block; }
+  h2 { color: var(--dark); margin: 6px 0 14px; font-size: 1.3em; }
+  h3 { color: var(--dark); margin: 0 0 10px; font-size: 1.05em; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } body { font-size: 17px; } .acts { grid-template-columns: 1fr !important; } }
+  .card { background: var(--white); border: 2px solid var(--mid); border-radius: 14px; padding: 16px; min-width: 0; }
+  .btn { font: inherit; font-weight: 700; padding: 10px 18px; border-radius: 12px; border: none; cursor: pointer; color: var(--white); background: var(--green); }
+  .btn.dark { background: var(--dark); }
+  .btn.ghost { background: var(--white); color: var(--dark); border: 2px solid var(--green); }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+  /* 1. Цифровий слід */
+  .beach { position: relative; height: 170px; border-radius: 12px; overflow: hidden;
+    background: linear-gradient(#bfe3f2 0 22%, #9fd0e6 22% 30%, var(--sand) 30% 100%); }
+  .fp { position: absolute; width: 34px; margin-left: -17px; text-align: center; transition: opacity .8s; }
+  .fp .ic { font-size: 22px; line-height: 1.1; }
+  .fp .dot { width: 12px; height: 12px; border-radius: 50%; margin: 2px auto 0; }
+  .fp.on .dot { background: var(--green); }
+  .fp.off .dot { background: var(--bad); }
+  .fp.faded { opacity: .55; }
+  .acts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .acts button { font: inherit; font-size: .85em; text-align: left; padding: 9px 12px; border-radius: 10px; cursor: pointer;
+    background: var(--light); border: 2px solid var(--mid); color: var(--text); }
+  .acts button.hidden-act { border-color: #e7b3ad; background: #fdf1ef; }
+  .legend { display: flex; gap: 18px; flex-wrap: wrap; margin: 10px 0 0; font-weight: 600; }
+  .legend span::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  .legend .l-on::before { background: var(--green); }
+  .legend .l-off::before { background: var(--bad); }
+  .portrait { display: flex; gap: 14px; align-items: flex-start; }
+  .face { font-size: 64px; line-height: 1; filter: grayscale(1); opacity: .35; transition: all .5s; }
+  .portrait ul { margin: 0; padding-left: 20px; }
+  .portrait li { margin: 4px 0; }
+  .status { margin-top: 10px; font-weight: 700; color: var(--bad); min-height: 1.3em; }
+
+  /* 2. Вікторина */
+  .quiz-item { font-size: 1.25em; font-weight: 600; text-align: center; padding: 26px 12px; min-height: 110px; display: grid; place-items: center; }
+  .quiz-item.right { background: #DFF3E6; border-color: var(--green); }
+  .quiz-item.wrong { background: #FBE3E0; border-color: var(--bad); }
+  .score { text-align: center; font-size: 1.05em; margin-top: 14px; font-weight: 700; color: var(--dark); }
+  .stars { text-align: center; font-size: 28px; min-height: 38px; letter-spacing: 4px; }
+
+  /* 3. Чат */
+  .chat { display: flex; flex-direction: column; gap: 10px; min-height: 220px; }
+  .msg { max-width: 85%; padding: 10px 14px; border-radius: 14px; background: var(--light); border: 2px solid var(--mid); }
+  .msg .who { font-size: .8em; font-weight: 700; color: var(--muted); }
+  .msg.me { align-self: flex-end; background: #DFF3E6; border-color: var(--green); }
+  .msg.me.bad { background: #FBE3E0; border-color: var(--bad); }
+  .msg.sys { align-self: center; max-width: 100%; background: none; border: none; font-weight: 700; color: var(--dark); text-align: center; }
+
+  /* 4. Пароль */
+  .inp { width: 100%; font: inherit; font-size: 1.1em; padding: 10px 12px; border-radius: 12px; border: 3px solid var(--green); }
+  .mono { font-family: Consolas, "Courier New", monospace; }
+  .chain { display: grid; gap: 6px; margin-top: 8px; }
+  .chain div { font-family: Consolas, "Courier New", monospace; font-size: 1.05em; background: var(--light); border-radius: 10px; padding: 8px 12px; word-break: break-all; }
+  .chain div.final { background: var(--green); color: var(--white); font-weight: 700; font-size: 1.2em; }
+  .chain div.arrow { background: none; padding: 0 12px; color: var(--muted); }
+  .crack { margin-top: 10px; font-weight: 700; color: var(--dark); }
+  .opts button { font-family: Consolas, "Courier New", monospace; font-size: .9em; border: 2px solid var(--green); background: var(--white);
+    color: var(--dark); border-radius: 10px; padding: 6px 12px; cursor: pointer; }
+  .opts button.active { background: var(--green); color: var(--white); }
+  label.small { display: block; font-weight: 600; margin: 10px 0 4px; }
+
+  /* 5. Двофакторний вхід */
+  .steps { display: flex; gap: 8px; justify-content: center; margin-bottom: 14px; flex-wrap: wrap; }
+  .steps div { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; font-weight: 800;
+    background: var(--white); border: 3px solid var(--mid); color: var(--muted); }
+  .steps div.done { background: var(--green); border-color: var(--green); color: var(--white); }
+  .site .inp { margin-bottom: 10px; }
+  .phone { width: 220px; height: 380px; margin: 0 auto; border-radius: 30px; background: #22302a; padding: 16px 12px; }
+  .screen { background: #e9f2ec; height: 100%; border-radius: 18px; padding: 12px; }
+  .sms { background: var(--white); border-radius: 12px; padding: 10px; font-size: .85em; box-shadow: 0 2px 6px rgba(0,0,0,.15); }
+  .sms b { font-size: 1.6em; letter-spacing: 3px; color: var(--dark); }
+  .result { font-size: 1.3em; font-weight: 800; margin-top: 12px; min-height: 1.4em; }
+  .result.ok { color: var(--green); }
+  .result.no { color: var(--bad); }
+  .mode { margin-top: 14px; }
+</style>
+</head>
+<body>
+<header><h1>Цифровий слід і безпека в мережі</h1></header>
+<nav>
+  <button class="active" data-tab="t1">Цифровий слід</button>
+  <button data-tab="t2">Приватне чи публічне</button>
+  <button data-tab="t3">Незнайомець у чаті</button>
+  <button data-tab="t4">Пароль із фрази</button>
+  <button data-tab="t5">Двофакторний вхід</button>
+</nav>
+<main>
+
+<!-- 1. Цифровий слід (слайди 4-7, 11) -->
+<section id="t1" class="active">
+  <h2>Кожна дія в інтернеті - це крок по піску</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="beach" id="beach"></div>
+      <div class="legend"><span class="l-on" id="cntOn">Навмисні: 0</span><span class="l-off" id="cntOff">Без твого відома: 0</span></div>
+      <div class="acts" id="acts"></div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn dark" id="erase">Стерти сліди</button>
+        <button class="btn ghost" id="newDay">Почати знову</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Твій електронний портрет</h3>
+      <div class="portrait">
+        <div class="face" id="face">🧒</div>
+        <ul id="portrait"><li>Поки порожньо</li></ul>
+      </div>
+      <div class="status" id="eraseStatus"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2. Приватне чи публічне (слайди 8-10) -->
+<section id="t2">
+  <h2>Приватна чи публічна інформація?</h2>
+  <div class="card">
+    <div class="quiz-item card" id="quizItem"></div>
+    <div class="row" style="justify-content:center;margin-top:12px">
+      <button class="btn" id="btnPriv">Приватна</button>
+      <button class="btn dark" id="btnPub">Публічна</button>
+    </div>
+    <div class="score" id="score"></div>
+    <div class="stars" id="stars"></div>
+    <div style="text-align:center;margin-top:8px"><button class="btn ghost" id="restart">Почати знову</button></div>
+  </div>
+</section>
+
+<!-- 3. Незнайомець у чаті (слайд 12) -->
+<section id="t3">
+  <h2>Кому можна відповісти?</h2>
+  <div class="card">
+    <div class="chat" id="chat"></div>
+    <div class="row" style="justify-content:center;margin-top:14px">
+      <button class="btn" id="reply">Відповісти</button>
+      <button class="btn dark" id="ignore">Не відповідати</button>
+    </div>
+    <div class="score" id="chatScore"></div>
+    <div style="text-align:center;margin-top:8px"><button class="btn ghost" id="chatRestart">Почати знову</button></div>
+  </div>
+</section>
+
+<!-- 4. Пароль із фрази (слайди 14-16) -->
+<section id="t4">
+  <h2>Як перетворити фразу на надійний пароль</h2>
+  <div class="card" style="margin-bottom:16px">
+    <div class="grid">
+      <div>
+        <label class="small" for="phrase">Фраза</label>
+        <input class="inp mono" id="phrase" value="I exercise every day" autocomplete="off" spellcheck="false">
+      </div>
+      <div>
+        <label class="small" for="flat">Номер квартири (для способу 1)</label>
+        <input class="inp mono" id="flat" value="15" inputmode="numeric" autocomplete="off">
+      </div>
+    </div>
+    <label class="small">Яку літеру замінити символом (для способу 2)</label>
+    <div class="row opts" id="swapOpts"></div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h3>Спосіб 1</h3>
+      <div class="chain" id="chain1"></div>
+      <div class="crack" id="crack1"></div>
+    </div>
+    <div class="card">
+      <h3>Спосіб 2</h3>
+      <div class="chain" id="chain2"></div>
+      <div class="crack" id="crack2"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. Двофакторний вхід (слайди 17-18) -->
+<section id="t5">
+  <h2>Пароль + код із телефона</h2>
+  <div class="steps" id="steps"><div>1</div><div>2</div><div>3</div><div>4</div></div>
+  <div class="grid">
+    <div class="card site">
+      <h3>Вхід на сайт</h3>
+      <input class="inp mono" id="login" value="olena2005" autocomplete="off" spellcheck="false">
+      <input class="inp mono" id="pass" type="password" value="I1e8e5d3!%" autocomplete="off">
+      <button class="btn" id="signIn">Увійти</button>
+      <div id="codeBox" style="display:none;margin-top:14px">
+        <div style="font-weight:600;margin-bottom:6px">Введіть код, надісланий на ваш телефон:</div>
+        <div class="row">
+          <input class="inp mono" id="code" maxlength="4" inputmode="numeric" style="width:140px" autocomplete="off">
+          <button class="btn" id="sendCode">Підтвердити</button>
+        </div>
+      </div>
+      <div class="result" id="result"></div>
+      <div class="mode row">
+        <button class="btn" id="modeOwner">Я власник</button>
+        <button class="btn ghost" id="modeHacker">Я зловмисник</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="phone"><div class="screen" id="screen"></div></div>
+    </div>
+  </div>
+</section>
+
+</main>
+<script>
+// ---------- вкладки
+document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('active', x === b));
+  document.querySelectorAll('section').forEach(s => s.classList.toggle('active', s.id === b.dataset.tab));
+}));
+const $ = id => document.getElementById(id);
+
+// ---------- 1. Цифровий слід
+const acts = [
+  { t: 'Опублікувати фото', ic: '📷', on: true, f: 'як ти виглядаєш і де буваєш' },
+  { t: 'Поставити «лайк»', ic: '👍', on: true, f: 'що тобі подобається' },
+  { t: 'Залишити відгук', ic: '💬', on: true, f: 'твоя думка про товари й фільми' },
+  { t: 'Зареєструватися в сервісі', ic: '📝', on: true, f: 'твоя електронна пошта й нік' },
+  { t: 'Натиснути «Надіслати»', ic: '✉️', on: true, f: 'з ким ти спілкуєшся' },
+  { t: 'Підписатися на розсилку', ic: '📰', on: true, f: 'чим ти цікавишся' },
+  { t: 'Сайт зберіг cookies', ic: '🍪', on: false, f: 'які сайти ти відвідуєш' },
+  { t: 'Застосунок записав геолокацію', ic: '📍', on: false, f: 'де ти живеш і навчаєшся' }
+];
+const MAXSTEPS = 14;
+let steps = [];
+const beach = $('beach');
+acts.forEach(a => {
+  const b = document.createElement('button');
+  b.textContent = a.ic + ' ' + a.t;
+  if (!a.on) b.classList.add('hidden-act');
+  b.onclick = () => addStep(a);
+  $('acts').appendChild(b);
+});
+function addStep(a) {
+  if (steps.length >= MAXSTEPS) steps.shift();
+  steps.push(a);
+  $('eraseStatus').textContent = '';
+  drawBeach(false);
+}
+function drawBeach(faded) {
+  beach.innerHTML = '';
+  steps.forEach((a, k) => {
+    const d = document.createElement('div');
+    d.className = 'fp ' + (a.on ? 'on' : 'off') + (faded ? ' faded' : '');
+    d.innerHTML = `<div class="ic">${a.ic}</div><div class="ic">👣</div><div class="dot"></div>`;
+    d.style.left = (5 + k * (90 / (MAXSTEPS - 1))) + '%';
+    d.style.top = (k % 2 ? 72 : 54) + 'px';
+    beach.appendChild(d);
+  });
+  const on = steps.filter(a => a.on).length;
+  $('cntOn').textContent = 'Навмисні: ' + on;
+  $('cntOff').textContent = 'Без твого відома: ' + (steps.length - on);
+  const facts = [...new Set(steps.map(a => a.f))];
+  $('portrait').innerHTML = facts.length ? facts.map(f => `<li>${f}</li>`).join('') : '<li>Поки порожньо</li>';
+  const k = facts.length / acts.length;
+  $('face').style.opacity = (0.35 + 0.65 * k).toFixed(2);
+  $('face').style.filter = `grayscale(${(1 - k).toFixed(2)})`;
+}
+$('erase').onclick = () => {
+  if (!steps.length) return;
+  drawBeach(true);
+  $('eraseStatus').textContent = 'Сліди залишилися: копії, скріншоти й архіви вже збережено';
+};
+$('newDay').onclick = () => { steps = []; $('eraseStatus').textContent = ''; drawBeach(false); };
+drawBeach(false);
+
+// ---------- 2. Приватне чи публічне
+const quiz = [
+  ['Твій пароль від пошти', 'priv'],
+  ['Назва твого улюбленого мультфільму', 'pub'],
+  ['Домашня адреса', 'priv'],
+  ['Фото малюнка, який ти намалював(ла)', 'pub'],
+  ['Номер телефону мами', 'priv'],
+  ['Твоє улюблене хобі', 'pub'],
+  ['Код з SMS для входу', 'priv'],
+  ['Твоя улюблена пісня', 'pub'],
+  ['Номер банківської картки батьків', 'priv'],
+  ['Відгук про прочитану книжку', 'pub']
+];
+let qi = 0, right = 0, locked = false, timer = null;
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
+}
+const qEl = $('quizItem');
+function showQ() {
+  qEl.className = 'quiz-item card';
+  if (qi >= quiz.length) { qEl.textContent = `Готово! ${right} з ${quiz.length}`; $('score').textContent = ''; return; }
+  qEl.textContent = quiz[qi][0];
+  $('score').textContent = `Питання ${qi + 1} з ${quiz.length} · правильно: ${right}`;
+}
+function answer(kind) {
+  if (locked || qi >= quiz.length) return;
+  locked = true;
+  const ok = quiz[qi][1] === kind;
+  if (ok) { right++; $('stars').textContent += '⭐'; }
+  qEl.classList.add(ok ? 'right' : 'wrong');
+  qEl.textContent = quiz[qi][0] + (ok ? ' ✓' : ' ✗ - ' + (quiz[qi][1] === 'priv' ? 'приватна' : 'публічна'));
+  timer = setTimeout(() => { qi++; locked = false; timer = null; showQ(); }, 1200);
+}
+$('btnPriv').onclick = () => answer('priv');
+$('btnPub').onclick = () => answer('pub');
+$('restart').onclick = () => { clearTimeout(timer); timer = null; qi = 0; right = 0; locked = false; $('stars').textContent = ''; shuffle(quiz); showQ(); };
+shuffle(quiz);
+showQ();
+
+// ---------- 3. Незнайомець у чаті (ok: true - відповісти можна)
+const chatQs = [
+  { who: 'Мама', q: 'Ти вже вдома?', ok: true, a: 'Так, уже вдома.', r: 'Мамі можна' },
+  { who: 'Cool_Gamer_777', q: 'Привіт! Як тебе звати повністю?', ok: false, a: 'Мене звати ...', r: 'Особисті дані - не незнайомцям' },
+  { who: 'Однокласник Петро', q: 'Яке домашнє з інформатики?', ok: true, a: 'Переглянути презентацію й виконати картку.', r: 'Петра ти знаєш особисто' },
+  { who: 'Cool_Gamer_777', q: 'А в якій школі ти вчишся?', ok: false, a: 'У школі №...', r: 'Дані про школу - не незнайомцям' },
+  { who: 'Cool_Gamer_777', q: 'Ти зараз вдома сам(а)?', ok: false, a: 'Так, батьки на роботі до вечора.', r: 'Ніколи не розповідай, що ти вдома сам(а)' },
+  { who: 'Тато', q: 'Нагадай пароль від Wi-Fi, я налаштовую новий ноутбук.', ok: true, a: 'Зараз надішлю.', r: 'Пароль можна повідомити лише батькам' },
+  { who: 'Nika_2012', q: 'Скинь геолокацію, де ти зараз?', ok: false, a: '📍 Надіслано місцезнаходження', r: 'Не повідомляй своє місцезнаходження' },
+  { who: 'Nika_2012', q: 'Дай пароль від гри, я додам тобі монет!', ok: false, a: 'Мій пароль: ...', r: 'Паролі - нікому, крім батьків' },
+  { who: 'Cool_Gamer_777', q: 'Коли твої батьки йдуть на роботу?', ok: false, a: 'О 8:00, повертаються о 18:00.', r: 'Не повідомляй розклад батьків' }
+];
+let ci = 0, cRight = 0, cLock = false, cTimer = null;
+const chat = $('chat');
+function chatBubble(cls, who, text) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + cls;
+  d.innerHTML = (who ? `<div class="who">${who}</div>` : '') + text;
+  chat.appendChild(d);
+  while (chat.children.length > 6) chat.removeChild(chat.firstChild);
+}
+function chatNext() {
+  if (ci >= chatQs.length) {
+    chatBubble('sys', '', `Готово! Правильних рішень: ${cRight} з ${chatQs.length}`);
+    $('chatScore').textContent = '';
+    return;
+  }
+  const c = chatQs[ci];
+  chatBubble('', c.who, c.q);
+  $('chatScore').textContent = `Повідомлення ${ci + 1} з ${chatQs.length} · правильних рішень: ${cRight}`;
+}
+function chatAnswer(reply) {
+  if (cLock || ci >= chatQs.length) return;
+  cLock = true;
+  const c = chatQs[ci];
+  const ok = reply === c.ok;
+  if (ok) cRight++;
+  chatBubble('me' + (ok ? '' : ' bad'), 'Ти', (reply ? c.a : '🚫 Не відповідаю') + (ok ? ' ✓' : ' ✗'));
+  chatBubble('sys', '', c.r);
+  cTimer = setTimeout(() => { ci++; cLock = false; cTimer = null; chatNext(); }, 1500);
+}
+$('reply').onclick = () => chatAnswer(true);
+$('ignore').onclick = () => chatAnswer(false);
+$('chatRestart').onclick = () => { clearTimeout(cTimer); cTimer = null; ci = 0; cRight = 0; cLock = false; chat.innerHTML = ''; chatNext(); };
+chatNext();
+
+// ---------- час на злам (10 мільярдів спроб за секунду)
+const RATE = 1e10;
+function plural(n, one, few, many) {
+  const n10 = n % 10, n100 = n % 100;
+  if (n10 === 1 && n100 !== 11) return one;
+  if (n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14)) return few;
+  return many;
+}
+function fmtBig(log10) {
+  if (log10 < 6) { const v = Math.round(Math.pow(10, log10)); return v >= 1000000 ? '1 мільйон' : v.toLocaleString('uk-UA'); }
+  const names = [[24, 'септильйон'], [21, 'секстильйон'], [18, 'квінтильйон'], [15, 'квадрильйон'], [12, 'трильйон'], [9, 'мільярд'], [6, 'мільйон']];
+  if (log10 >= 27) return 'приблизно 10<sup>' + Math.floor(log10) + '</sup>';
+  for (let k = 0; k < names.length; k++) {
+    const [p, base] = names[k];
+    if (log10 >= p) {
+      const v = Math.pow(10, log10 - p);
+      if (Math.round(v) >= 1000 && k > 0) return fmtBig(names[k - 1][0]);
+      const r = Math.round(v * 10) / 10;
+      if (v >= 100 || r % 1 === 0) { const n = Math.round(v); return n + ' ' + plural(n, base, base + 'и', base + 'ів'); }
+      return r.toFixed(1).replace('.', ',') + ' ' + base + 'а';
+    }
+  }
+}
+function fmtTime(log10sec) {
+  if (log10sec < 0) return 'миттєво';
+  let v = Math.pow(10, log10sec);
+  const units = [[60, 'секунда', 'секунди', 'секунд'], [60, 'хвилина', 'хвилини', 'хвилин'], [24, 'година', 'години', 'годин'], [365, 'день', 'дні', 'днів']];
+  for (const u of units) {
+    if (Math.round(v) < u[0]) { const n = Math.max(1, Math.round(v)); return n + ' ' + plural(n, u[1], u[2], u[3]); }
+    v /= u[0];
+  }
+  const yearsLog = log10sec - Math.log10(3600 * 24 * 365);
+  if (yearsLog < 3) { const n = Math.round(Math.pow(10, yearsLog)); return n + ' ' + plural(n, 'рік', 'роки', 'років'); }
+  return fmtBig(yearsLog) + ' років';
+}
+function crackTime(p) {
+  const pool = (/[a-z]/.test(p) ? 26 : 0) + (/[A-Z]/.test(p) ? 26 : 0) + (/[а-щьюяєіїґ]/.test(p) ? 33 : 0) + (/[А-ЩЬЮЯЄІЇҐ]/.test(p) ? 33 : 0)
+             + (/[0-9]/.test(p) ? 10 : 0) + (/[^a-zA-Zа-щьюяєіїґА-ЩЬЮЯЄІЇҐ0-9]/.test(p) ? 33 : 0);
+  return fmtTime(p.length * Math.log10(pool) - Math.log10(RATE));
+}
+
+// ---------- 4. Пароль із фрази
+const shiftDigits = { '1': '!', '2': '@', '3': '#', '4': '$', '5': '%', '6': '^', '7': '&', '8': '*', '9': '(', '0': ')' };
+const swaps = [['e', '@'], ['a', '@'], ['o', '0'], ['i', '!'], ['s', '$']];
+// латинська літера та її кирилична двійниця
+const twins = { e: 'eе', a: 'aа', o: 'oо', i: 'iі', s: 's' };
+let swap = swaps[0];
+const swapEl = $('swapOpts');
+swaps.forEach((sw, k) => {
+  const b = document.createElement('button');
+  b.textContent = sw[0] + ' → ' + sw[1];
+  if (k === 0) b.classList.add('active');
+  b.onclick = () => { swap = sw; swapEl.querySelectorAll('button').forEach(x => x.classList.toggle('active', x === b)); buildPw(); };
+  swapEl.appendChild(b);
+});
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const chainHtml = items => items.map((t, k) => (k ? '<div class="arrow">↓</div>' : '') +
+  `<div class="${k === items.length - 1 ? 'final' : ''}">${esc(t)}</div>`).join('');
+function buildPw() {
+  const phrase = $('phrase').value.trim();
+  const words = phrase.split(/\s+/).map(w => w.replace(/[^\p{L}\p{N}]/gu, '')).filter(Boolean);
+  const flat = $('flat').value.replace(/\D/g, '');
+  if (!words.length) {
+    $('chain1').innerHTML = $('chain2').innerHTML = '<div>Введи фразу</div>';
+    $('crack1').textContent = $('crack2').textContent = '';
+    return;
+  }
+  // Спосіб 1: перші літери -> після кожної кількість літер у слові -> у кінці символи над цифрами номера квартири
+  const firsts = words.map(w => w[0]).join('');
+  const withLen = words.map(w => w[0] + w.length).join('');
+  const syms = [...flat].map(d => shiftDigits[d]).join('');
+  const p1 = withLen + syms;
+  $('chain1').innerHTML = chainHtml(syms ? [phrase, firsts, withLen, p1] : [phrase, firsts, withLen]);
+  $('crack1').innerHTML = 'Час на злам: ' + crackTime(p1);
+  // Спосіб 2: уся фраза разом -> заміна літери символом -> у кінці кількість літер у кожному слові
+  const joined = words.join('');
+  const swapped = joined.replace(new RegExp('[' + twins[swap[0]] + ']', 'g'), swap[1]);
+  const p2 = swapped + words.map(w => w.length).join('');
+  $('chain2').innerHTML = chainHtml(swapped !== joined ? [phrase, joined, swapped, p2] : [phrase, joined, p2]);
+  $('crack2').innerHTML = 'Час на злам: ' + crackTime(p2);
+}
+$('phrase').addEventListener('input', buildPw);
+$('flat').addEventListener('input', buildPw);
+buildPw();
+
+// ---------- 5. Двофакторний вхід
+const PASS = 'I1e8e5d3!%';
+let hacker = false, stage = 1, code = '', tries = 0;
+const screen = $('screen');
+function setStage(n) {
+  stage = n;
+  document.querySelectorAll('#steps div').forEach((d, k) => d.classList.toggle('done', k < n));
+}
+function resetLogin() {
+  setStage(1); code = ''; tries = 0;
+  $('pass').value = PASS;
+  $('codeBox').style.display = 'none';
+  $('code').value = '';
+  $('result').textContent = ''; $('result').className = 'result';
+  screen.innerHTML = hacker
+    ? '<div style="text-align:center;margin-top:110px;font-size:44px">📵</div><div style="text-align:center;font-weight:700">Телефон у власника</div>'
+    : '<div style="text-align:center;color:#5b6e62;margin-top:140px">Повідомлень немає</div>';
+  $('modeOwner').className = 'btn' + (hacker ? ' ghost' : '');
+  $('modeHacker').className = 'btn ' + (hacker ? 'dark' : 'ghost');
+}
+$('signIn').onclick = () => {
+  if (stage === 4) return;
+  if ($('pass').value !== PASS) { $('result').textContent = 'Неправильний пароль'; $('result').className = 'result no'; return; }
+  code = String(Math.floor(1000 + Math.random() * 9000));
+  tries = 0;
+  setStage(2);
+  $('result').textContent = ''; $('result').className = 'result';
+  $('code').value = '';
+  $('codeBox').style.display = 'block';
+  if (!hacker) screen.innerHTML = `<div class="sms">SMS · щойно<br>Код для входу:<br><b>${code}</b></div>`;
+};
+$('sendCode').onclick = () => {
+  if (stage < 2 || stage === 4) return;
+  const r = $('result');
+  if ($('code').value.trim() === code) {
+    setStage(4); r.textContent = 'Вхід успішний ✓'; r.className = 'result ok';
+    $('codeBox').style.display = 'none';
+    return;
+  }
+  setStage(3);
+  tries++;
+  if (tries >= 3) {
+    r.textContent = 'Вхід заблоковано: 3 неправильні коди'; r.className = 'result no';
+    $('codeBox').style.display = 'none';
+    stage = 1;
+  } else {
+    r.textContent = `Неправильний код (спроба ${tries} з 3)`; r.className = 'result no';
+  }
+};
+$('code').addEventListener('keydown', e => { if (e.key === 'Enter') $('sendCode').click(); });
+$('modeOwner').onclick = () => { hacker = false; resetLogin(); };
+$('modeHacker').onclick = () => { hacker = true; resetLogin(); };
+resetLogin();
+</script>
+</body>
+</html>
