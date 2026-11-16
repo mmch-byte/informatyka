@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Візуалізації з інформатики</title>
+<style>
+  :root {
+    --forest: #1E5E3A; --leaf: #2E8B57; --paper: #F2F8F4; --bench: #E2EFE6; --ink: #17261D; --sun: #F2B705; --muted: #4F6357;
+    --display: "Bahnschrift", "DIN Alternate", "Segoe UI Semibold", "Arial Narrow", sans-serif;
+    --text: "Segoe UI", "Noto Sans", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--text); font-size: 19px; line-height: 1.45; }
+  :focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+  header { background: var(--forest); color: #fff; position: relative; padding: 30px 20px 34px; }
+  header::before, header::after { content: ""; position: absolute; left: 0; right: 0; height: 10px;
+    background: radial-gradient(circle at 9px 5px, var(--paper) 3.2px, transparent 3.6px) 0 0 / 22px 10px repeat-x; }
+  header::before { top: 6px; } header::after { bottom: 6px; }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  h1 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 2rem; line-height: 1.15; }
+  header p { margin: 6px 0 0; color: #A8D5B8; font-family: var(--display); }
+  main { padding: 28px 20px 60px; }
+  .tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+  .tabs button { font: inherit; font-weight: 600; cursor: pointer; border-radius: 8px; padding: 9px 18px; border: 2px solid var(--leaf); background: #fff; color: var(--forest); }
+  .tabs button.on { background: var(--leaf); color: #fff; }
+  h2 { font-family: var(--display); font-weight: 600; color: var(--forest); font-size: 1.5rem; margin: 26px 0 8px; }
+  ul { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--forest); }
+  li { display: grid; grid-template-columns: 64px 1fr auto; gap: 14px; align-items: center; padding: 14px 4px; border-bottom: 1px solid #C9DDD0; }
+  .n { font-family: var(--display); font-size: 1.6rem; font-weight: 600; color: var(--leaf); text-align: center; }
+  .t b { display: block; }
+  .t small { color: var(--muted); font-size: .8rem; word-break: break-all; }
+  .acts { display: flex; gap: 8px; }
+  .btn { font: inherit; font-size: .95rem; font-weight: 600; cursor: pointer; border-radius: 8px; padding: 8px 14px; border: 2px solid var(--leaf);
+    background: #fff; color: var(--forest); text-decoration: none; white-space: nowrap; }
+  .btn.copy { background: var(--leaf); color: #fff; }
+  .btn.done { background: var(--sun); border-color: var(--sun); color: var(--ink); }
+  @media (max-width: 680px) {
+    html, body { font-size: 17px; }
+    li { grid-template-columns: 44px 1fr; }
+    .acts { grid-column: 1 / -1; }
+  }
+</style>
+</head>
+<body>
+<header><div class="wrap"><h1>Візуалізації з інформатики</h1><p>Натисни «Копіювати посилання» і встав його в завдання Google Classroom</p></div></header>
+<main class="wrap">
+  <div class="tabs" id="tabs"></div>
+  <div id="list"></div>
+</main>
+<script>
+/* Список візуалізацій. Щоб додати нову - допиши рядок у потрібний клас. */
+const BASE = 'https://mmch-byte.github.io/informatyka/';
+const DATA = [
+  { cls: '5 клас', dir: '5-klas', items: [
+    { n: 9, topic: 'Програми для роботи з графікою', file: '09-graphics-design-draft.html' },
+  ] },
+  { cls: '6 клас', dir: '6-klas', items: [
+    { n: 9, topic: 'Цифровий слід в мережі. Конфіденційна та публічна інформація. Заходи з безпеки при роботі в мережі', file: '09-digital-footprint.html' },
+  ] },
+  { cls: '8 клас', dir: '8-klas', items: [
+    { n: 13, topic: 'Додавання вбудованих функцій до формул табличного процесора', file: '13-built-in-functions.html' },
+    { n: 14, topic: 'Використання статистичних функцій табличного процесора. Формули з логічним вибором', file: '14-logical-functions.html' },
+  ] },
+];
+let cur = 'all';
+const tabs = document.getElementById('tabs'), list = document.getElementById('list');
+tabs.innerHTML = [['all', 'Усі класи'], ...DATA.map(c => [c.dir, c.cls])].map(([k, t]) => `<button data-k="${k}" class="${k === cur ? 'on' : ''}">${t}</button>`).join('');
+tabs.querySelectorAll('button').forEach(b => b.onclick = () => { cur = b.dataset.k; tabs.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); render(); });
+function render() {
+  list.innerHTML = DATA.filter(c => cur === 'all' || c.dir === cur).map(c => `<h2>${c.cls}</h2><ul>${
+    c.items.slice().sort((a, b) => b.n - a.n).map(it => { const url = BASE + c.dir + '/' + it.file;
+      return `<li><span class="n">№${it.n}</span><span class="t"><b>${it.topic}</b><small>${url}</small></span>
+        <span class="acts"><a class="btn" href="${url}" target="_blank" rel="noopener">Відкрити</a><button class="btn copy" data-url="${url}">Копіювати посилання</button></span></li>`; }).join('')
+  }</ul>`).join('');
+  list.querySelectorAll('.copy').forEach(b => b.onclick = () => copy(b));
+}
+function copy(b) {
+  const url = b.dataset.url, ok = () => { b.textContent = 'Скопійовано ✓'; b.classList.add('done'); setTimeout(() => { b.textContent = 'Копіювати посилання'; b.classList.remove('done'); }, 1800); };
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(url).then(ok, () => fallback(url, ok));
+  else fallback(url, ok);
+}
+function fallback(url, ok) {
+  const t = document.createElement('textarea'); t.value = url; document.body.appendChild(t); t.select();
+  try { document.execCommand('copy'); ok(); } catch (e) { prompt('Скопіюй посилання:', url); }
+  t.remove();
+}
+render();
+</script>
+</body>
+</html>
