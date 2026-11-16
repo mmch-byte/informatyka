@@ -1,0 +1,954 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Програми для роботи з графікою</title>
+<style>
+  /* Токени: зелена гама уроку, «плівка» як головний мотив */
+  :root {
+    --forest: #1E5E3A;   /* плівка, заголовки */
+    --leaf: #2E8B57;     /* кнопки, активні елементи */
+    --paper: #F2F8F4;    /* фон сторінки */
+    --bench: #E2EFE6;    /* робочий стіл для практики */
+    --ink: #17261D;      /* основний текст */
+    --sun: #F2B705;      /* кути видошукача, фокус */
+    --red: #C0392B;      /* «небезпечно» */
+    --muted: #4F6357;
+    --display: "Bahnschrift", "DIN Alternate", "Segoe UI Semibold", "Arial Narrow", sans-serif;
+    --text: "Segoe UI", "Noto Sans", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--text); font-size: 20px; line-height: 1.5; }
+  :focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+  /* ---------- шапка-плівка ---------- */
+  header { background: var(--forest); color: #fff; }
+  .title { max-width: 1060px; margin: 0 auto; padding: 22px 20px 6px; display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+  .title h1 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 2.1rem; line-height: 1.1; letter-spacing: -.01em; }
+  .title span { font-family: var(--display); color: #A8D5B8; font-size: 1.05rem; }
+  .strip { position: relative; padding: 22px 0; overflow-x: auto; scrollbar-width: thin; }
+  .strip::before, .strip::after { content: ""; position: absolute; left: 0; right: 0; height: 10px;
+    background: radial-gradient(circle at 9px 5px, var(--paper) 3.2px, transparent 3.6px) 0 0 / 22px 10px repeat-x; min-width: 1100px; }
+  .strip::before { top: 6px; } .strip::after { bottom: 6px; }
+  nav { display: flex; gap: 10px; max-width: 1060px; margin: 0 auto; padding: 0 20px; min-width: max-content; }
+  nav button { font: inherit; cursor: pointer; border: 0; padding: 8px 8px 10px; width: 196px; text-align: left;
+    background: #163F28; color: #CFE6D7; border-radius: 4px; display: flex; flex-direction: column; gap: 8px; }
+  nav .thumb { position: relative; height: 92px; border-radius: 2px; overflow: hidden; background: #0F2E1C;
+    display: grid; place-items: center; font-size: 2.6rem; }
+  nav .thumb img, nav .thumb canvas, nav .thumb svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+  nav .cap { display: flex; gap: 8px; align-items: baseline; font-size: .9rem; line-height: 1.25; }
+  nav .cap b { font-family: var(--display); color: var(--sun); font-weight: 600; }
+  nav button.on { background: var(--paper); color: var(--ink); }
+  nav button.on .cap b { color: var(--leaf); }
+  nav button:not(.on) .thumb > * { opacity: .7; filter: saturate(.6); }
+  nav button:not(.on):hover { background: #1F5536; }
+
+  /* ---------- загальне ---------- */
+  main { max-width: 1060px; margin: 0 auto; padding: 34px 20px 60px; }
+  section { display: none; } section.on { display: block; }
+  h2 { font-family: var(--display); font-weight: 600; font-size: 1.85rem; line-height: 1.15; color: var(--forest); margin: 0 0 14px; }
+  h3 { font-family: var(--display); font-weight: 600; font-size: 1.2rem; color: var(--forest); margin: 0 0 10px; }
+  p { margin: 0 0 12px; max-width: 68ch; }
+  .lead { font-size: 1.12rem; }
+  dfn { font-style: normal; font-weight: 700; color: var(--forest); }
+  .def { margin: 18px 0; padding: 14px 18px; background: #fff; border-radius: 6px; max-width: 72ch; box-shadow: inset 4px 0 0 var(--leaf); }
+  .btn { font: inherit; font-size: 1rem; font-weight: 600; cursor: pointer; border-radius: 8px; padding: 9px 18px;
+    border: 2px solid var(--leaf); background: #fff; color: var(--forest); }
+  .btn:hover { background: #E6F3EA; }
+  .btn.on { background: var(--leaf); color: #fff; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .theory { margin-bottom: 34px; }
+  .bench { background: var(--bench); border-radius: 14px; padding: 24px; }
+  .bench > h3 { font-size: 1.35rem; margin-bottom: 16px; }
+  .hide { display: none; }
+
+  /* кути видошукача - другорядний мотив для зображень */
+  .vf { position: relative; }
+  .vf::before, .vf::after { content: ""; position: absolute; width: 26px; height: 26px; pointer-events: none; z-index: 2; }
+  .vf::before { top: 8px; left: 8px; border-top: 4px solid var(--sun); border-left: 4px solid var(--sun); }
+  .vf::after { bottom: 8px; right: 8px; border-bottom: 4px solid var(--sun); border-right: 4px solid var(--sun); }
+
+  /* ---------- Мета уроку ---------- */
+  .goals { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--forest); max-width: 860px; }
+  .goals li { border-bottom: 1px solid #C9DDD0; }
+  .goals button { font: inherit; width: 100%; display: grid; grid-template-columns: 70px 1fr auto; gap: 16px; align-items: center;
+    padding: 18px 6px; background: none; border: 0; text-align: left; cursor: pointer; color: var(--ink); }
+  .goals button:hover { background: #E6F3EA; }
+  .goals .ico { font-size: 2.4rem; text-align: center; }
+  .goals .txt { font-size: 1.15rem; }
+  .goals .go { font-family: var(--display); color: var(--leaf); font-weight: 600; white-space: nowrap; }
+
+  /* ---------- 1. Безпека ---------- */
+  .dangers { list-style: none; margin: 8px 0 18px; padding: 0; max-width: 760px; }
+  .dangers li { display: grid; grid-template-columns: 56px 1fr; gap: 14px; padding: 14px 0; border-bottom: 1px solid #C9DDD0; }
+  .dangers .ico { font-size: 2rem; text-align: center; }
+  .dangers b { display: block; font-family: var(--display); font-weight: 600; color: var(--forest); font-size: 1.1rem; }
+  .shield { max-width: 760px; padding: 14px 18px; border-radius: 8px; background: #FFF3C4; }
+  .scorebar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+  .score { font-family: var(--display); font-size: 1.15rem; color: var(--forest); white-space: nowrap; }
+  .pbar { flex: 1; min-width: 140px; height: 10px; background: #fff; border-radius: 99px; overflow: hidden; }
+  .pbar i { display: block; height: 100%; width: 0; background: var(--leaf); transition: width .3s; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(178px, 1fr)); gap: 18px; }
+  .item { position: relative; background: #fff; padding: 10px 10px 12px; border-radius: 3px;
+    box-shadow: 0 1px 0 #C9DDD0, 0 6px 14px -8px rgba(23, 38, 29, .35); display: flex; flex-direction: column; gap: 10px; }
+  .item .pic { height: 96px; background: #DCEBE1; display: grid; place-items: center; font-size: 3rem; }
+  .item .name { flex: 1; font-weight: 600; font-size: .92rem; line-height: 1.3; }
+  .item .choice { display: grid; grid-template-columns: 1fr; gap: 6px; }
+  .item .choice button { font: inherit; font-size: .88rem; font-weight: 700; padding: 7px 2px; border-radius: 6px; cursor: pointer; background: #fff; border: 2px solid; }
+  .item .yes { color: var(--leaf); border-color: var(--leaf); }
+  .item .no { color: var(--red); border-color: var(--red); }
+  .item:not(.done) .yes:hover { background: var(--leaf); color: #fff; }
+  .item:not(.done) .no:hover { background: var(--red); color: #fff; }
+  .item.done .choice button { opacity: .3; cursor: default; }
+  .item.done .choice button.answer { opacity: 1; color: #fff; }
+  .item.done .yes.answer { background: var(--leaf); }
+  .item.done .no.answer { background: var(--red); }
+  .item .why { display: none; font-size: .82rem; color: var(--muted); line-height: 1.3; }
+  .item.done .why { display: block; }
+  .item .badge { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%;
+    display: none; place-items: center; color: #fff; font-weight: 800; }
+  .item.right .badge { display: grid; background: var(--leaf); }
+  .item.wrong .badge { display: grid; background: var(--red); }
+
+  /* ---------- вибір тварини ---------- */
+  .pick { display: flex; gap: 10px; flex-wrap: wrap; }
+  .pick button { padding: 3px; border: 2px solid transparent; border-radius: 6px; cursor: pointer; background: #fff; }
+  .pick button.on { border-color: var(--leaf); }
+  .pick img { width: 76px; height: 57px; object-fit: cover; display: block; border-radius: 3px; }
+
+  /* ---------- 2. Фоторедактор ---------- */
+  .apps { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 4px 0 18px; padding: 0; list-style: none;
+    font-family: var(--display); font-size: 1.1rem; color: var(--forest); }
+  .can { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 26px; max-width: 820px; }
+  .can li { display: grid; grid-template-columns: 34px 1fr; }
+  .ed { display: grid; grid-template-columns: minmax(280px, 520px) 1fr; gap: 26px; align-items: start; }
+  .stage { position: relative; border-radius: 6px; overflow: hidden; user-select: none; touch-action: none; cursor: ew-resize; background: #000; aspect-ratio: 4 / 3; }
+  .stage img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+  .stage .divider { position: absolute; top: 0; bottom: 0; width: 3px; margin-left: -1.5px; background: #fff; pointer-events: none; z-index: 3; }
+  .stage .divider span { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 42px; height: 42px;
+    border-radius: 50%; background: #fff; color: var(--forest); display: grid; place-items: center; font-weight: 800; box-shadow: 0 2px 8px rgba(0, 0, 0, .35); }
+  .stage .lbl { position: absolute; bottom: 12px; background: rgba(23, 38, 29, .7); color: #fff; padding: 2px 12px;
+    border-radius: 4px; font-size: .9rem; font-weight: 700; pointer-events: none; z-index: 3; }
+  .stage .lbl.l { left: 44px; } .stage .lbl.r { right: 44px; }
+  .tools { display: flex; flex-direction: column; gap: 20px; }
+  .sl { display: grid; grid-template-columns: 140px 1fr 58px; align-items: center; gap: 12px; font-weight: 600; }
+  .sl + .sl { margin-top: 10px; }
+  .sl input { width: 100%; accent-color: var(--leaf); }
+  .sl output { text-align: right; color: var(--muted); font-family: var(--display); }
+
+  /* ---------- 3. Фото на картину ---------- */
+  .steps { list-style: none; counter-reset: s; padding: 0; margin: 16px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; max-width: 900px; }
+  .steps li { counter-increment: s; padding: 10px 18px 10px 0; border-top: 3px solid var(--leaf); }
+  .steps li::before { content: counter(s); display: block; font-family: var(--display); font-size: 2rem; font-weight: 600; color: var(--leaf); line-height: 1.2; }
+  .fx { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .fx figure { margin: 0; }
+  .fx figcaption { font-family: var(--display); font-weight: 600; color: var(--forest); margin: 0 0 6px; font-size: 1.1rem; }
+  .fx .frame { position: relative; border-radius: 6px; overflow: hidden; }
+  .fx canvas { width: 100%; height: auto; display: block; }
+  .ai { position: absolute; inset: 0; background: rgba(30, 94, 58, .85); color: #fff; display: none; place-items: center; text-align: center; font-weight: 700; z-index: 3; }
+  .ai.on { display: grid; }
+  .ai .brush { font-size: 2.6rem; display: block; animation: paint .6s ease-in-out infinite alternate; }
+  @keyframes paint { from { transform: rotate(-20deg) translateX(-14px); } to { transform: rotate(20deg) translateX(14px); } }
+  .slider { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+  .slider input { width: 150px; accent-color: var(--leaf); }
+  .invisible { visibility: hidden; }
+
+  /* ---------- 4. Аватар ---------- */
+  .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; max-width: 960px; margin-top: 8px; }
+  .facts div { padding: 4px 22px; border-left: 3px solid var(--leaf); }
+  .facts div:first-child { padding-left: 16px; }
+  .facts b { display: block; font-family: var(--display); font-weight: 600; color: var(--forest); font-size: 1.1rem; margin-bottom: 4px; }
+  .facts span { font-size: .95rem; }
+  .avw { display: grid; grid-template-columns: 240px 1fr; gap: 24px; align-items: start; }
+  .avopts { display: flex; flex-direction: column; gap: 8px; }
+  .avopt { font: inherit; display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 10px; cursor: pointer;
+    border: 2px solid transparent; background: #fff; color: var(--ink); font-weight: 600; text-align: left; }
+  .avopt.on { border-color: var(--leaf); }
+  .avopt small { display: block; font-weight: 400; color: var(--muted); font-size: .78rem; }
+  .av { display: inline-grid; place-items: center; border-radius: 50%; overflow: hidden; flex: none; vertical-align: middle;
+    color: #fff; font-weight: 800; background: #ccc; line-height: 1; font-family: var(--display); }
+  .av svg, .av img { width: 100%; height: 100%; display: block; object-fit: cover; }
+  .av.anim .hd { animation: bob 1.6s ease-in-out infinite; transform-origin: 100px 170px; }
+  .av.anim .ey { animation: blink 2.6s infinite; transform-box: fill-box; transform-origin: center; }
+  .av.anim .bgc { animation: bgc 4s linear infinite; }
+  .av.anim .sp { animation: spark 1.3s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes bob { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+  @keyframes blink { 0%, 88%, 100% { transform: scaleY(1); } 93% { transform: scaleY(.1); } }
+  @keyframes bgc { 0%, 100% { fill: #8FD3F5; } 33% { fill: #FFD6E0; } 66% { fill: #C9F2C7; } }
+  .av.anim .wave { animation: wave 1s ease-in-out infinite alternate; transform-origin: 165px 200px; }
+  @keyframes wave { from { transform: rotate(-8deg); } to { transform: rotate(12deg); } }
+  @keyframes spark { 0%, 100% { transform: scale(.4); opacity: .3; } 50% { transform: scale(1.1); opacity: 1; } }
+  .places { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .places .btn { padding: 7px 13px; }
+  .screen { border-radius: 10px; overflow: hidden; background: #fff; min-height: 320px; box-shadow: 0 0 0 1px #C9DDD0; }
+  .mbar { display: flex; align-items: center; gap: 14px; padding: 10px 14px; background: #EDF2F0; font-size: .9rem; flex-wrap: wrap; }
+  .mbar b { font-size: 1rem; }
+  .mbar .me { margin-left: auto; display: flex; align-items: center; gap: 8px; font-weight: 700; }
+  .mbody { padding: 14px; display: flex; flex-direction: column; gap: 12px; font-size: .9rem; }
+  .tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .tiles div { height: 100px; border-radius: 8px; background: #EEF1F4; display: grid; place-items: center; font-size: 2.6rem; }
+  .muted { color: var(--muted); }
+  .fpost { display: flex; gap: 12px; padding: 10px; border-bottom: 1px solid #E1E7EC; }
+  .fpost .nm { font-weight: 700; margin-bottom: 4px; }
+  .mail { display: flex; gap: 12px; align-items: center; padding: 10px; border-bottom: 1px solid #E1E7EC; }
+  .mail b { min-width: 215px; }
+  .game { background: #1D2433; color: #E8ECF5; min-height: 316px; }
+  .game .mbar { background: #2A3348; color: #fff; }
+  .player { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 10px; background: #2A3348; }
+  .player.me { outline: 3px solid var(--sun); }
+  .player .lv { margin-left: auto; color: #AFC0E0; }
+  .play { align-self: center; background: var(--sun); color: #1D2433; border: 0; border-radius: 10px; padding: 10px 30px; font: inherit; font-weight: 800; }
+  .msgs { display: flex; flex-direction: column; gap: 10px; }
+  .m { display: flex; gap: 8px; align-items: flex-end; max-width: 80%; }
+  .m .bub { background: #EEF1F4; padding: 8px 12px; border-radius: 14px 14px 14px 2px; }
+  .m.mine { align-self: flex-end; flex-direction: row-reverse; }
+  .m.mine .bub { background: #D7F0DF; border-radius: 14px 14px 2px 14px; }
+  .reg { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 30px 14px; text-align: center; }
+  .reg .ok { color: var(--leaf); font-weight: 700; font-size: 1.1rem; }
+
+  @media (max-width: 860px) {
+    .ed, .avw { grid-template-columns: 1fr; }
+    .facts, .steps { grid-template-columns: 1fr; gap: 14px; }
+    .facts div { padding-left: 16px; }
+    .can { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    html, body { font-size: 17px; }
+    .title h1 { font-size: 1.6rem; }
+    nav button { width: 150px; } nav .thumb { height: 70px; }
+    main { padding-top: 24px; }
+    .bench { padding: 16px; }
+    .fx { grid-template-columns: 1fr; }
+    .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .sl { grid-template-columns: 100px 1fr 50px; }
+    .goals button { grid-template-columns: 48px 1fr; } .goals .go { display: none; }
+    .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .mail { flex-wrap: wrap; } .mail b { min-width: 0; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="title"><h1>Програми для роботи з графікою</h1><span>Інформатика, 5 клас, урок №9</span></div>
+  <div class="strip">
+    <nav aria-label="Частини уроку">
+      <button class="on" data-tab="t0"><span class="thumb">🎯</span><span class="cap"><b>1</b>Мета уроку</span></button>
+      <button data-tab="t1"><span class="thumb">🛡️</span><span class="cap"><b>2</b>Чи безпечно публікувати фото?</span></button>
+      <button data-tab="t2"><span class="thumb" id="th2"></span><span class="cap"><b>3</b>Фоторедактори</span></button>
+      <button data-tab="t3"><span class="thumb" id="th3"></span><span class="cap"><b>4</b>Фото на картину</span></button>
+      <button data-tab="t4"><span class="thumb" id="th4"></span><span class="cap"><b>5</b>Аватар</span></button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ===== Мета уроку ===== -->
+  <section id="t0" class="on">
+    <h2>Сьогодні на уроці ми з вами:</h2>
+    <ul class="goals">
+      <li><button data-go="t1"><span class="ico">🛡️</span><span class="txt">обговоримо, чи безпечно публікувати свої фото в інтернеті;</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t2"><span class="ico">🖼️</span><span class="txt">дізнаємось про способи безпечної публікації фото в інтернеті;</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t4"><span class="ico">🧑‍🎨</span><span class="txt">навчимося створювати аватари у спеціальній програмі.</span><span class="go">Відкрити</span></button></li>
+    </ul>
+  </section>
+
+  <!-- ===== 1. Чи безпечно публікувати фото ===== -->
+  <section id="t1">
+    <div class="theory">
+      <h2>Чи безпечно розміщувати власні фото в інтернеті?</h2>
+      <div class="row" style="margin-bottom:14px"><button class="btn" id="showAns">Показати відповідь</button></div>
+      <div id="ans" class="hide">
+        <p class="lead"><dfn>Розміщення власних фото в інтернеті може бути небезпечним.</dfn> Зловмисники можуть використати такі фото:</p>
+        <ul class="dangers">
+          <li><span class="ico">🪪</span><span><b>Для підробки документів</b>Чуже фото вставляють у фальшивий документ: посвідчення, перепустку чи квиток.</span></li>
+          <li><span class="ico">💬</span><span><b>Для цькування людини</b>Фото змінюють, додають образливі підписи й розсилають іншим, щоб принизити людину.</span></li>
+          <li><span class="ico">🎭</span><span><b>З шахрайською метою</b>Шахраї створюють профіль із чужим фото й від імені цієї людини просять гроші в її друзів.</span></li>
+        </ul>
+        <div class="shield">🛡️ <b>Як захиститися?</b> Перш ніж публікувати фото, опрацюй його у фоторедакторі. Або замість свого фото постав аватарку.</div>
+      </div>
+    </div>
+    <div class="bench">
+      <h3>Перевір себе: безпечно чи небезпечно публікувати?</h3>
+      <div class="scorebar">
+        <div class="score" id="score"></div>
+        <div class="pbar"><i id="barFill"></i></div>
+        <button class="btn" id="reset1">Почати знову</button>
+      </div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <!-- ===== 2. Фоторедактори ===== -->
+  <section id="t2">
+    <div class="theory">
+      <h2>Фоторедактори</h2>
+      <p class="lead">Щоб не розміщувати в інтернеті свої справжні фотографії, їх опрацьовують за допомогою фоторедакторів.</p>
+      <div class="def"><dfn>Фоторедактор</dfn> - програма для обробки фотографій. Фоторедактори бувають для комп'ютера, для телефона, а також у вигляді онлайн-сервісів.</div>
+      <h3>Наприклад</h3>
+      <ul class="apps"><li>Snapseed</li><li>PicsArt</li><li>Adobe Photoshop Express</li><li>Adobe Lightroom</li><li>та інші</li></ul>
+      <h3>Що можна зробити у фоторедакторі</h3>
+      <ul class="can">
+        <li><span>☀️</span>змінити яскравість і контраст;</li>
+        <li><span>🎨</span>зробити кольори яскравішими або фото чорно-білим;</li>
+        <li><span>✂️</span>обрізати й повернути фото;</li>
+        <li><span>✨</span>додати ефекти й перетворити фото на картину.</li>
+      </ul>
+    </div>
+    <div class="bench">
+      <h3>Спробуй сам: оброби фото</h3>
+      <div class="ed">
+        <div class="stage vf" id="stage">
+          <img id="after" alt="Після обробки"><img id="before" alt="До обробки">
+          <div class="divider" id="divider"><span>⇔</span></div>
+          <span class="lbl l">До</span><span class="lbl r">Після</span>
+        </div>
+        <div class="tools">
+          <div><h3>Фото</h3><div class="pick" data-pick></div></div>
+          <div>
+            <h3>Налаштування</h3>
+            <label class="sl">Яскравість <input type="range" id="br" min="40" max="160" value="100"><output></output></label>
+            <label class="sl">Контраст <input type="range" id="ct" min="40" max="160" value="100"><output></output></label>
+            <label class="sl">Насиченість <input type="range" id="st" min="0" max="200" value="100"><output></output></label>
+          </div>
+          <div>
+            <h3>Ефекти</h3>
+            <div class="row">
+              <button class="btn" data-pre="bright">Яскраві кольори</button>
+              <button class="btn" data-pre="bw">Чорно-біле</button>
+              <button class="btn" data-pre="retro">Ретро</button>
+              <button class="btn" data-pre="reset">Скинути</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 3. Фото на картину ===== -->
+  <section id="t3">
+    <div class="theory">
+      <h2>Як перетворити фото на картину</h2>
+      <p class="lead">За допомогою онлайн-сервісів, наприклад <dfn>loonapix.com</dfn>, можна перетворити фотографію на картину. Це відбувається завдяки вбудованим технологіям <dfn>штучного інтелекту</dfn>. Таке «перетворене» фото має такий вигляд, наче його намалювали олійними фарбами чи виклали з мозаїки.</p>
+      <ol class="steps">
+        <li>Обираємо фото</li>
+        <li>Обираємо ефект: олійні фарби, мозаїка, олівець…</li>
+        <li>Штучний інтелект «перемальовує» фото</li>
+      </ol>
+    </div>
+    <div class="bench">
+      <h3>Спробуй сам: обери фото й ефект</h3>
+      <div class="row" style="margin-bottom:12px"><div class="pick" data-pick></div></div>
+      <div class="row" style="margin-bottom:16px">
+        <button class="btn on" data-fx="oil">Олійні фарби</button>
+        <button class="btn" data-fx="mosaic">Мозаїка</button>
+        <button class="btn" data-fx="pencil">Олівець</button>
+        <button class="btn" data-fx="poster">Плакат</button>
+        <label class="slider invisible" id="sizeBox">Розмір плиток
+          <input type="range" id="size" min="4" max="40" value="12">
+        </label>
+      </div>
+      <div class="fx">
+        <figure><figcaption>Фото</figcaption><div class="frame vf"><canvas id="src" width="480" height="360"></canvas></div></figure>
+        <figure><figcaption>Картина</figcaption><div class="frame vf"><canvas id="dst" width="480" height="360"></canvas>
+          <div class="ai" id="ai"><div><span class="brush">🖌️</span>Штучний інтелект малює…</div></div></div></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. Аватар ===== -->
+  <section id="t4">
+    <div class="theory">
+      <h2>Аватар (аватарка)</h2>
+      <p class="lead">Іншим способом власного представлення в мережі є створення аватарки.</p>
+      <div class="def"><dfn>Аватар (аватарка)</dfn> - графічне зображення, що представляє користувача сайту, форуму, вебсервісу, мережевої гри, у програмах-месенджерах тощо.</div>
+      <div class="facts">
+        <div><b>Де використовують?</b><span>На сайтах, форумах, у вебсервісах, мережевих іграх і месенджерах.</span></div>
+        <div><b>Хто обирає?</b><span>Користувач обирає аватар сам, або система надає його автоматично після реєстрації.</span></div>
+        <div><b>Яким буває?</b><span>Невеличкою картинкою, фотографією або коротким анімаційним сюжетом.</span></div>
+      </div>
+    </div>
+    <div class="bench">
+      <h3>Спробуй сам: обери аватар і подивись, де його видно</h3>
+      <div class="avw">
+        <div class="avopts" id="avopts"></div>
+        <div>
+          <div class="places">
+            <button class="btn on" data-pl="reg">Реєстрація</button>
+            <button class="btn" data-pl="site">Сайт</button>
+            <button class="btn" data-pl="forum">Форум</button>
+            <button class="btn" data-pl="mail">Вебсервіс</button>
+            <button class="btn" data-pl="game">Мережева гра</button>
+            <button class="btn" data-pl="chat">Месенджер</button>
+          </div>
+          <div class="screen" id="screen"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+/* ---------- вкладки ---------- */
+function openTab(id) {
+  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === id));
+  document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === id));
+  if (id === 't3') renderFx(false);
+  const f = document.querySelector(`nav [data-tab="${id}"]`); if (f) f.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  window.scrollTo(0, 0);
+}
+document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => openTab(b.dataset.tab)));
+document.querySelectorAll('[data-go]').forEach(g => g.addEventListener('click', () => openTab(g.dataset.go)));
+
+/* ---------- випадкові числа ---------- */
+let seed = 11;
+const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; };
+
+/* ---------- 1. Перевір себе ---------- */
+document.getElementById('showAns').addEventListener('click', e => {
+  const a = document.getElementById('ans'), open = a.classList.toggle('hide');
+  e.target.textContent = open ? 'Показати відповідь' : 'Сховати відповідь';
+});
+const ITEMS = [
+  { pic: '📄', name: 'Фото свідоцтва про народження', ok: false, why: 'Можуть підробити документи' },
+  { pic: '🎫', name: 'Фото учнівського квитка', ok: false, why: 'Можуть підробити документи' },
+  { pic: '🤳', name: 'Справжнє селфі на відкритій сторінці', ok: false, why: 'Шахраї можуть створити профіль із твоїм фото' },
+  { pic: '🙈', name: 'Смішне фото друга без його дозволу', ok: false, why: 'Таке фото можуть використати для цькування' },
+  { pic: '🏠', name: 'Фото родини біля свого будинку', ok: false, why: 'Видно обличчя й місце, де ви живете' },
+  { pic: '🐈', name: 'Фото кота, перетворене на картину', ok: true, why: 'На фото немає людей' },
+  { pic: '🧑‍🎨', name: 'Намальована аватарка в профілі гри', ok: true, why: 'Аватарка не показує справжнє обличчя' },
+  { pic: '🌄', name: 'Краєвид, оброблений у фоторедакторі', ok: true, why: 'На фото немає людей' },
+  { pic: '🐶', name: 'Мозаїка з фото собаки', ok: true, why: 'На фото немає людей' },
+  { pic: '🌷', name: 'Фото квітки на підвіконні', ok: true, why: 'На фото немає людей' },
+];
+const grid = document.getElementById('grid'), score = document.getElementById('score'), barFill = document.getElementById('barFill');
+let right = 0;
+function showScore() {
+  score.textContent = `Правильних відповідей: ${right} з ${ITEMS.length}`;
+  barFill.style.width = (right / ITEMS.length * 100) + '%';
+}
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function buildGrid() {
+  right = 0; showScore(); grid.innerHTML = '';
+  shuffle(ITEMS).forEach(it => {
+    const d = document.createElement('div'); d.className = 'item';
+    d.innerHTML = `<div class="badge"></div><div class="pic">${it.pic}</div><div class="name">${it.name}</div>
+      <div class="choice"><button class="yes" data-v="1">Безпечно</button><button class="no" data-v="0">Небезпечно</button></div>
+      <div class="why">${it.why}</div>`;
+    d.querySelectorAll('.choice button').forEach(btn => btn.addEventListener('click', () => {
+      if (d.classList.contains('done')) return;
+      const good = (btn.dataset.v === '1') === it.ok;
+      d.querySelector(it.ok ? '.yes' : '.no').classList.add('answer');
+      d.classList.add('done', good ? 'right' : 'wrong');
+      d.querySelector('.badge').textContent = good ? '✓' : '✗';
+      if (good) right++;
+      showScore();
+    }));
+    grid.appendChild(d);
+  });
+}
+document.getElementById('reset1').addEventListener('click', buildGrid);
+buildGrid();
+
+/* ---------- намальовані «фото» тварин ---------- */
+const PW = 480, PH = 360;
+const ell = (c, x, y, rx, ry, r = 0) => { c.beginPath(); c.ellipse(x, y, rx, ry, r, 0, Math.PI * 2); };
+const rgba = (h, a) => { const n = parseInt(h.slice(1), 16); return `rgba(${n >> 16},${(n >> 8) & 255},${n & 255},${a})`; };
+function volume(c, path, lx, ly, r, dark = .38, light = .28) { // світло зверху зліва, тінь знизу справа
+  c.save(); path(); c.clip();
+  const g = c.createRadialGradient(lx, ly, r * .05, lx, ly, r);
+  g.addColorStop(0, `rgba(255,250,235,${light})`); g.addColorStop(.42, 'rgba(255,255,255,0)'); g.addColorStop(1, `rgba(45,22,5,${dark})`);
+  c.fillStyle = g; c.fillRect(0, 0, PW, PH); c.restore();
+}
+function fur(c, path, box, cx, cy, colors, n, len, down = .4, alpha = .55) {
+  c.save(); path(); c.clip(); c.lineCap = 'round';
+  const [x0, y0, x1, y1] = box;
+  for (let i = 0; i < n; i++) {
+    const x = x0 + rnd() * (x1 - x0), y = y0 + rnd() * (y1 - y0);
+    let a = Math.atan2(y - cy, x - cx); a = a * (1 - down) + (Math.PI / 2) * down + (rnd() - .5) * .5;
+    const l = len * (.5 + rnd() * .9);
+    c.strokeStyle = rgba(colors[Math.floor(rnd() * colors.length)], alpha * (.6 + rnd() * .4)); c.lineWidth = .7 + rnd() * 1.1;
+    c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + Math.cos(a) * l * .5 + (rnd() - .5) * 2, y + Math.sin(a) * l * .5, x + Math.cos(a) * l, y + Math.sin(a) * l); c.stroke();
+  }
+  c.restore();
+}
+function fuzz(c, cx, cy, rx, ry, color, n, len, from = 0, to = Math.PI * 2) { // м'який пухнастий край
+  c.save(); c.lineCap = 'round';
+  for (let i = 0; i < n; i++) {
+    const t = from + rnd() * (to - from), x = cx + Math.cos(t) * rx * (.96 + rnd() * .05), y = cy + Math.sin(t) * ry * (.96 + rnd() * .05);
+    const l = len * (.4 + rnd() * .8), a = t + (rnd() - .5) * .6;
+    c.strokeStyle = rgba(color, .5 + rnd() * .4); c.lineWidth = .7 + rnd();
+    c.beginPath(); c.moveTo(x, y); c.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); c.stroke();
+  }
+  c.restore();
+}
+function blurred(c, px, fn) { c.save(); c.filter = `blur(${px}px)`; fn(); c.restore(); c.filter = 'none'; }
+function eye(c, x, y, w, h, iris, slit, look = 0) {
+  const lid = () => { c.beginPath(); c.moveTo(x - w, y); c.quadraticCurveTo(x, y - h * 1.5, x + w, y); c.quadraticCurveTo(x, y + h * 1.3, x - w, y); c.closePath(); };
+  c.save(); lid(); c.clip();
+  const g = c.createRadialGradient(x + look, y, 1, x + look, y, w * .95);
+  iris.forEach(([o, col]) => g.addColorStop(o, col));
+  c.fillStyle = g; c.fillRect(x - w, y - h * 2, w * 2, h * 4);
+  c.fillStyle = '#0B0B0B';
+  if (slit) { ell(c, x + look, y, w * .16, h * .95); c.fill(); } else { ell(c, x + look, y, w * .45, w * .45); c.fill(); }
+  c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(x - w, y - h * 2, w * 2, h * 1.35);
+  c.restore();
+  c.strokeStyle = '#24170C'; c.lineWidth = 2.6; lid(); c.stroke();
+  c.fillStyle = '#fff'; ell(c, x + look + w * .28, y - h * .35, w * .17, w * .17); c.fill();
+  c.fillStyle = 'rgba(255,255,255,.6)'; ell(c, x + look - w * .25, y + h * .35, w * .08, w * .08); c.fill();
+}
+function photoFinish(c) {
+  const v = c.createRadialGradient(PW / 2, PH / 2, PH * .38, PW / 2, PH / 2, PH * .9);
+  v.addColorStop(0, 'rgba(0,0,0,0)'); v.addColorStop(1, 'rgba(10,10,0,.32)');
+  c.fillStyle = v; c.fillRect(0, 0, PW, PH);
+}
+
+function drawCat(c) {
+  // фон: кімната з вікном, розмита
+  blurred(c, 5, () => {
+    let g = c.createLinearGradient(0, 0, PW, 0); g.addColorStop(0, '#F6E6CE'); g.addColorStop(1, '#D9BE98');
+    c.fillStyle = g; c.fillRect(0, 0, PW, PH);
+    c.fillStyle = '#FFFDF6'; c.fillRect(20, 10, 150, 200);
+    g = c.createLinearGradient(30, 20, 160, 200); g.addColorStop(0, '#E8F6FF'); g.addColorStop(1, '#A9D3F0');
+    c.fillStyle = g; c.fillRect(30, 20, 130, 180);
+    c.fillStyle = '#FFFDF6'; c.fillRect(92, 20, 8, 180); c.fillRect(30, 104, 130, 8);
+    c.fillStyle = 'rgba(255,248,220,.35)'; c.beginPath(); c.moveTo(30, 20); c.lineTo(160, 20); c.lineTo(330, 260); c.lineTo(120, 260); c.fill();
+    c.fillStyle = '#A0522D'; c.fillRect(392, 120, 54, 50);
+    [[402, 108, 22, '#3F8A3A'], [428, 92, 26, '#4FA048'], [446, 112, 18, '#357A33'], [414, 78, 18, '#5DB054']].forEach(([x, y, r, col]) => { c.fillStyle = col; ell(c, x, y, r, r); c.fill(); });
+  });
+  // плед
+  let g = c.createLinearGradient(0, 235, 0, PH); g.addColorStop(0, '#6F93BE'); g.addColorStop(1, '#45658E');
+  c.fillStyle = g; c.beginPath(); c.moveTo(0, 250); c.quadraticCurveTo(PW / 2, 228, PW, 252); c.lineTo(PW, PH); c.lineTo(0, PH); c.fill();
+  c.strokeStyle = 'rgba(255,255,255,.16)'; c.lineWidth = 3;
+  for (let y = 250; y < PH + 10; y += 12) { c.beginPath(); for (let x = -10; x < PW + 20; x += 16) { c.lineTo(x, y + ((x / 16) % 2 ? 6 : 0) + (y - 250) * .02); } c.stroke(); }
+  blurred(c, 7, () => { c.fillStyle = 'rgba(20,25,40,.4)'; ell(c, 262, 336, 112, 16); c.fill(); });
+  // хвіст
+  c.lineCap = 'round';
+  g = c.createLinearGradient(300, 330, 380, 260); g.addColorStop(0, '#D4782F'); g.addColorStop(1, '#E99A52');
+  c.strokeStyle = g; c.lineWidth = 24; c.beginPath(); c.moveTo(300, 326); c.bezierCurveTo(360, 334, 392, 300, 372, 262); c.stroke();
+  c.strokeStyle = 'rgba(150,72,20,.55)'; c.lineWidth = 7;
+  [[338, 326], [362, 314], [377, 290]].forEach(([x, y]) => { c.beginPath(); c.moveTo(x - 4, y - 10); c.lineTo(x + 4, y + 10); c.stroke(); });
+  // тулуб
+  const body = () => { c.beginPath(); c.moveTo(200, 326); c.bezierCurveTo(176, 300, 186, 226, 238, 204); c.lineTo(280, 204); c.bezierCurveTo(332, 226, 342, 300, 318, 326);
+    c.bezierCurveTo(300, 342, 218, 342, 200, 326); c.closePath(); c.moveTo(232, 318); c.ellipse(212, 312, 28, 26, 0, 0, 7); c.moveTo(334, 312); c.ellipse(306, 312, 28, 26, 0, 0, 7); };
+  c.fillStyle = '#E2873B'; body(); c.fill();
+  c.fillStyle = '#F8EAD6'; c.beginPath(); c.moveTo(232, 330); c.bezierCurveTo(222, 280, 232, 222, 259, 214); c.bezierCurveTo(288, 222, 298, 280, 288, 330); c.fill();
+  
+  volume(c, body, 225, 220, 140);
+  fur(c, body, [180, 200, 340, 340], 259, 190, ['#F2A35C', '#C8692A', '#FFD9A8', '#B85E22'], 1700, 10, .7);
+  c.strokeStyle = 'rgba(150,70,20,.5)'; c.lineWidth = 6; c.lineCap = 'round';
+  [[205, 240, 228, 236], [200, 268, 224, 262], [202, 296, 226, 290], [314, 240, 292, 236], [318, 268, 296, 262], [316, 296, 294, 290]].forEach(([a, b, x, y]) => { c.beginPath(); c.moveTo(a, b); c.quadraticCurveTo((a + x) / 2, b - 6, x, y); c.stroke(); });
+  fuzz(c, 259, 268, 72, 66, '#E8954A', 200, 4, Math.PI * .95, Math.PI * 2.05);
+  c.fillStyle = '#F8EAD6'; ell(c, 240, 330, 21, 12); c.fill(); ell(c, 280, 330, 21, 12); c.fill();
+  fur(c, () => { c.beginPath(); c.ellipse(240, 330, 21, 12, 0, 0, 7); c.ellipse(280, 330, 21, 12, 0, 0, 7); }, [218, 316, 302, 344], 260, 320, ['#FFFFFF', '#E3CDB2'], 200, 4, .5);
+  c.strokeStyle = 'rgba(150,110,80,.7)'; c.lineWidth = 1.5;
+  [[233, 339], [240, 341], [247, 339], [273, 339], [280, 341], [287, 339]].forEach(([x, y]) => { c.beginPath(); c.moveTo(x, y); c.lineTo(x, y - 7); c.stroke(); });
+  // голова
+  const head = () => { c.beginPath(); c.moveTo(198, 150); c.bezierCurveTo(196, 108, 224, 90, 259, 90); c.bezierCurveTo(294, 90, 322, 108, 320, 150); c.bezierCurveTo(320, 186, 294, 208, 259, 208); c.bezierCurveTo(224, 208, 198, 186, 198, 150); c.closePath(); };
+  const ears = () => { c.beginPath(); c.moveTo(206, 132); c.quadraticCurveTo(204, 92, 216, 62); c.quadraticCurveTo(238, 78, 252, 100); c.closePath(); c.moveTo(312, 132); c.quadraticCurveTo(314, 92, 302, 62); c.quadraticCurveTo(280, 78, 266, 100); c.closePath(); };
+  c.fillStyle = '#DD8238'; ears(); c.fill();
+  g = c.createLinearGradient(0, 70, 0, 120); g.addColorStop(0, '#E9A0A0'); g.addColorStop(1, '#C97C6E');
+  c.fillStyle = g; c.beginPath(); c.moveTo(214, 122); c.quadraticCurveTo(214, 96, 220, 76); c.quadraticCurveTo(236, 88, 244, 104); c.closePath();
+  c.moveTo(304, 122); c.quadraticCurveTo(304, 96, 298, 76); c.quadraticCurveTo(282, 88, 274, 104); c.closePath(); c.fill();
+  c.strokeStyle = 'rgba(255,245,230,.8)'; c.lineWidth = 1;
+  for (let i = 0; i < 14; i++) { const s = i < 7 ? 1 : -1, bx = s > 0 ? 222 : 296, by = 104 + (i % 7) * 3; c.beginPath(); c.moveTo(bx, by); c.lineTo(bx + s * (8 + rnd() * 6), by - 10 - rnd() * 8); c.stroke(); }
+  c.fillStyle = '#E58C3F'; head(); c.fill();
+  volume(c, head, 232, 112, 120, .3, .3);
+  fur(c, head, [196, 88, 322, 210], 259, 160, ['#F2A35C', '#C8692A', '#FFD3A0', '#B85E22'], 1500, 7, .1);
+  c.strokeStyle = 'rgba(150,70,20,.6)'; c.lineWidth = 4.5;
+  [[-16, 102, 118], [0, 98, 122], [16, 102, 118]].forEach(([dx, y1, y2]) => { c.beginPath(); c.moveTo(259 + dx, y1); c.quadraticCurveTo(259 + dx * 1.15, (y1 + y2) / 2, 259 + dx * .85, y2); c.stroke(); });
+  [[206, 160, 226, 156], [204, 172, 224, 170], [312, 160, 292, 156], [314, 172, 294, 170]].forEach(([a, b, x, y]) => { c.beginPath(); c.moveTo(a, b); c.lineTo(x, y); c.stroke(); });
+  fuzz(c, 259, 150, 61, 58, '#E8954A', 300, 6, Math.PI * .1, Math.PI * .9);
+  fuzz(c, 259, 150, 61, 58, '#E8954A', 120, 6, Math.PI * .95, Math.PI * 1.15);
+  fuzz(c, 259, 150, 61, 58, '#E8954A', 120, 6, Math.PI * 1.85, Math.PI * 2.05);
+  // морда
+  c.fillStyle = '#FBF2E6'; ell(c, 246, 176, 18, 13); c.fill(); ell(c, 272, 176, 18, 13); c.fill(); ell(c, 259, 190, 12, 8); c.fill();
+  fur(c, () => { c.beginPath(); c.ellipse(246, 176, 18, 13, 0, 0, 7); c.ellipse(272, 176, 18, 13, 0, 0, 7); }, [226, 160, 292, 192], 259, 170, ['#FFFFFF', '#E9D6BE'], 300, 4, 0, .6);
+  eye(c, 233, 142, 17, 11, [[0, '#F4F48A'], [.45, '#B5D240'], [1, '#5E8A24']], true, 1);
+  eye(c, 285, 142, 17, 11, [[0, '#F4F48A'], [.45, '#B5D240'], [1, '#5E8A24']], true, -1);
+  g = c.createLinearGradient(0, 160, 0, 172); g.addColorStop(0, '#F2A5AE'); g.addColorStop(1, '#C96A78');
+  c.fillStyle = g; c.beginPath(); c.moveTo(250, 162); c.quadraticCurveTo(259, 158, 268, 162); c.quadraticCurveTo(262, 172, 259, 173); c.quadraticCurveTo(256, 172, 250, 162); c.fill();
+  c.strokeStyle = '#6E4430'; c.lineWidth = 2; c.beginPath(); c.moveTo(259, 173); c.lineTo(259, 180);
+  c.moveTo(259, 180); c.quadraticCurveTo(252, 186, 245, 181); c.moveTo(259, 180); c.quadraticCurveTo(266, 186, 273, 181); c.stroke();
+  c.fillStyle = 'rgba(110,70,50,.5)'; [[240, 176], [246, 181], [236, 182], [278, 176], [272, 181], [282, 182]].forEach(([x, y]) => { ell(c, x, y, 1.2, 1.2); c.fill(); });
+  c.strokeStyle = 'rgba(255,255,255,.9)'; c.lineWidth = 1.1;
+  [[1, -6, -10], [1, 0, 0], [1, 6, 9], [-1, -6, -10], [-1, 0, 0], [-1, 6, 9]].forEach(([s, dy, end]) => {
+    c.beginPath(); c.moveTo(259 + s * 18, 180 + dy * .5); c.quadraticCurveTo(259 + s * 55, 172 + dy, 259 + s * 92, 166 + end * 2); c.stroke(); });
+  photoFinish(c);
+}
+
+function drawDog(c) {
+  blurred(c, 7, () => {
+    let g = c.createLinearGradient(0, 0, 0, PH); g.addColorStop(0, '#BFE3F7'); g.addColorStop(.5, '#E4F3E0'); g.addColorStop(1, '#8CC46E');
+    c.fillStyle = g; c.fillRect(0, 0, PW, PH);
+    [[40, 120, 80, '#4E8C45'], [140, 100, 70, '#66A65A'], [360, 110, 90, '#467F3F'], [460, 130, 70, '#5E9E52'], [250, 140, 60, '#7DB86B']].forEach(([x, y, r, col]) => { c.fillStyle = col; ell(c, x, y, r, r * .8); c.fill(); });
+    for (let i = 0; i < 18; i++) { c.fillStyle = `rgba(255,255,220,${.25 + rnd() * .35})`; ell(c, rnd() * PW, rnd() * 160, 6 + rnd() * 14, 6 + rnd() * 14); c.fill(); }
+    c.fillStyle = '#7DBA5E'; c.fillRect(0, 190, PW, PH);
+  });
+  // тулуб із шиєю
+  const body = () => { c.beginPath(); c.ellipse(240, 345, 124, 92, 0, 0, Math.PI * 2); c.moveTo(196, 200); c.lineTo(284, 200); c.bezierCurveTo(296, 240, 316, 262, 330, 290); c.lineTo(150, 290); c.bezierCurveTo(164, 262, 184, 240, 196, 200); c.closePath(); };
+  c.fillStyle = '#C47F3E'; body(); c.fill();
+  c.fillStyle = '#F7EDE0'; c.beginPath(); c.moveTo(194, 360); c.bezierCurveTo(194, 290, 214, 236, 240, 226); c.bezierCurveTo(266, 236, 286, 290, 286, 360); c.fill();
+  volume(c, body, 200, 250, 170);
+  fur(c, body, [110, 196, 370, PH], 240, 210, ['#D99A5B', '#A8682E', '#F0C08A'], 1400, 10, .8);
+  // вуха (позаду голови частково)
+  const earL = () => { c.beginPath(); c.moveTo(190, 120); c.bezierCurveTo(158, 124, 146, 180, 156, 232); c.bezierCurveTo(162, 256, 190, 254, 198, 226); c.bezierCurveTo(204, 190, 204, 146, 190, 120); c.closePath(); };
+  const earR = () => { c.beginPath(); c.moveTo(290, 120); c.bezierCurveTo(322, 124, 334, 180, 324, 232); c.bezierCurveTo(318, 256, 290, 254, 282, 226); c.bezierCurveTo(276, 190, 276, 146, 290, 120); c.closePath(); };
+  // голова
+  const head = () => { c.beginPath(); c.moveTo(178, 168); c.bezierCurveTo(175, 116, 206, 88, 240, 88); c.bezierCurveTo(274, 88, 305, 116, 302, 168); c.bezierCurveTo(300, 206, 276, 232, 240, 232); c.bezierCurveTo(204, 232, 180, 206, 178, 168); c.closePath(); };
+  blurred(c, 4, () => { c.fillStyle = 'rgba(60,30,10,.35)'; ell(c, 240, 238, 64, 14); c.fill(); });
+  c.fillStyle = '#CB8A4A'; head(); c.fill();
+  c.fillStyle = '#F7EDE0'; c.beginPath(); c.moveTo(232, 96); c.quadraticCurveTo(240, 92, 248, 96); c.quadraticCurveTo(252, 140, 270, 172); c.lineTo(210, 172); c.quadraticCurveTo(228, 140, 232, 96); c.fill();
+  volume(c, head, 210, 110, 130, .32, .3);
+  fur(c, head, [176, 86, 304, 234], 240, 150, ['#E0A566', '#A8682E', '#F3CB97'], 1400, 7, .2);
+  fuzz(c, 240, 160, 62, 72, '#CB8A4A', 260, 6, Math.PI * 1.15, Math.PI * 1.85);
+  [earL, earR].forEach((e, k) => {
+    const g = c.createLinearGradient(k ? 330 : 150, 120, k ? 280 : 200, 250); g.addColorStop(0, '#5E3518'); g.addColorStop(1, '#8A5528');
+    c.fillStyle = g; e(); c.fill();
+    fur(c, e, k ? [276, 118, 336, 258] : [144, 118, 204, 258], k ? 300 : 180, 110, ['#4A2A12', '#9A6434', '#6B3E1C'], 500, 9, .85, .6);
+  });
+  // морда
+  const muzzle = () => { c.beginPath(); c.ellipse(240, 200, 42, 30, 0, 0, Math.PI * 2); };
+  c.fillStyle = '#F4E4D0'; muzzle(); c.fill();
+  volume(c, muzzle, 230, 185, 50, .25, .2);
+  fur(c, muzzle, [196, 168, 284, 232], 240, 190, ['#FFFFFF', '#E3CDB2'], 350, 4, .2, .5);
+  eye(c, 212, 156, 13, 11, [[0, '#8A5A2E'], [.6, '#4A2A12'], [1, '#2A1408']], false, 1);
+  eye(c, 268, 156, 13, 11, [[0, '#8A5A2E'], [.6, '#4A2A12'], [1, '#2A1408']], false, -1);
+  c.fillStyle = 'rgba(240,200,150,.8)'; ell(c, 208, 137, 7, 4, -.2); c.fill(); ell(c, 272, 137, 7, 4, .2); c.fill();
+  let g = c.createRadialGradient(236, 182, 2, 240, 188, 18); g.addColorStop(0, '#5A5A5A'); g.addColorStop(1, '#0E0E0E');
+  c.fillStyle = g; c.beginPath(); c.moveTo(224, 184); c.quadraticCurveTo(240, 172, 256, 184); c.quadraticCurveTo(254, 198, 240, 200); c.quadraticCurveTo(226, 198, 224, 184); c.fill();
+  c.fillStyle = 'rgba(255,255,255,.55)'; ell(c, 234, 180, 5, 2.5); c.fill();
+  c.strokeStyle = '#3A2414'; c.lineWidth = 2.4; c.beginPath(); c.moveTo(240, 200); c.lineTo(240, 210);
+  c.moveTo(240, 210); c.quadraticCurveTo(228, 220, 216, 212); c.moveTo(240, 210); c.quadraticCurveTo(252, 220, 264, 212); c.stroke();
+  g = c.createLinearGradient(0, 212, 0, 246); g.addColorStop(0, '#F28FA2'); g.addColorStop(1, '#D9607A');
+  c.fillStyle = g; c.beginPath(); c.moveTo(229, 214); c.quadraticCurveTo(240, 210, 251, 214); c.quadraticCurveTo(252, 238, 240, 244); c.quadraticCurveTo(228, 238, 229, 214); c.fill();
+  c.strokeStyle = '#B9506A'; c.lineWidth = 1.6; c.beginPath(); c.moveTo(240, 216); c.lineTo(240, 236); c.stroke();
+  // нашийник
+  c.lineCap = 'round'; c.strokeStyle = '#B8322A'; c.lineWidth = 13; c.beginPath(); c.moveTo(186, 250); c.quadraticCurveTo(240, 280, 294, 250); c.stroke();
+  c.strokeStyle = 'rgba(255,255,255,.3)'; c.lineWidth = 3; c.beginPath(); c.moveTo(190, 247); c.quadraticCurveTo(240, 275, 290, 247); c.stroke();
+  g = c.createRadialGradient(236, 282, 1, 240, 286, 12); g.addColorStop(0, '#FFF2A8'); g.addColorStop(1, '#C9961E');
+  c.fillStyle = g; ell(c, 240, 286, 11, 11); c.fill();
+  // трава попереду
+  c.lineCap = 'round';
+  for (let i = 0; i < 260; i++) {
+    const x = rnd() * PW, h = 14 + rnd() * 26, y = PH + 4;
+    c.strokeStyle = ['#3E7A30', '#5DA544', '#7DC060', '#2F6B27'][i % 4]; c.lineWidth = 1.5 + rnd() * 1.5;
+    c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x + (rnd() - .5) * 8, y - h * .6, x + (rnd() - .5) * 14, y - h); c.stroke();
+  }
+  photoFinish(c);
+}
+
+function drawBird(c) {
+  blurred(c, 8, () => {
+    let g = c.createLinearGradient(0, 0, PW, PH); g.addColorStop(0, '#DDF2E3'); g.addColorStop(1, '#7FBF92');
+    c.fillStyle = g; c.fillRect(0, 0, PW, PH);
+    for (let i = 0; i < 40; i++) {
+      c.fillStyle = `rgba(${50 + rnd() * 60},${120 + rnd() * 90},${60 + rnd() * 50},${.35 + rnd() * .4})`;
+      ell(c, rnd() * PW, rnd() * PH, 18 + rnd() * 34, 12 + rnd() * 22, rnd() * 3); c.fill();
+    }
+    for (let i = 0; i < 14; i++) { c.fillStyle = `rgba(255,255,230,${.3 + rnd() * .4})`; ell(c, rnd() * PW, rnd() * PH * .6, 5 + rnd() * 10, 5 + rnd() * 10); c.fill(); }
+  });
+  // хвіст
+  let g = c.createLinearGradient(230, 250, 170, 350); g.addColorStop(0, '#2C6E8E'); g.addColorStop(1, '#173E5A');
+  c.fillStyle = g; c.beginPath(); c.moveTo(220, 244); c.quadraticCurveTo(206, 300, 168, 354); c.lineTo(180, 356); c.quadraticCurveTo(222, 304, 238, 250); c.closePath(); c.fill();
+  c.beginPath(); c.moveTo(232, 248); c.quadraticCurveTo(222, 306, 190, 358); c.lineTo(200, 358); c.quadraticCurveTo(236, 306, 248, 252); c.closePath(); c.fill();
+  c.strokeStyle = 'rgba(255,255,255,.25)'; c.lineWidth = 1.2; c.beginPath(); c.moveTo(228, 252); c.quadraticCurveTo(214, 304, 176, 354); c.stroke();
+  // гілка
+  g = c.createLinearGradient(0, 270, 0, 310); g.addColorStop(0, '#8A6038'); g.addColorStop(.5, '#6B4526'); g.addColorStop(1, '#3E2814');
+  c.fillStyle = g; c.beginPath(); c.moveTo(-10, 300); c.quadraticCurveTo(240, 262, 490, 286); c.lineTo(490, 306); c.quadraticCurveTo(240, 284, -10, 324); c.fill();
+  c.strokeStyle = 'rgba(40,24,10,.5)'; c.lineWidth = 1.2;
+  for (let i = 0; i < 60; i++) { const x = rnd() * PW, y = 290 - x * .02 + rnd() * 18; c.beginPath(); c.moveTo(x, y); c.lineTo(x + 10 + rnd() * 14, y - 1); c.stroke(); }
+  c.fillStyle = '#5DA544'; [[420, 278, 18, 8, -.4], [440, 270, 16, 7, -.9], [60, 296, 18, 8, .5]].forEach(([x, y, rx, ry, r]) => { ell(c, x, y, rx, ry, r); c.fill(); });
+  // тулуб
+  const body = () => { c.beginPath(); c.ellipse(250, 196, 54, 84, -.14, 0, Math.PI * 2); };
+  g = c.createLinearGradient(220, 130, 290, 280); g.addColorStop(0, '#9BE36A'); g.addColorStop(1, '#3E9B2E');
+  c.fillStyle = g; body(); c.fill();
+  volume(c, body, 236, 150, 110, .3, .25);
+  fur(c, body, [190, 110, 310, 285], 250, 150, ['#B4F07E', '#4FAA36', '#7ACB55'], 900, 6, .75, .45);
+  // крило з візерунком
+  const wing = () => { c.beginPath(); c.moveTo(208, 146); c.bezierCurveTo(186, 192, 190, 248, 226, 282); c.bezierCurveTo(250, 256, 256, 200, 248, 150); c.closePath(); };
+  c.fillStyle = '#F0E07A'; wing(); c.fill();
+  c.save(); wing(); c.clip();
+  for (let y = 142; y < 286; y += 7.5) for (let x = 184; x < 258; x += 10) {
+    const ox = x + (Math.round(y / 7.5) % 2) * 5;
+    c.fillStyle = '#1F1F1F'; c.beginPath(); c.arc(ox, y, 5, .15, Math.PI - .15); c.fill();
+    c.fillStyle = '#F0E07A'; c.beginPath(); c.arc(ox, y - 2, 4.2, .15, Math.PI - .15); c.fill();
+  }
+  c.fillStyle = 'rgba(40,90,40,.55)'; c.beginPath(); c.moveTo(212, 250); c.quadraticCurveTo(220, 276, 226, 282); c.quadraticCurveTo(240, 266, 244, 246); c.closePath(); c.fill();
+  c.restore();
+  volume(c, wing, 214, 160, 120, .35, .15);
+  g = c.createRadialGradient(262, 150, 2, 262, 150, 30); g.addColorStop(0, 'rgba(220,220,90,.9)'); g.addColorStop(1, 'rgba(160,210,90,0)');
+  c.fillStyle = g; ell(c, 262, 150, 34, 22); c.fill();
+  // голова
+  const head = () => { c.beginPath(); c.ellipse(268, 116, 40, 38, 0, 0, Math.PI * 2); };
+  g = c.createRadialGradient(258, 104, 4, 266, 116, 44); g.addColorStop(0, '#FFF7A8'); g.addColorStop(1, '#E8CF3E');
+  c.fillStyle = g; head(); c.fill();
+  c.save(); head(); c.clip(); c.strokeStyle = '#1F1F1F'; c.lineWidth = 1.8;
+  for (let i = 0; i < 7; i++) { const y = 82 + i * 7; c.beginPath(); c.moveTo(224, y + 8); for (let x = 224; x <= 266 - i * 5; x += 7) c.quadraticCurveTo(x + 3.5, y - 2, x + 7, y + 2); c.stroke(); }
+  c.restore();
+  fur(c, head, [226, 76, 310, 156], 268, 116, ['#FFF7B0', '#E3C83A'], 400, 5, .2, .45);
+  c.fillStyle = '#5B4BB0'; ell(c, 292, 148, 6, 5); c.fill();
+  c.fillStyle = '#151515'; [[278, 154], [288, 158], [298, 155]].forEach(([x, y]) => { ell(c, x, y, 2.6, 2.6); c.fill(); });
+  c.fillStyle = '#F6F2E4'; ell(c, 285, 106, 10, 10); c.fill();
+  c.strokeStyle = 'rgba(0,0,0,.25)'; c.lineWidth = 1; ell(c, 285, 106, 10, 10); c.stroke();
+  c.fillStyle = '#111'; ell(c, 286, 106, 6, 6); c.fill();
+  c.fillStyle = '#fff'; ell(c, 288, 103.5, 2, 2); c.fill();
+  g = c.createLinearGradient(298, 108, 312, 120); g.addColorStop(0, '#6D8FE0'); g.addColorStop(1, '#3E5FB8');
+  c.fillStyle = g; ell(c, 304, 115, 7, 5.5, .3); c.fill();
+  g = c.createLinearGradient(300, 118, 312, 142); g.addColorStop(0, '#F2DFA6'); g.addColorStop(1, '#B89A55');
+  c.fillStyle = g; c.beginPath(); c.moveTo(298, 120); c.bezierCurveTo(316, 118, 320, 134, 306, 144); c.bezierCurveTo(304, 136, 300, 130, 296, 128); c.closePath(); c.fill();
+  // лапки
+  c.strokeStyle = '#B9A5A0'; c.lineWidth = 4.5; c.lineCap = 'round';
+  [[236, 266], [262, 266]].forEach(([x, y]) => { c.beginPath(); c.moveTo(x, y); c.lineTo(x - 2, y + 14); c.moveTo(x - 2, y + 14); c.quadraticCurveTo(x - 10, y + 18, x - 8, y + 26); c.moveTo(x - 2, y + 14); c.quadraticCurveTo(x + 8, y + 18, x + 6, y + 26); c.stroke(); });
+  photoFinish(c);
+}
+
+function renderPet(fn) {
+  const hi = document.createElement('canvas'); hi.width = PW * 2; hi.height = PH * 2;
+  const h = hi.getContext('2d'); h.scale(2, 2); fn(h);
+  const cv = document.createElement('canvas'); cv.width = PW; cv.height = PH;
+  const c = cv.getContext('2d'); c.imageSmoothingQuality = 'high'; c.drawImage(hi, 0, 0, PW, PH);
+  const im = c.getImageData(0, 0, PW, PH), d = im.data;
+  for (let i = 0; i < d.length; i += 4) { const n = (rnd() - .5) * 12; d[i] += n; d[i + 1] += n; d[i + 2] += n; }
+  c.putImageData(im, 0, 0);
+  return cv;
+}
+
+const PETS = [['Кіт', drawCat], ['Пес', drawDog], ['Папуга', drawBird]].map(([name, fn]) => {
+  const cv = renderPet(fn);
+  return { name, url: cv.toDataURL('image/jpeg', .9), canvas: cv };
+});
+const CAT_AV = (() => {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 120;
+  cv.getContext('2d').drawImage(PETS[0].canvas, 189, 70, 140, 140, 0, 0, 120, 120);
+  return cv.toDataURL('image/jpeg', .9);
+})();
+
+/* ---------- вибір тварини (вкладки 2 і 3) ---------- */
+let cur = 0;
+document.querySelectorAll('[data-pick]').forEach(box => {
+  box.innerHTML = PETS.map((p, i) => `<button data-i="${i}" class="${i === cur ? 'on' : ''}" title="${p.name}" aria-label="${p.name}"><img src="${p.url}" alt=""></button>`).join('');
+});
+document.querySelectorAll('[data-pick] button').forEach(b => b.addEventListener('click', () => {
+  cur = +b.dataset.i;
+  document.querySelectorAll('[data-pick] button').forEach(x => x.classList.toggle('on', +x.dataset.i === cur));
+  setEditorPhoto(); loadFxPhoto();
+}));
+
+/* ---------- 2. Фоторедактор ---------- */
+const after = document.getElementById('after'), before = document.getElementById('before');
+const stage = document.getElementById('stage'), divider = document.getElementById('divider');
+const S = { br: 100, ct: 100, st: 100, gray: 0, sepia: 0 };
+function setEditorPhoto() { after.src = before.src = PETS[cur].url; }
+function applyFilter() {
+  after.style.filter = `brightness(${S.br}%) contrast(${S.ct}%) saturate(${S.st}%) grayscale(${S.gray}%) sepia(${S.sepia}%)`;
+  ['br', 'ct', 'st'].forEach(k => {
+    const inp = document.getElementById(k); inp.value = S[k]; inp.nextElementSibling.textContent = S[k] + '%';
+  });
+}
+['br', 'ct', 'st'].forEach(k => document.getElementById(k).addEventListener('input', e => { S[k] = +e.target.value; applyFilter(); }));
+const PRE = {
+  bright: { br: 108, ct: 118, st: 175, gray: 0, sepia: 0 },
+  bw: { br: 100, ct: 120, st: 100, gray: 100, sepia: 0 },
+  retro: { br: 105, ct: 90, st: 80, gray: 0, sepia: 70 },
+  reset: { br: 100, ct: 100, st: 100, gray: 0, sepia: 0 },
+};
+document.querySelectorAll('[data-pre]').forEach(b => b.addEventListener('click', () => { Object.assign(S, PRE[b.dataset.pre]); applyFilter(); }));
+function setSplit(p) {
+  p = Math.max(0, Math.min(100, p));
+  before.style.clipPath = `inset(0 ${100 - p}% 0 0)`; divider.style.left = p + '%';
+}
+let drag = false;
+const fromEvent = e => { const r = stage.getBoundingClientRect(); setSplit((e.clientX - r.left) / r.width * 100); };
+stage.addEventListener('pointerdown', e => { drag = true; stage.setPointerCapture(e.pointerId); fromEvent(e); });
+stage.addEventListener('pointermove', e => { if (drag) fromEvent(e); });
+stage.addEventListener('pointerup', () => drag = false);
+stage.addEventListener('pointercancel', () => drag = false);
+setEditorPhoto(); Object.assign(S, PRE.bright); applyFilter(); setSplit(50);
+
+/* ---------- 3. Фото на картину ---------- */
+const src = document.getElementById('src'), dst = document.getElementById('dst'), ai = document.getElementById('ai');
+const sx = src.getContext('2d'), dx = dst.getContext('2d');
+const W = src.width, H = src.height;
+let ORIG = null, fx = 'oil', aiTimer = null;
+function loadFxPhoto() {
+  sx.drawImage(PETS[cur].canvas, 0, 0, W, H); ORIG = sx.getImageData(0, 0, W, H); renderFx(true);
+}
+const sizeIn = document.getElementById('size'), sizeBox = document.getElementById('sizeBox');
+document.querySelectorAll('[data-fx]').forEach(b => b.addEventListener('click', () => {
+  fx = b.dataset.fx;
+  document.querySelectorAll('[data-fx]').forEach(x => x.classList.toggle('on', x === b));
+  sizeBox.classList.toggle('invisible', fx !== 'mosaic');
+  renderFx(true);
+}));
+sizeIn.addEventListener('input', () => renderFx(false));
+function renderFx(withAi) {
+  if (!ORIG || !document.getElementById('t3').classList.contains('on')) return;
+  clearTimeout(aiTimer);
+  if (withAi) { ai.classList.add('on'); aiTimer = setTimeout(() => { paint(); ai.classList.remove('on'); }, 700); }
+  else { ai.classList.remove('on'); paint(); }
+}
+function paint() {
+  const s = ORIG.data, out = dx.createImageData(W, H), o = out.data;
+  if (fx === 'mosaic') {
+    const n = +sizeIn.value;
+    for (let by = 0; by < H; by += n) for (let bx = 0; bx < W; bx += n) {
+      let r = 0, g = 0, b = 0, c = 0;
+      for (let y = by; y < Math.min(by + n, H); y++) for (let x = bx; x < Math.min(bx + n, W); x++) {
+        const i = (y * W + x) * 4; r += s[i]; g += s[i + 1]; b += s[i + 2]; c++;
+      }
+      r /= c; g /= c; b /= c;
+      for (let y = by; y < Math.min(by + n, H); y++) for (let x = bx; x < Math.min(bx + n, W); x++) {
+        const i = (y * W + x) * 4, e = (x === bx || y === by) && n > 6 ? .85 : 1;
+        o[i] = r * e; o[i + 1] = g * e; o[i + 2] = b * e; o[i + 3] = 255;
+      }
+    }
+  } else if (fx === 'pencil') {
+    const gray = new Float32Array(W * H);
+    for (let i = 0; i < W * H; i++) gray[i] = .3 * s[i * 4] + .59 * s[i * 4 + 1] + .11 * s[i * 4 + 2];
+    const at = (xx, yy) => gray[Math.min(H - 1, Math.max(0, yy)) * W + Math.min(W - 1, Math.max(0, xx))];
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      const gx = -at(x - 1, y - 1) - 2 * at(x - 1, y) - at(x - 1, y + 1) + at(x + 1, y - 1) + 2 * at(x + 1, y) + at(x + 1, y + 1);
+      const gy = -at(x - 1, y - 1) - 2 * at(x, y - 1) - at(x + 1, y - 1) + at(x - 1, y + 1) + 2 * at(x, y + 1) + at(x + 1, y + 1);
+      const m = Math.min(255, Math.hypot(gx, gy) * 1.1);
+      const paper = 248 - ((x * 7 + y * 13) % 9);
+      const v = Math.max(30, paper - m - (255 - gray[y * W + x]) * .12);
+      const i = (y * W + x) * 4; o[i] = v; o[i + 1] = v; o[i + 2] = v * .97; o[i + 3] = 255;
+    }
+  } else if (fx === 'poster') {
+    const L = 4, q = v => Math.round(Math.round(v / 255 * (L - 1)) * 255 / (L - 1));
+    for (let i = 0; i < s.length; i += 4) { o[i] = q(s[i]); o[i + 1] = q(s[i + 1]); o[i + 2] = q(s[i + 2]); o[i + 3] = 255; }
+  } else { // олійні фарби: фільтр Кувахари
+    const R = 5;
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) {
+      let best = Infinity, br = 0, bg = 0, bb = 0;
+      for (const [dx0, dy0] of [[-R, -R], [0, -R], [-R, 0], [0, 0]]) {
+        let sr = 0, sg = 0, sb = 0, sl = 0, sl2 = 0, c = 0;
+        for (let yy = y + dy0; yy <= y + dy0 + R; yy++) {
+          if (yy < 0 || yy >= H) continue;
+          for (let xx = x + dx0; xx <= x + dx0 + R; xx++) {
+            if (xx < 0 || xx >= W) continue;
+            const i = (yy * W + xx) * 4, l = s[i] + s[i + 1] + s[i + 2];
+            sr += s[i]; sg += s[i + 1]; sb += s[i + 2]; sl += l; sl2 += l * l; c++;
+          }
+        }
+        const v = sl2 / c - (sl / c) ** 2;
+        if (v < best) { best = v; br = sr / c; bg = sg / c; bb = sb / c; }
+      }
+      const i = (y * W + x) * 4; o[i] = br; o[i + 1] = bg; o[i + 2] = bb; o[i + 3] = 255;
+    }
+  }
+  dx.putImageData(out, 0, 0);
+}
+loadFxPhoto();
+
+/* ---------- 4. Аватар ---------- */
+const NICK = 'Олена', NICK_V = 'Олено';
+const cartoon = anim => `<svg viewBox="0 0 200 200">
+  <rect class="bgc" width="200" height="200" fill="#8FD3F5"/>
+  <circle cx="100" cy="96" r="80" fill="#fff" opacity=".22"/>
+  ${anim ? `<path class="sp" d="M30 40 l5 12 l12 5 l-12 5 l-5 12 l-5 -12 l-12 -5 l12 -5 z" fill="#fff"/>
+    <path class="sp" d="M168 52 l4 9 l9 4 l-9 4 l-4 9 l-4 -9 l-9 -4 l9 -4 z" fill="#FFE9A8" style="animation-delay:.6s"/>` : ''}
+  <path d="M24 200 C26 168 52 150 100 148 C148 150 174 168 176 200 Z" fill="#2E8B57"/>
+  <path d="M40 200 C44 178 58 166 74 160 L80 200 Z M160 200 C156 178 142 166 126 160 L120 200 Z" fill="#24744A"/>
+  <path d="M64 152 C74 172 126 172 136 152 C130 176 70 176 64 152 Z" fill="#1E5E3A"/>
+  <path d="M91 168 L89 188 M109 168 L111 188" stroke="#F2F8F4" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="89" cy="190" r="3" fill="#F2F8F4"/><circle cx="111" cy="190" r="3" fill="#F2F8F4"/>
+
+  <path d="M86 124 L86 152 C92 159 108 159 114 152 L114 124 Z" fill="#EDB993"/>
+  <path d="M86 132 C94 142 106 142 114 132 L114 124 L86 124 Z" fill="#D9A07A"/>
+  <g class="hd">
+    <path d="M46 98 C42 52 72 26 102 26 C134 26 160 52 154 100 C152 124 150 140 142 152 L126 152 C129 140 130 128 128 116 L72 116 C70 128 71 140 74 152 L58 152 C50 140 47 122 46 98 Z" fill="#6B4122"/>
+    <ellipse cx="57" cy="100" rx="9" ry="12" fill="#F2C29B"/><ellipse cx="57" cy="101" rx="4.5" ry="7" fill="#E3A57E"/>
+    <ellipse cx="143" cy="100" rx="9" ry="12" fill="#F2C29B"/><ellipse cx="143" cy="101" rx="4.5" ry="7" fill="#E3A57E"/>
+    <path d="M57 90 C57 58 76 40 100 40 C124 40 143 58 143 90 C143 120 125 140 100 140 C75 140 57 120 57 90 Z" fill="#F7CFA8"/>
+    <path d="M60 84 C74 74 126 74 140 84 L140 92 C126 82 74 82 60 92 Z" fill="#E9B58D" opacity=".55"/>
+    <path d="M50 92 C46 52 76 30 104 31 C134 32 158 56 152 92 C148 76 140 66 128 61 C121 72 104 79 82 78 C93 73 99 66 101 58 C87 69 70 75 58 79 C55 83 52 87 50 92 Z" fill="#8B5A2B"/>
+    <path d="M76 45 C90 38 112 37 126 44" stroke="#B07A45" stroke-width="4" fill="none" stroke-linecap="round" opacity=".85"/>
+    <path d="M69 86 q10 -6 20 -1 M111 85 q10 -5 20 1" stroke="#5A3A1E" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <g class="ey">
+      <ellipse cx="80" cy="101" rx="9" ry="10" fill="#fff"/><circle cx="81" cy="102" r="6.5" fill="#6B4A2A"/>
+      <circle cx="81" cy="102" r="3.3" fill="#151515"/><circle cx="83.5" cy="99" r="2" fill="#fff"/>
+      <ellipse cx="120" cy="101" rx="9" ry="10" fill="#fff"/><circle cx="121" cy="102" r="6.5" fill="#6B4A2A"/>
+      <circle cx="121" cy="102" r="3.3" fill="#151515"/><circle cx="123.5" cy="99" r="2" fill="#fff"/>
+      <path d="M70 98 q10 -10 20 0 M110 98 q10 -10 20 0" stroke="#3B2A20" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+    </g>
+    <path d="M100 106 q-4 9 2 11" stroke="#D99A74" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M87 122 Q100 136 113 122 Q100 127 87 122 Z" fill="#9C3B3B"/>
+    <path d="M94 127 Q100 132 106 127 Q100 129 94 127 Z" fill="#E77A7A"/>
+    <circle cx="70" cy="116" r="7.5" fill="#F28C8C" opacity=".35"/><circle cx="130" cy="116" r="7.5" fill="#F28C8C" opacity=".35"/>
+  </g>
+  ${anim ? `<g transform="translate(-16,10)"><g class="wave"><path d="M150 200 L162 150 L182 154 L176 200 Z" fill="#2E8B57"/>
+    <rect x="160" y="146" width="24" height="8" rx="3" fill="#1E5E3A"/>
+    <path d="M161 146 C158 132 160 118 166 116 C168 112 172 112 173 116 C175 110 180 110 181 116 C184 113 188 115 187 121 C190 122 191 128 188 134 C188 140 186 146 184 146 Z" fill="#F7CFA8" stroke="#D99A74" stroke-width="1.5"/></g></g>` : ''}
+  </svg>`;
+const AVS = {
+  auto: { name: 'Надає система', hint: 'після реєстрації', html: () => 'О', bg: '#2E8B57' },
+  pic: { name: 'Картинка', hint: 'обирає користувач', html: () => cartoon(false) },
+  photo: { name: 'Фотографія', hint: 'обирає користувач', html: () => `<img src="${CAT_AV}" alt="">` },
+  anim: { name: 'Анімація', hint: 'обирає користувач', html: () => cartoon(true), cls: 'anim' },
+};
+let avKind = 'auto', place = 'reg';
+const av = (size, kind = avKind) => {
+  const a = AVS[kind];
+  return `<span class="av ${a.cls || ''}" style="width:${size}px;height:${size}px;font-size:${size * .45}px;${a.bg ? 'background:' + a.bg : ''}">${a.html()}</span>`;
+};
+const other = (size, letter, color) => `<span class="av" style="width:${size}px;height:${size}px;font-size:${size * .45}px;background:${color}">${letter}</span>`;
+const SCREENS = {
+  reg: () => `<div class="mbar"><b>📝 Реєстрація на сайті</b></div>
+    <div class="reg">${av(110)}<div class="ok">✓ Реєстрацію завершено</div>
+      <div>Вітаємо, <b>${NICK_V}</b>!</div>
+      <div class="muted">${avKind === 'auto' ? 'Система автоматично надала тобі аватар. Його можна змінити.' : 'Аватар обрано самостійно.'}</div></div>`,
+  site: () => `<div class="mbar"><b>📚 Шкільна бібліотека</b><span class="muted">Головна&emsp;Книги&emsp;Новини</span>
+      <span class="me">${av(44)}${NICK}</span></div>
+    <div class="mbody"><div class="tiles"><div>📕</div><div>📗</div><div>📘</div><div>📙</div><div>📓</div><div>📔</div></div></div>`,
+  forum: () => `<div class="mbar"><b>💬 Форум любителів тварин</b><span class="me">${av(40)}${NICK}</span></div>
+    <div class="mbody"><b>Тема: як навчити собаку команди «Сидіти»?</b>
+      <div class="fpost">${av(56)}<div><div class="nm">${NICK}</div>Даю ласощі щоразу, коли пес сідає 🦴</div></div>
+      <div class="fpost">${other(56, 'Д', '#2E74B5')}<div><div class="nm">Дмитро</div>Мій навчився за тиждень!</div></div>
+      <div class="fpost">${other(56, 'І', '#7B4FD6')}<div><div class="nm">Ірина</div>Головне - хвалити після кожної спроби.</div></div></div>`,
+  mail: () => `<div class="mbar"><b>✉ Пошта</b><span class="muted">🔍 Пошук листів</span><span class="me">${av(44)}</span></div>
+    <div class="mbody" style="gap:0"><b style="margin-bottom:6px">Вхідні</b>
+      <div class="mail">${other(40, 'Б', '#C8372D')}<b>Бібліотека</b><span>Нові книги вже на полицях</span></div>
+      <div class="mail">${other(40, 'Р', '#F28C28')}<b>Гурток робототехніки</b><span>Заняття в четвер о 15:00</span></div>
+      <div class="mail">${other(40, 'Д', '#2E74B5')}<b>Дмитро</b><span>Фото мого пса, як домовлялися</span></div></div>`,
+  game: () => `<div class="game"><div class="mbar"><b>🎮 Лобі гри</b><span class="me">${av(40)}${NICK}</span></div>
+    <div class="mbody">
+      <div class="player me">${av(52)}<b>${NICK}</b><span class="lv">рівень 12</span></div>
+      <div class="player">${other(52, 'Т', '#F28C28')}<b>Тарас</b><span class="lv">рівень 9</span></div>
+      <div class="player">${other(52, 'І', '#7B4FD6')}<b>Ірина</b><span class="lv">рівень 15</span></div>
+      <button class="play" type="button">Грати</button></div></div>`,
+  chat: () => `<div class="mbar"><b>💬 Гурток малювання</b><span class="muted">3 учасники</span></div>
+    <div class="mbody msgs">
+      <div class="m">${other(40, 'І', '#7B4FD6')}<div class="bub">Хто вже намалював осінній парк?</div></div>
+      <div class="m mine">${av(40)}<div class="bub">Я! Зараз надішлю 🎨</div></div>
+      <div class="m">${other(40, 'Т', '#F28C28')}<div class="bub">Чекаємо!</div></div>
+      <div class="m mine">${av(40)}<div class="bub">Ось він 🍂🌳</div></div></div>`,
+};
+const avopts = document.getElementById('avopts'), screen = document.getElementById('screen');
+function renderAv() {
+  avopts.innerHTML = Object.keys(AVS).map(k =>
+    `<button class="avopt ${k === avKind ? 'on' : ''}" data-av="${k}">${av(52, k)}<span>${AVS[k].name}<small>${AVS[k].hint}</small></span></button>`).join('');
+  avopts.querySelectorAll('[data-av]').forEach(b => b.addEventListener('click', () => { avKind = b.dataset.av; renderAv(); }));
+  screen.innerHTML = SCREENS[place]();
+}
+document.querySelectorAll('[data-pl]').forEach(b => b.addEventListener('click', () => {
+  place = b.dataset.pl;
+  document.querySelectorAll('[data-pl]').forEach(x => x.classList.toggle('on', x === b));
+  renderAv();
+}));
+renderAv();
+
+/* ---------- мініатюри кадрів плівки ---------- */
+document.getElementById('th2').innerHTML = `<img src="${PETS[0].url}" alt="">`;
+(() => {
+  const t = document.createElement('canvas'); t.width = 24; t.height = 18;
+  t.getContext('2d').drawImage(PETS[1].canvas, 0, 0, 24, 18); t.style.imageRendering = 'pixelated';
+  document.getElementById('th3').appendChild(t);
+})();
+document.getElementById('th4').innerHTML = cartoon(false).replace('<svg ', '<svg preserveAspectRatio="xMidYMid slice" ');
+</script>
+</body>
+</html>
