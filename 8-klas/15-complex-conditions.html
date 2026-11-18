@@ -8,7 +8,7 @@
   /* Токени: зелена гама уроку, «плівка» як головний мотив */
   :root {
     --forest: #1E5E3A; --leaf: #2E8B57; --paper: #F2F8F4; --bench: #E2EFE6; --ink: #17261D;
-    --sun: #F2B705; --red: #C0392B; --muted: #4F6357;
+    --sun: #F2B705; --red: #C0392B; --muted: #4F6357; --line: #C9DDD0;
     --blue: #1F66C1; --blue-soft: #E2EDFB; --orange: #C9650A; --orange-soft: #FDEEDA; --red-soft: #FBE6E4; --leaf-soft: #E3F3EA;
     --display: "Bahnschrift", "DIN Alternate", "Segoe UI Semibold", "Arial Narrow", sans-serif;
     --text: "Segoe UI", "Noto Sans", Roboto, Arial, sans-serif;
@@ -28,45 +28,41 @@
     background: radial-gradient(circle at 9px 5px, var(--paper) 3.2px, transparent 3.6px) 0 0 / 22px 10px repeat-x; min-width: 1100px; }
   .strip::before { top: 6px; } .strip::after { bottom: 6px; }
   nav { display: flex; gap: 10px; max-width: 1060px; margin: 0 auto; padding: 0 20px; min-width: max-content; }
-  nav button { font: inherit; cursor: pointer; border: 0; padding: 8px 8px 10px; flex: 1 1 0; min-width: 150px; text-align: left;
+  nav button { font: inherit; cursor: pointer; border: 0; padding: 8px 8px 10px; flex: 1 1 0; min-width: 170px; text-align: left;
     background: #163F28; color: #CFE6D7; border-radius: 4px; display: flex; flex-direction: column; gap: 8px; }
-  nav .thumb { position: relative; height: 92px; border-radius: 2px; overflow: hidden; background: #0F2E1C;
+  nav .thumb { position: relative; height: 84px; border-radius: 2px; overflow: hidden; background: #0F2E1C;
     display: grid; place-items: center; font-family: var(--mono); font-size: 1.4rem; font-weight: 700; color: #A8E6BE; }
   nav .thumb.emo { font-family: var(--text); font-size: 2.6rem; }
   nav .cap { display: flex; gap: 8px; align-items: baseline; font-size: .9rem; line-height: 1.25; }
   nav .cap b { font-family: var(--display); color: var(--sun); font-weight: 600; }
   nav button.on { background: var(--paper); color: var(--ink); }
   nav button.on .cap b { color: var(--leaf); }
-  nav button:not(.on) .thumb > * , nav button:not(.on) .thumb { opacity: .8; }
+  nav button:not(.on) .thumb { opacity: .8; }
   nav button:not(.on):hover { background: #1F5536; }
 
   /* ---------- загальне ---------- */
-  main { max-width: 1060px; margin: 0 auto; padding: 34px 20px 60px; }
+  main { max-width: 1060px; margin: 0 auto; padding: 30px 20px 60px; }
   section { display: none; } section.on { display: block; }
-  h2 { font-family: var(--display); font-weight: 600; font-size: 1.85rem; line-height: 1.15; color: var(--forest); margin: 0 0 14px; }
-  h3 { font-family: var(--display); font-weight: 600; font-size: 1.2rem; color: var(--forest); margin: 0 0 10px; }
-  p { margin: 0 0 12px; max-width: 68ch; }
-  .lead { font-size: 1.12rem; }
+  h2 { font-family: var(--display); font-weight: 600; font-size: 1.8rem; line-height: 1.15; color: var(--forest); margin: 0 0 12px; }
+  h3 { font-family: var(--display); font-weight: 600; font-size: 1.2rem; color: var(--forest); margin: 0 0 8px; }
+  p { margin: 0 0 10px; max-width: 72ch; }
+  .lead { font-size: 1.08rem; }
   dfn { font-style: normal; font-weight: 700; color: var(--forest); }
-  .def { margin: 18px 0; padding: 14px 18px; background: #fff; border-radius: 6px; max-width: 72ch; box-shadow: inset 4px 0 0 var(--leaf); }
-  .warn { margin: 18px 0; padding: 14px 18px; background: #fff; border-radius: 6px; max-width: 72ch; box-shadow: inset 4px 0 0 var(--sun); }
-  .btn { font: inherit; font-size: 1rem; font-weight: 600; cursor: pointer; border-radius: 8px; padding: 9px 18px;
+  .def { margin: 14px 0; padding: 12px 18px; background: #fff; border-radius: 6px; max-width: 76ch; box-shadow: inset 4px 0 0 var(--leaf); }
+  .btn { font: inherit; font-size: .95rem; font-weight: 600; cursor: pointer; border-radius: 8px; padding: 6px 14px;
     border: 2px solid var(--leaf); background: #fff; color: var(--forest); }
   .btn:hover { background: #E6F3EA; }
   .btn.on { background: var(--leaf); color: #fff; }
-  .btn.mono { font-family: var(--mono); }
-  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-  .theory { margin-bottom: 34px; }
-  .bench { background: var(--bench); border-radius: 14px; padding: 24px; }
-  .bench + .bench { margin-top: 22px; }
-  .bench > h3 { font-size: 1.35rem; margin-bottom: 16px; }
-  .bench .lead2 { margin: -6px 0 14px; color: var(--muted); max-width: 72ch; }
-  .hide { display: none !important; }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .theory { margin-bottom: 26px; }
+  .bench { background: var(--bench); border-radius: 14px; padding: 18px 22px 20px; }
+  .hint { margin: 0 0 12px; color: var(--muted); font-size: .92rem; }
   code, .code { font-family: var(--mono); font-weight: 700; }
+  .tg { color: var(--leaf); } .tr { color: var(--red); }
 
   /* цілі */
   .goals { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--forest); max-width: 860px; }
-  .goals li { border-bottom: 1px solid #C9DDD0; }
+  .goals li { border-bottom: 1px solid var(--line); }
   .goals button { font: inherit; width: 100%; display: grid; grid-template-columns: 70px 1fr auto; gap: 16px; align-items: center;
     padding: 18px 6px; background: none; border: 0; text-align: left; cursor: pointer; color: var(--ink); }
   .goals button:hover { background: #E6F3EA; }
@@ -75,135 +71,155 @@
   .goals .go { font-family: var(--display); color: var(--leaf); font-weight: 600; white-space: nowrap; }
 
   /* факти й кроки */
-  .facts { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 0; max-width: 960px; margin-top: 8px; }
-  .facts > div { padding: 4px 22px; border-left: 3px solid var(--leaf); }
+  .facts { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); max-width: 960px; margin-top: 8px; }
+  .facts > div { padding: 2px 20px; border-left: 3px solid var(--leaf); }
   .facts > div:first-child { padding-left: 16px; }
-  .facts > div > b { display: block; font-family: var(--mono); font-weight: 700; color: var(--forest); font-size: 1.05rem; margin-bottom: 4px; }
-  .facts span { font-size: .95rem; }
-  .steps { list-style: none; counter-reset: s; padding: 0; margin: 14px 0 0; display: grid; grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 0; max-width: 1000px; }
-  .steps li { counter-increment: s; padding: 10px 18px 10px 0; border-top: 3px solid var(--leaf); font-size: .95rem; }
-  .steps li::before { content: counter(s); display: block; font-family: var(--display); font-size: 2rem; font-weight: 600; color: var(--leaf); line-height: 1.2; }
+  .facts > div > b { display: block; font-family: var(--mono); font-weight: 700; color: var(--forest); font-size: 1.02rem; margin-bottom: 2px; }
+  .facts span { font-size: .93rem; }
+  .steps { list-style: none; counter-reset: s; padding: 0; margin: 8px 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); max-width: 1020px; }
+  .steps li { counter-increment: s; padding: 8px 16px 8px 0; border-top: 3px solid var(--leaf); font-size: .92rem; }
+  .steps li::before { content: counter(s); display: block; font-family: var(--display); font-size: 1.7rem; font-weight: 600; color: var(--leaf); line-height: 1.2; }
 
-  /* таблиці зі слайдів */
-  .ftable { border-collapse: collapse; width: 100%; max-width: 900px; margin: 8px 0 4px; font-size: .95rem; background: #fff; }
-  .ftable th { text-align: left; font-family: var(--display); font-weight: 600; color: #fff; background: var(--forest); padding: 8px 12px; }
-  .ftable td { padding: 8px 12px; border-bottom: 1px solid #C9DDD0; vertical-align: top; }
+  /* таблиці */
+  .ftable { border-collapse: collapse; width: 100%; max-width: 940px; margin: 6px 0 4px; font-size: .93rem; background: #fff; }
+  .ftable th { text-align: left; font-family: var(--display); font-weight: 600; color: #fff; background: var(--forest); padding: 7px 12px; }
+  .ftable td { padding: 7px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
   .ftable td.f { font-family: var(--mono); font-weight: 700; white-space: nowrap; }
   .ftable.wrapf td.f { white-space: normal; width: 58%; }
   .ftable.tt { max-width: 640px; } .ftable.tt td, .ftable.tt th { text-align: center; }
-  .ftable.nt { max-width: 320px; }
-  .ftable tr.on td { background: #FFF3C4; }
-  .ftable td.T, .ftable td.F, .lg td.val { font-family: var(--mono); font-weight: 700; text-align: center; }
-  .tables2 { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
-  .tables2 > div { flex: 1 1 300px; }
-  .tables2 > div.narrow { flex: 0 1 320px; }
+  .ftable.nt { max-width: 300px; }
+  .ftable td.T, .ftable td.F, td.val { font-family: var(--mono); font-weight: 700; text-align: center; width: 110px; }
+  .tables2 { display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start; }
+  .tables2 > div { flex: 1 1 300px; } .tables2 > div.narrow { flex: 0 1 300px; }
+  .T { background: var(--leaf-soft); color: var(--leaf); } .F { background: var(--red-soft); color: var(--red); }
+  td.val { transition: background .2s, color .2s; }
 
   /* формули: функція - зелена, посилання й умови - сині, текст у лапках - помаранчевий */
-  .n { color: var(--leaf); font-weight: 700; } .a1 { color: var(--blue); } .a2 { color: var(--orange); } .a3 { color: var(--red); } .tg { color: var(--leaf); }
-  .fpre { position: relative; margin: 12px 0; padding: 10px 16px 10px 48px; background: #fff; border-radius: 8px; box-shadow: 0 0 0 1px #C9DDD0;
-    font: 600 1.15rem/1.6 var(--mono); white-space: pre; overflow-x: auto; color: var(--ink); }
-  .fpre::before { content: "fx"; position: absolute; left: 16px; top: 10px; font-style: italic; font-family: Georgia, serif; color: var(--muted); }
+  .n { color: var(--leaf); font-weight: 700; } .a1 { color: var(--blue); } .a2 { color: var(--orange); } .a3 { color: var(--red); }
+  .fpre { position: relative; margin: 10px 0; padding: 8px 16px 8px 46px; background: #fff; border-radius: 8px; box-shadow: 0 0 0 1px var(--line);
+    font: 600 1.05rem/1.6 var(--mono); white-space: pre; overflow-x: auto; color: var(--ink); }
+  .fpre::before { content: "fx"; position: absolute; left: 16px; top: 8px; font-style: italic; font-family: Georgia, serif; color: var(--muted); }
 
-  /* введення */
-  .sl { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin: 8px 0; }
-  .sl label { font: 700 1.2rem var(--mono); color: var(--blue); min-width: 78px; }
-  .sl input[type=range] { flex: 1; min-width: 200px; accent-color: var(--blue); height: 30px; }
-  .num { font: 700 1.3rem var(--mono); width: 120px; padding: 6px 10px; border: 2px solid var(--blue); border-radius: 8px; color: var(--blue); background: var(--blue-soft); }
-  .sel { font: 700 1.2rem var(--mono); padding: 6px 10px; border: 2px solid var(--orange); border-radius: 8px; color: var(--orange); background: var(--orange-soft); }
-  .T { background: var(--leaf-soft); color: var(--leaf); } .F { background: var(--red-soft); color: var(--red); }
-  table.lg { border-collapse: collapse; width: 100%; max-width: 860px; margin: 14px 0 0; font: 600 1.15rem var(--mono); background: #fff; }
-  .lg td { border: 1px solid #C9DDD0; padding: 10px 14px; }
-  .lg td.note { font: .95rem var(--text); color: var(--muted); }
-  .lg td.val { width: 130px; transition: background .2s, color .2s; }
+  /* підсторінки */
+  .subtabs { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 14px; border-bottom: 2px solid var(--leaf); }
+  .subtabs button { font: 600 .98rem var(--display); cursor: pointer; border: 0; background: transparent; color: var(--muted);
+    padding: 8px 16px; border-radius: 8px 8px 0 0; margin-bottom: -2px; border-bottom: 2px solid transparent; }
+  .subtabs button:hover { color: var(--forest); background: #D5E8DC; }
+  .subtabs button.on { background: var(--leaf); color: #fff; border-bottom-color: var(--leaf); }
+  .sub { display: none; } .sub.on { display: block; }
+
+  /* клітинки з − / + і кнопки-значення */
+  .ctl { display: flex; flex-wrap: wrap; gap: 10px 26px; align-items: flex-start; margin: 2px 0 10px; }
+  .cell { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+  .cellrow { display: inline-flex; align-items: stretch; background: #fff; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .cellrow .addr { font: 700 .95rem var(--mono); color: var(--muted); background: #EDF2EF; padding: 6px 10px; display: grid; place-items: center; border-right: 1px solid var(--line); }
+  .cellrow .cap { font-size: .85rem; color: var(--muted); padding: 0 10px; display: grid; place-items: center; border-right: 1px solid var(--line); }
+  .cellrow input { font: 700 1.2rem var(--mono); width: 84px; border: 0; text-align: right; padding: 4px 10px; color: var(--blue); background: var(--blue-soft); }
+  .cellrow button { font: 700 1.15rem var(--mono); width: 38px; border: 0; border-left: 1px solid var(--line); background: #fff; color: var(--forest); cursor: pointer; }
+  .cellrow button:hover { background: #E6F3EA; }
+  .vals { display: flex; flex-wrap: wrap; gap: 6px; }
+  .vals button { font: 700 .88rem var(--mono); padding: 3px 10px; border-radius: 6px; border: 1.5px solid var(--line); background: #fff; color: var(--forest); cursor: pointer; }
+  .vals button:hover { border-color: var(--leaf); }
+  .vals button.on { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+  .sel { font: 700 1.1rem var(--mono); padding: 4px 10px; border: 0; color: var(--orange); background: var(--orange-soft); }
+
+  /* таблиця значень у «Спробуй сам» */
+  table.lg { border-collapse: collapse; width: 100%; max-width: 900px; font: 600 1.02rem var(--mono); background: #fff; }
+  .lg td { border: 1px solid var(--line); padding: 6px 12px; }
+  .lg td.note { font: .9rem var(--text); color: var(--muted); }
+  .lg th { font: 600 .85rem var(--display); color: var(--muted); text-align: left; padding: 4px 12px; background: #F5F9F6; border: 1px solid var(--line); }
   .lg tr.sep td { border-top: 3px solid var(--forest); }
-  .lg tr.bad td:first-child { color: var(--red); text-decoration: line-through; text-decoration-thickness: 2px; }
 
   /* вісь */
-  .axis { position: relative; height: 54px; max-width: 860px; margin: 6px 0 0; }
-  .axis .ln { position: absolute; left: 0; right: 0; top: 20px; height: 6px; background: #DFE6E2; border-radius: 3px; }
-  .axis .ok { position: absolute; top: 20px; height: 6px; background: var(--leaf); border-radius: 3px; }
-  .axis .pt { position: absolute; top: 9px; width: 28px; height: 28px; margin-left: -14px; border-radius: 50%; background: var(--blue); border: 4px solid #fff; box-shadow: 0 0 0 2px var(--blue); }
-  .axis span { position: absolute; top: 32px; font: 600 .8rem var(--mono); color: var(--muted); transform: translateX(-50%); }
+  .axis { position: relative; height: 46px; max-width: 860px; margin: 0 0 6px; }
+  .axis .ln { position: absolute; left: 0; right: 0; top: 16px; height: 6px; background: #DFE6E2; border-radius: 3px; }
+  .axis .ok { position: absolute; top: 16px; height: 6px; background: var(--leaf); border-radius: 3px; }
+  .axis .pt { position: absolute; top: 6px; width: 26px; height: 26px; margin-left: -13px; border-radius: 50%; background: var(--blue); border: 4px solid #fff; box-shadow: 0 0 0 2px var(--blue); transition: left .25s; }
+  .axis span { position: absolute; top: 28px; font: 600 .78rem var(--mono); color: var(--muted); transform: translateX(-50%); }
 
-  /* перемикачі умов */
-  .switches { display: flex; flex-wrap: wrap; gap: 18px; margin: 6px 0 4px; }
-  .sw { font: inherit; cursor: pointer; display: flex; flex-direction: column; gap: 6px; align-items: flex-start; padding: 12px 18px; border-radius: 12px;
-    border: 3px solid var(--blue); background: #fff; min-width: 210px; text-align: left; }
-  .sw small { font: 700 1rem var(--mono); color: var(--blue); }
-  .sw .knob { display: flex; align-items: center; gap: 12px; font: 700 1.3rem var(--mono); }
-  .sw .knob i { width: 54px; height: 30px; border-radius: 99px; background: #E4D6D4; position: relative; transition: background .2s; }
-  .sw .knob i::after { content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; transition: left .2s; box-shadow: 0 0 0 1px #C9DDD0; }
-  .sw.t .knob i { background: var(--leaf); } .sw.t .knob i::after { left: 27px; }
-  .sw.t .knob b { color: var(--leaf); } .sw:not(.t) .knob b { color: var(--red); }
-
-  /* гілки IF */
-  .flow { display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px 18px; align-items: center; max-width: 860px; margin: 18px auto 6px; }
-  .cond { text-align: center; font: 700 1.15rem var(--mono); padding: 14px 18px; border: 3px solid var(--blue); background: var(--blue-soft); color: var(--blue); border-radius: 12px; }
-  .cond small { display: block; font: 600 .9rem var(--mono); color: var(--muted); margin-top: 4px; }
-  .br { text-align: center; padding: 14px; border: 3px solid #C9DDD0; border-radius: 12px; color: #9AA39E; background: #FAFBFA; transition: all .25s; }
-  .br small { display: block; font-size: .85rem; font-weight: 600; }
-  .br b { font: 700 1.25rem var(--mono); }
+  /* гілки IF - компактно */
+  .flow { display: grid; grid-template-columns: 1fr auto 1fr auto; gap: 10px 14px; align-items: center; max-width: 980px; margin: 12px 0 2px; }
+  .cond { text-align: center; font: 700 1rem var(--mono); padding: 8px 14px; border: 2px solid var(--blue); background: var(--blue-soft); color: var(--blue); border-radius: 10px; white-space: nowrap; }
+  .parts { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 5px; }
+  .parts span { font: 700 .82rem var(--mono); padding: 1px 8px; border-radius: 5px; }
+  .br { text-align: center; padding: 8px 10px; border: 2px solid var(--line); border-radius: 10px; color: #9AA39E; background: #FAFBFA; transition: all .25s; }
+  .br small { display: block; font-size: .75rem; font-weight: 600; }
+  .br b { font: 700 1rem var(--mono); }
   .br.on.t { border-color: var(--leaf); background: var(--leaf-soft); color: var(--forest); }
   .br.on.f { border-color: var(--red); background: var(--red-soft); color: var(--red); }
-  .out { grid-column: 1 / 4; text-align: center; color: var(--muted); }
-  .out output { display: inline-block; font: 700 1.5rem var(--mono); padding: 6px 18px; border-radius: 10px; border: 3px solid var(--forest); margin-left: 10px; color: var(--ink); background: #fff; min-width: 150px; }
-  .parts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 8px; }
-  .parts span { font: 700 .95rem var(--mono); padding: 3px 10px; border-radius: 6px; }
+  .out { text-align: center; color: var(--muted); font-size: .85rem; line-height: 1.2; }
+  .out output { display: block; font: 700 1.15rem var(--mono); padding: 4px 12px; border-radius: 8px; border: 2px solid var(--forest); margin-top: 3px; color: var(--ink); background: #fff; min-width: 120px; }
 
-  /* питання з відповіддю */
-  .ask { margin-top: 22px; }
-  .ask h3 { margin-bottom: 10px; }
-  .answer { margin-top: 12px; padding: 14px 18px; background: #fff; border-radius: 6px; max-width: 72ch; box-shadow: inset 4px 0 0 var(--leaf); }
-  .answer ol { margin: 6px 0 0; padding-left: 22px; }
+  /* чому не можна 9<A1<100 */
+  .vs { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 940px; }
+  .vs > div { background: #fff; border-radius: 10px; padding: 12px 16px; border-top: 4px solid var(--leaf); }
+  .vs > div.badv { border-top-color: var(--red); }
+  .vs h3 { font-size: 1.02rem; margin-bottom: 6px; }
+  .vs ol { margin: 0; padding-left: 22px; font-size: .93rem; }
+  .vs ol li { margin: 3px 0; }
+  .res { font: 700 1.1rem var(--mono); margin-top: 8px; }
+  .res b { padding: 1px 10px; border-radius: 6px; }
 
-  /* вікторина - фотокартки */
-  .scorebar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
-  .score { font-family: var(--display); font-size: 1.15rem; color: var(--forest); white-space: nowrap; }
-  .pbar { flex: 1; min-width: 140px; height: 10px; background: #fff; border-radius: 99px; overflow: hidden; }
-  .pbar i { display: block; height: 100%; width: 0; background: var(--leaf); transition: width .3s; }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
-  .item { position: relative; background: #fff; padding: 10px 10px 12px; border-radius: 3px;
-    box-shadow: 0 1px 0 #C9DDD0, 0 6px 14px -8px rgba(23, 38, 29, .35); display: flex; flex-direction: column; gap: 10px; }
-  .item .pic { height: 86px; background: #DCEBE1; display: grid; place-items: center; font-size: 2.6rem; }
-  .item .name { flex: 1; font-weight: 600; font-size: .92rem; line-height: 1.35; }
-  .item .choice { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-  .item .choice button { font: 700 .9rem var(--mono); padding: 7px 2px; border-radius: 6px; cursor: pointer; background: #fff; border: 2px solid var(--leaf); color: var(--forest); }
-  .item:not(.done) .choice button:hover { background: var(--leaf); color: #fff; }
-  .item.done .choice button { opacity: .3; cursor: default; }
-  .item.done .choice button.answer { opacity: 1; color: #fff; background: var(--leaf); }
-  .item.done .choice button.picked:not(.answer) { opacity: 1; color: #fff; background: var(--red); border-color: var(--red); }
-  .item .why { display: none; font-size: .82rem; color: var(--muted); line-height: 1.3; }
-  .item.done .why { display: block; }
-  .item .badge { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%; display: none; place-items: center; color: #fff; font-weight: 800; }
-  .item.right .badge { display: grid; background: var(--leaf); }
-  .item.wrong .badge { display: grid; background: var(--red); }
+  /* вкладені умови: коробки */
+  .nest { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 5px; padding: 6px 8px; border: 2px dashed var(--line); border-radius: 10px; background: #fff;
+    font: 700 .95rem var(--mono); transition: border-color .2s, background .2s, box-shadow .2s; }
+  .nest .fn { color: var(--leaf); }
+  .nest .v { font: 700 .8rem var(--mono); padding: 1px 7px; border-radius: 5px; display: none; }
+  .nest.simple { color: var(--blue); padding: 4px 8px; }
+  .nest.inner { background: #F7FAF8; }
+  .nest.done { border-style: solid; }
+  .nest.done.t { border-color: var(--leaf); } .nest.done.f { border-color: var(--red); }
+  .nest.done > .v { display: inline-block; } .nest.done > .v:empty { display: none; }
+  .ftable td.f .ansl { display: block; padding-left: 2.2em; }
+  .ftable.wrapf td.f { white-space: nowrap; }
+  .kw { display: inline-flex; align-items: center; align-items: last baseline; gap: 5px; min-width: 0; max-width: 100%; } .kw > .nest { min-width: 0; }
+  .nest.ans { color: var(--orange); padding: 4px 8px; }
+  .nest.pick { border-style: solid; border-color: var(--leaf); background: var(--leaf-soft); }
+  .nest.dim { opacity: .35; }
+  .nest .v.res { background: var(--forest); color: #fff; }
+  .nestbox { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .nestbox .outl { color: var(--muted); font-size: .9rem; }
+  .nestbox output { display: inline-block; font: 700 1.1rem var(--mono); padding: 3px 12px; border-radius: 8px; border: 2px solid var(--line); margin-left: 6px; color: #9AA39E; background: #fff; min-width: 120px; text-align: center; }
+  .nestbox output.ready { border-color: var(--forest); color: var(--ink); }
 
-  /* кути видошукача */
-  .vf { position: relative; }
-  .vf::before, .vf::after { content: ""; position: absolute; width: 22px; height: 22px; pointer-events: none; z-index: 2; }
-  .vf::before { top: 6px; left: 6px; border-top: 4px solid var(--sun); border-left: 4px solid var(--sun); }
-  .vf::after { bottom: 6px; right: 6px; border-bottom: 4px solid var(--sun); border-right: 4px solid var(--sun); }
+  /* ланцюжок вкладених IF */
+  .chain { display: grid; grid-template-columns: minmax(0, 1fr) 46px minmax(0, 220px); gap: 6px 10px; align-items: center; max-width: 880px; margin-top: 10px; }
+  .chain .q { font: 700 .95rem var(--mono); padding: 7px 10px; border: 2px solid var(--line); border-radius: 10px; color: #9AA39E; background: #FAFBFA; transition: all .25s; }
+  .chain .q.on { border-color: var(--blue); background: var(--blue-soft); color: var(--blue); }
+  .chain .q .parts { justify-content: flex-start; }
+  .chain .ar { text-align: center; font-weight: 700; font-size: .85rem; color: #9AA39E; }
+  .chain .ar.on { color: var(--leaf); }
+  .chain .r { font: 700 1rem var(--mono); padding: 7px 10px; border: 2px solid var(--line); border-radius: 10px; text-align: center; color: #9AA39E; background: #FAFBFA; transition: all .25s; }
+  .chain .r.on { border-color: var(--leaf); background: var(--leaf-soft); color: var(--forest); }
+  .chain .dn { grid-column: 1; padding-left: 18px; font-weight: 700; font-size: .85rem; color: #9AA39E; }
+  .chain .dn.on { color: var(--red); }
+  .twocol { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: start; }
+  .chain .q > span { white-space: nowrap; }
+  .twocol .chain { grid-template-columns: auto 40px minmax(0, 170px); }
 
   @media (max-width: 860px) {
-    .facts, .steps { grid-template-columns: 1fr; gap: 14px; }
+    .facts, .steps { grid-template-columns: 1fr; gap: 10px; }
     .facts > div { padding-left: 16px; }
+    .twocol, .vs { grid-template-columns: 1fr; }
   }
   @media (max-width: 600px) {
     html, body { font-size: 17px; }
     .title h1 { font-size: 1.5rem; }
-    nav button { min-width: 140px; } nav .thumb { height: 64px; font-size: 1.1rem; } nav .thumb.emo { font-size: 2rem; }
-    main { padding-top: 24px; }
-    .bench { padding: 16px; }
+    nav button { min-width: 140px; } nav .thumb { height: 60px; font-size: 1.05rem; } nav .thumb.emo { font-size: 2rem; }
+    main { padding-top: 22px; }
+    .bench { padding: 14px; }
     .goals button { grid-template-columns: 48px 1fr; } .goals .go { display: none; }
-    .fpre { font-size: .95rem; padding-left: 40px; } .fpre::before { left: 12px; }
-    .lg { font-size: .95rem; } .lg td.val { width: 80px; } .lg td.note { display: none; }
-    .flow { grid-template-columns: 1fr 1fr; } .cond { grid-column: 1 / 3; order: -1; font-size: 1rem; } .out { grid-column: 1 / 3; } .br b { font-size: 1rem; }
-    .num { width: 90px; } .sw { min-width: 0; flex: 1 1 140px; }
-    .ftable td.f { white-space: normal; }
-    .ftable td, .ftable th { padding: 6px 6px; }
-    .ftable.tt th, .ftable.tt td { padding: 6px 3px; font-size: .78rem; }
+    .fpre { font-size: .85rem; padding-left: 38px; } .fpre::before { left: 12px; }
+    .lg { font-size: .88rem; } .lg td.note { display: none; } .lg th.note { display: none; } td.val { width: 72px; }
+    .flow { grid-template-columns: 1fr 1fr; } .flow .cond { grid-column: 1 / 3; order: -1; white-space: normal; } .flow .out { grid-column: 1 / 3; }
+    .ftable td.f { white-space: normal; } .ftable td, .ftable th { padding: 6px; }
+    .ftable.tt th, .ftable.tt td { padding: 5px 3px; font-size: .76rem; }
     .tables2 > div, .tables2 > div.narrow { flex: 1 1 100%; }
-    .grid { grid-template-columns: 1fr; }
+    .chain, .twocol .chain { grid-template-columns: minmax(0, 1fr) 30px minmax(0, 96px); } .chain .q, .chain .r { font-size: .8rem; }
+    .chain .q > span { white-space: normal; word-break: break-word; }
+    .subtabs button { padding: 7px 10px; font-size: .9rem; }
+    .cellrow input { width: 70px; }
+    .ftable.wrapf td.f { white-space: normal; } .nest { white-space: normal; }
   }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
@@ -216,9 +232,8 @@
       <button class="on" data-tab="t0"><span class="thumb emo">🎯</span><span class="cap"><b>1</b>Мета уроку</span></button>
       <button data-tab="t1"><span class="thumb">9&lt;x&lt;100</span><span class="cap"><b>2</b>Прості і складені умови</span></button>
       <button data-tab="t2"><span class="thumb">AND OR</span><span class="cap"><b>3</b>Як працюють AND, OR, NOT</span></button>
-      <button data-tab="t3"><span class="thumb">A1=15</span><span class="cap"><b>4</b>Приклади складених умов</span></button>
-      <button data-tab="t4"><span class="thumb">IF(AND)</span><span class="cap"><b>5</b>Складені умови у функції IF</span></button>
-      <button data-tab="t5"><span class="thumb">1 2 3 4</span><span class="cap"><b>6</b>Як скласти складену умову</span></button>
+      <button data-tab="t3"><span class="thumb">IF(AND)</span><span class="cap"><b>4</b>Складені умови у функції IF</span></button>
+      <button data-tab="t4"><span class="thumb">IF(IF)</span><span class="cap"><b>5</b>Як скласти умову. Вкладені умови</span></button>
     </nav>
   </div>
 </header>
@@ -230,11 +245,11 @@
     <ul class="goals">
       <li><button data-go="t1"><span class="ico">🧩</span><span class="gtxt">що таке проста і складена умова;</span><span class="go">Відкрити</span></button></li>
       <li><button data-go="t2"><span class="ico">🔀</span><span class="gtxt">як працюють логічні функції AND, OR і NOT;</span><span class="go">Відкрити</span></button></li>
-      <li><button data-go="t4"><span class="ico">🧠</span><span class="gtxt">як використовувати складені умови у функції IF.</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t3"><span class="ico">🧠</span><span class="gtxt">як використовувати складені умови у функції IF.</span><span class="go">Відкрити</span></button></li>
     </ul>
   </section>
 
-  <!-- ===== 1. Прості і складені умови ===== -->
+  <!-- ===== 2. Прості і складені умови ===== -->
   <section id="t1">
     <div class="theory">
       <h2>Як описувати складні умови?</h2>
@@ -248,141 +263,99 @@
     </div>
     <div class="bench">
       <h3>Спробуй сам: чи двоцифрове число?</h3>
-      <p class="lead2">У клітинці A1 записано число. Рухай повзунок і дивись, які умови виконуються. Зелена смуга - двоцифрові числа.</p>
-      <div class="sl"><label for="d_r">A1 =</label><input type="range" id="d_r" min="0" max="120" value="45"><input type="number" class="num" id="d_n" min="0" max="120" value="45" aria-label="A1"></div>
+      <p class="hint">Зміни число в клітинці A1. Зелена смуга - двоцифрові числа.</p>
+      <div class="ctl" id="d_ctl"></div>
       <div class="axis"><div class="ln"></div><div class="ok" id="d_ok"></div><div class="pt" id="d_pt"></div><span style="left:0">0</span><span id="d_m1">10</span><span id="d_m2">99</span><span style="left:100%">120</span></div>
       <table class="lg" id="d_tbl"></table>
     </div>
   </section>
 
-  <!-- ===== 2. Як працюють AND, OR, NOT ===== -->
+  <!-- ===== 3. Як працюють AND, OR, NOT ===== -->
   <section id="t2">
     <div class="theory">
       <h2>Як працюють функції AND, OR і NOT?</h2>
-      <p class="lead">Значення складеної умови залежить від значень простих умов: <code class="tg">TRUE</code> - істина, <code class="a3">FALSE</code> - хибність.</p>
+      <p class="lead">Значення складеної умови залежить від значень простих умов: <code class="tg">TRUE</code> - істина, <code class="tr">FALSE</code> - хибність.</p>
       <div class="tables2">
-        <div>
-          <table class="ftable tt" id="tt">
-            <tr><th>умова1</th><th>умова2</th><th>AND(умова1; умова2)</th><th>OR(умова1; умова2)</th></tr>
-          </table>
-        </div>
-        <div class="narrow">
-          <table class="ftable tt nt" id="nt">
-            <tr><th>умова</th><th>NOT(умова)</th></tr>
-          </table>
-        </div>
-      </div>
-      <div class="facts" style="--n:2; margin-top:18px">
-        <div><b>AND</b><span>Істина, тільки коли виконуються <b>всі</b> умови. Досить однієї хибної - і результат FALSE.</span></div>
-        <div><b>OR</b><span>Істина, коли виконується <b>хоча б одна</b> умова. FALSE - тільки коли хибні всі.</span></div>
+        <div><table class="ftable tt" id="tt"><tr><th>умова1</th><th>умова2</th><th>AND(умова1; умова2)</th><th>OR(умова1; умова2)</th></tr></table></div>
+        <div class="narrow"><table class="ftable tt nt" id="nt"><tr><th>умова</th><th>NOT(умова)</th></tr></table></div>
       </div>
     </div>
     <div class="bench">
-      <h3>Спробуй сам: перемикай умови</h3>
-      <p class="lead2">Натискай на перемикачі. У таблиці вище підсвічується рядок із тими самими значеннями.</p>
-      <div class="switches">
-        <button class="sw t" id="sw1" aria-pressed="true"><small>умова1</small><span class="knob"><i></i><b>TRUE</b></span></button>
-        <button class="sw" id="sw2" aria-pressed="false"><small>умова2</small><span class="knob"><i></i><b>FALSE</b></span></button>
+      <div class="subtabs" data-group="g2">
+        <button class="on" data-sub="s2a">Приклади складених умов</button>
+        <button data-sub="s2b">Чому не можна писати 9&lt;A1&lt;100?</button>
       </div>
-      <table class="lg" id="sw_tbl">
-        <tr><td><span class="n">AND</span>(умова1; умова2)</td><td class="val" id="sw_and"></td></tr>
-        <tr><td><span class="n">OR</span>(умова1; умова2)</td><td class="val" id="sw_or"></td></tr>
-        <tr><td><span class="n">NOT</span>(умова1)</td><td class="val" id="sw_not"></td></tr>
-      </table>
-    </div>
-  </section>
-
-  <!-- ===== 3. Приклади складених умов ===== -->
-  <section id="t3">
-    <div class="theory">
-      <h2>Приклади складених умов</h2>
-      <p class="lead">У клітинці <code class="a1">A1</code> записано число <b>15</b>. Яких значень набувають складені умови?</p>
-      <table class="ftable">
-        <tr><th>Логічний вираз</th><th>Що перевіряє</th><th>Значення</th></tr>
-        <tr><td class="f"><span class="n">AND</span>(<span class="a1">A1&gt;9</span>; <span class="a1">A1&lt;100</span>)</td><td>число двоцифрове: більше за 9 і менше за 100</td><td class="T">TRUE</td></tr>
-        <tr><td class="f"><span class="n">OR</span>(<span class="a1">A1&lt;0</span>; <span class="a1">A1&gt;100</span>)</td><td>число від'ємне або більше за 100</td><td class="F">FALSE</td></tr>
-        <tr><td class="f"><span class="n">NOT</span>(<span class="a1">A1&gt;20</span>)</td><td>число не більше за 20</td><td class="T">TRUE</td></tr>
-        <tr><td class="f"><span class="n">AND</span>(<span class="a1">A1&gt;10</span>; <span class="n">OR</span>(<span class="a1">A1=12</span>; <span class="a1">A1=15</span>))</td><td>число більше за 10 і дорівнює 12 або 15</td><td class="T">TRUE</td></tr>
-      </table>
-      <div class="warn">Подвійну нерівність <code class="a3">9&lt;A1&lt;100</code> у формулі записувати не можна. Її замінюють функцією <code><span class="n">AND</span>(<span class="a1">A1&gt;9</span>; <span class="a1">A1&lt;100</span>)</code>.</div>
-    </div>
-    <div class="bench">
-      <h3>Спробуй сам: зміни число в A1</h3>
-      <p class="lead2">Рухай повзунок або натисни кнопку з числом. Значення всіх виразів перераховуються одразу.</p>
-      <div class="presets row" id="ex_pre" style="margin-bottom:6px"></div>
-      <div class="sl"><label for="ex_r">A1 =</label><input type="range" id="ex_r" min="-20" max="130" value="15"><input type="number" class="num" id="ex_n" min="-20" max="130" value="15" aria-label="A1"></div>
-      <table class="lg" id="ex_tbl"></table>
-      <div class="ask">
-        <h3>Чому не можна писати 9&lt;A1&lt;100?</h3>
-        <button class="btn" id="why_btn" aria-expanded="false">Показати відповідь</button>
-        <div class="answer hide" id="why_ans">
-          Excel не перевіряє обидві нерівності, а обчислює вираз зліва направо:
-          <ol>
-            <li>спочатку <code>9&lt;A1</code> - виходить <span id="why1"></span>;</li>
-            <li>потім <span id="why2"></span><code>&lt;100</code> - логічне значення порівнюється з числом, і Excel вважає будь-яке логічне значення «більшим» за число;</li>
-            <li>тому результат завжди <b class="a3">FALSE</b>, навіть для двоцифрового числа.</li>
-          </ol>
+      <div class="sub on" id="s2a">
+        <p class="hint">Зміни число в клітинці A1 - таблиця одразу покаже, які умови виконуються.</p>
+        <div class="ctl" id="ex_ctl"></div>
+        <table class="lg" id="ex_tbl"></table>
+      </div>
+      <div class="sub" id="s2b">
+        <p class="hint">Подвійну нерівність записати у формулі не можна - її замінюють функцією AND. Порівняй, як Excel обчислює обидва записи.</p>
+        <div class="ctl" id="w_ctl"></div>
+        <div class="vs">
+          <div>
+            <h3>Правильно: <span class="code"><span class="n">AND</span>(<span class="a1">A1&gt;9</span>; <span class="a1">A1&lt;100</span>)</span></h3>
+            <ol>
+              <li><code>A1&gt;9</code> - <span id="w_g1"></span></li>
+              <li><code>A1&lt;100</code> - <span id="w_g2"></span></li>
+              <li><code>AND</code> - істина, лише коли обидві умови TRUE</li>
+            </ol>
+            <div class="res">Результат: <b id="w_gr"></b></div>
+          </div>
+          <div class="badv">
+            <h3>Неправильно: <span class="code a3">9&lt;A1&lt;100</span></h3>
+            <ol>
+              <li>спочатку <code>9&lt;A1</code> - <span id="w_b1"></span></li>
+              <li>потім <code id="w_b2"></code> - логічне значення порівнюється з числом, а Excel вважає будь-яке логічне значення «більшим» за число</li>
+              <li>тому результат завжди FALSE</li>
+            </ol>
+            <div class="res">Результат: <b class="F">FALSE</b></div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <!-- ===== 4. Складені умови у функції IF ===== -->
-  <section id="t4">
+  <section id="t3">
     <div class="theory">
       <h2>Складені умови у функції IF</h2>
       <p class="lead">Складену умову записують <b>першим аргументом</b> функції <code>IF</code>:</p>
-      <pre class="fpre">=<span class="n">IF</span>( <span class="n">AND</span>(<span class="a1">умова1</span>; <span class="a1">умова2</span>);
-    значення якщо істина;
-    значення якщо хибність )</pre>
+      <pre class="fpre">=<span class="n">IF</span>(<span class="n">AND</span>(<span class="a1">умова1</span>; <span class="a1">умова2</span>); значення якщо істина; значення якщо хибність)</pre>
       <table class="ftable wrapf">
         <tr><th>Формула</th><th>Що означає</th></tr>
-        <tr><td class="f">=<span class="n">IF</span>(<span class="n">AND</span>(<span class="a1">B2&gt;=150</span>; <span class="a1">C2&gt;=12</span>); <span class="a2">"Допущено"</span>; <span class="a2">"Не допущено"</span>)</td><td>допущено, якщо зріст не менше 150 см і вік не менше 12 років</td></tr>
-        <tr><td class="f">=<span class="n">IF</span>(<span class="n">OR</span>(<span class="a1">B2="субота"</span>; <span class="a1">B2="неділя"</span>); <span class="a2">"Вихідний"</span>; <span class="a2">"Робочий день"</span>)</td><td>вихідний, якщо день - субота або неділя</td></tr>
-        <tr><td class="f">=<span class="n">IF</span>(<span class="n">NOT</span>(<span class="a1">B2=0</span>); <span class="a1">A2/B2</span>; <span class="a2">"Ділити на 0 не можна"</span>)</td><td>ділимо, тільки коли B2 не дорівнює 0</td></tr>
+        <tr><td class="f">=<span class="n">IF</span>(<span class="n">AND</span>(<span class="a1">B2&gt;=150</span>; <span class="a1">C2&gt;=12</span>);<span class="ansl"><span class="a2">"Допущено"</span>; <span class="a2">"Не допущено"</span>)</span></td><td>допущено, якщо зріст не менше 150 см і вік не менше 12 років</td></tr>
+        <tr><td class="f">=<span class="n">IF</span>(<span class="n">OR</span>(<span class="a1">B2="субота"</span>; <span class="a1">B2="неділя"</span>);<span class="ansl"><span class="a2">"Вихідний"</span>; <span class="a2">"Робочий день"</span>)</span></td><td>вихідний, якщо день - субота або неділя</td></tr>
+        <tr><td class="f">=<span class="n">IF</span>(<span class="n">NOT</span>(<span class="a1">B2=0</span>);<span class="ansl"><span class="a1">A2/B2</span>; <span class="a2">"Ділити на 0 не можна"</span>)</span></td><td>ділимо, тільки коли B2 не дорівнює 0</td></tr>
       </table>
     </div>
     <div class="bench">
-      <h3>Спробуй сам: допуск до змагань (AND)</h3>
-      <p class="lead2">У клітинці B2 записано зріст, у C2 - вік. Допускають, лише коли виконуються обидві умови.</p>
-      <div class="sl"><label for="a_hr">B2 =</label><input type="range" id="a_hr" min="130" max="190" value="155"><input type="number" class="num" id="a_h" min="130" max="190" value="155" aria-label="Зріст"></div>
-      <div class="sl"><label for="a_ar">C2 =</label><input type="range" id="a_ar" min="8" max="17" value="11"><input type="number" class="num" id="a_a" min="8" max="17" value="11" aria-label="Вік"></div>
-      <pre class="fpre">=<span class="n">IF</span>(<span class="n">AND</span>(<span class="a1">B2&gt;=150</span>; <span class="a1">C2&gt;=12</span>); <span class="a2">"Допущено"</span>; <span class="a2">"Не допущено"</span>)</pre>
-      <div class="flow">
-        <div class="br t" id="a_t"><small>істина (TRUE)</small><b>"Допущено"</b></div>
-        <div class="cond"><span id="a_cond"></span><div class="parts" id="a_parts"></div></div>
-        <div class="br f" id="a_f"><small>хибність (FALSE)</small><b>"Не допущено"</b></div>
-        <div class="out">у клітинці D2 з'явиться<output id="a_out"></output></div>
+      <div class="subtabs" data-group="g3">
+        <button class="on" data-sub="s3a">IF + AND: допуск до змагань</button>
+        <button data-sub="s3b">IF + OR: вихідний день</button>
+        <button data-sub="s3c">IF + NOT: ділення</button>
       </div>
-    </div>
-    <div class="bench">
-      <h3>Спробуй сам: вихідний чи робочий день (OR)</h3>
-      <p class="lead2">Обери день тижня в клітинці B2. Досить, щоб виконалася одна з умов.</p>
-      <div class="sl"><label for="o_day">B2 =</label><select class="sel" id="o_day"><option>понеділок</option><option>вівторок</option><option>середа</option><option>четвер</option><option>п'ятниця</option><option selected>субота</option><option>неділя</option></select></div>
-      <pre class="fpre">=<span class="n">IF</span>(<span class="n">OR</span>(<span class="a1">B2="субота"</span>; <span class="a1">B2="неділя"</span>); <span class="a2">"Вихідний"</span>; <span class="a2">"Робочий день"</span>)</pre>
-      <div class="flow">
-        <div class="br t" id="o_t"><small>істина (TRUE)</small><b>"Вихідний"</b></div>
-        <div class="cond"><span id="o_cond"></span><div class="parts" id="o_parts"></div></div>
-        <div class="br f" id="o_f"><small>хибність (FALSE)</small><b>"Робочий день"</b></div>
-        <div class="out">у клітинці C2 з'явиться<output id="o_out"></output></div>
+      <div class="sub on" id="s3a">
+        <p class="hint">B2 - зріст, C2 - вік. Допускають, лише коли виконуються обидві умови.</p>
+        <div class="ctl" id="a_ctl"></div>
+        <div class="stepper" id="st_a"></div>
       </div>
-    </div>
-    <div class="bench">
-      <h3>Спробуй сам: ділення без помилки (NOT)</h3>
-      <p class="lead2">У клітинці A2 записано число 12, у B2 - дільник. Зміни дільник на 0.</p>
-      <div class="sl"><label for="nt_r">B2 =</label><input type="range" id="nt_r" min="-4" max="4" value="3"><input type="number" class="num" id="nt_n" min="-4" max="4" value="3" aria-label="B2"></div>
-      <pre class="fpre">=<span class="n">IF</span>(<span class="n">NOT</span>(<span class="a1">B2=0</span>); <span class="a1">A2/B2</span>; <span class="a2">"Ділити на 0 не можна"</span>)</pre>
-      <div class="flow">
-        <div class="br t" id="nt_t"><small>істина (TRUE)</small><b id="nt_tv">A2/B2</b></div>
-        <div class="cond"><span id="nt_cond"></span><div class="parts" id="nt_parts"></div></div>
-        <div class="br f" id="nt_f"><small>хибність (FALSE)</small><b>"Ділити на 0 не можна"</b></div>
-        <div class="out">у клітинці C2 з'явиться<output id="nt_out"></output></div>
+      <div class="sub" id="s3b">
+        <p class="hint">Обери день тижня в клітинці B2. Досить, щоб виконалася одна з умов.</p>
+        <div class="ctl"><div class="cell"><div class="cellrow"><span class="addr">B2</span><span class="cap">день</span><select class="sel" id="o_day" aria-label="День тижня"><option>понеділок</option><option>вівторок</option><option>середа</option><option>четвер</option><option>п'ятниця</option><option selected>субота</option><option>неділя</option></select></div></div></div>
+        <div class="stepper" id="st_o"></div>
+      </div>
+      <div class="sub" id="s3c">
+        <p class="hint">У клітинці A2 записано число 12, у B2 - дільник. Зміни дільник на 0.</p>
+        <div class="ctl" id="nt_ctl"></div>
+        <div class="stepper" id="st_n"></div>
       </div>
     </div>
   </section>
 
-  <!-- ===== 5. Як скласти складену умову ===== -->
-  <section id="t5">
+  <!-- ===== 5. Як скласти складену умову. Вкладені умови ===== -->
+  <section id="t4">
     <div class="theory">
       <h2>Як скласти складену умову?</h2>
       <ol class="steps">
@@ -393,14 +366,27 @@
       </ol>
     </div>
     <div class="bench">
-      <h3>Спробуй сам: яку функцію обрати?</h3>
-      <p class="lead2">Прочитай правило на картці й обери функцію, якою його треба записати.</p>
-      <div class="scorebar">
-        <div class="score" id="score"></div>
-        <div class="pbar"><i id="barFill"></i></div>
-        <button class="btn" id="reset1">Почати знову</button>
+      <div class="subtabs" data-group="g4">
+        <button class="on" data-sub="s4a">Вкладені умови</button>
+        <button data-sub="s4b">Вкладені функції IF</button>
       </div>
-      <div class="grid" id="grid"></div>
+      <div class="sub on" id="s4a">
+        <p class="hint">Одна функція може стояти всередині іншої. Excel спочатку обчислює внутрішні умови, а потім зовнішню функцію.</p>
+        <div class="ctl" id="ns_ctl"></div>
+        <div class="stepper" id="st_ns"></div>
+      </div>
+      <div class="sub" id="s4b">
+        <p class="hint">B2 - зріст, C2 - вік. Якщо учня не допустили, формула перевіряє другу умову - чи можна взяти в резерв.</p>
+        <div class="ctl" id="ni_ctl"></div>
+        <div>
+          <pre class="fpre">=<span class="n">IF</span>(<span class="n">AND</span>(<span class="a1">B2&gt;=150</span>; <span class="a1">C2&gt;=12</span>);
+    <span class="a2">"Допущено"</span>;
+    <span class="n">IF</span>(<span class="n">OR</span>(<span class="a1">B2&gt;=145</span>; <span class="a1">C2&gt;=14</span>);
+        <span class="a2">"Резерв"</span>;
+        <span class="a2">"Не допущено"</span>))</pre>
+        </div>
+        <div class="stepper" id="st_ni"></div>
+      </div>
     </div>
   </section>
 </main>
@@ -414,139 +400,173 @@ function openTab(id) {
 }
 document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => openTab(b.dataset.tab)));
 document.querySelectorAll('[data-go]').forEach(g => g.addEventListener('click', () => openTab(g.dataset.go)));
+/* підсторінки */
+document.querySelectorAll('.subtabs').forEach(st => st.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+  st.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+  st.parentElement.querySelectorAll(':scope > .sub').forEach(s => s.classList.toggle('on', s.id === b.dataset.sub));
+})));
 const fmt = x => String(Math.round(x * 100) / 100).replace('.', ',');
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const TF = (el, t) => { el.textContent = t ? 'TRUE' : 'FALSE'; el.className = 'val ' + (t ? 'T' : 'F'); };
+const tfs = t => t ? 'TRUE' : 'FALSE';
 const chip = (txt, t) => `<span class="${t ? 'T' : 'F'}">${txt}</span>`;
-/* повзунок + поле */
-function link(r, n, min, max, cb) {
-  const R = $(r), N = $(n);
-  const go = v => { v = clamp(Math.round(v) || 0, min, max); R.value = v; if (document.activeElement !== N) N.value = v; cb(v); };
-  R.oninput = () => go(+R.value);
-  N.oninput = () => { const v = parseFloat(N.value); if (!isNaN(v)) go(v); };
-  N.onblur = () => { N.value = R.value; };
-  go(+R.value);
-}
-function branch(prefix, t, outText) {
-  $('#' + prefix + '_t').classList.toggle('on', t); $('#' + prefix + '_f').classList.toggle('on', !t);
-  const o = $('#' + prefix + '_out'); o.textContent = outText;
-  o.style.borderColor = t ? 'var(--leaf)' : 'var(--red)'; o.style.color = t ? 'var(--forest)' : 'var(--red)';
+
+/* клітинка з − / + і кнопками-значеннями */
+function cell(host, o) {
+  const d = document.createElement('div'); d.className = 'cell';
+  d.innerHTML = `<div class="cellrow"><span class="addr">${o.addr}</span>${o.cap ? `<span class="cap">${o.cap}</span>` : ''}<input inputmode="numeric" aria-label="${o.addr}"><button aria-label="Менше">−</button><button aria-label="Більше">+</button></div>
+    <div class="vals">${o.vals.map(v => `<button data-v="${v}">${v}</button>`).join('')}</div>`;
+  host.append(d);
+  const inp = d.querySelector('input'), [minus, plus] = d.querySelectorAll('.cellrow button');
+  let v = o.value;
+  const set = (x, fromInput) => { v = clamp(Math.round(x), o.min, o.max); if (!fromInput) inp.value = v;
+    d.querySelectorAll('.vals button').forEach(b => b.classList.toggle('on', +b.dataset.v === v)); o.on(v); };
+  minus.onclick = () => set(v - (o.step || 1)); plus.onclick = () => set(v + (o.step || 1));
+  inp.oninput = () => { const x = parseFloat(inp.value.replace(',', '.')); if (!isNaN(x)) set(x, true); };
+  inp.onblur = () => { inp.value = v; };
+  d.querySelectorAll('.vals button').forEach(b => b.onclick = () => set(+b.dataset.v));
+  set(v);
 }
 
-/* ---------- 1. Двоцифрове число ---------- */
+/* ---------- 2. Двоцифрове число ---------- */
 const D = [
-  ['A1&gt;9', x => x > 9], ['A1&lt;100', x => x < 100],
-  ['<span class="n">AND</span>(A1&gt;9; A1&lt;100)', x => x > 9 && x < 100, 1],
+  ['A1&gt;9', x => x > 9, 'проста умова'], ['A1&lt;100', x => x < 100, 'проста умова'],
+  ['<span class="n">AND</span>(A1&gt;9; A1&lt;100)', x => x > 9 && x < 100, 'складена умова: число двоцифрове', 1],
 ];
-$('#d_tbl').innerHTML = D.map((r, i) => '<tr' + (r[2] ? ' class="sep"' : '') + '><td>' + r[0] + '</td><td class="note">' + (r[2] ? 'складена умова: число двоцифрове' : 'проста умова') + '</td><td class="val" id="d_' + i + '"></td></tr>').join('');
-const pct = v => (v / 120 * 100) + '%';
+$('#d_tbl').innerHTML = D.map((r, i) => '<tr' + (r[3] ? ' class="sep"' : '') + '><td>' + r[0] + '</td><td class="note">' + r[2] + '</td><td class="val" id="d_' + i + '"></td></tr>').join('');
+const pct = v => (clamp(v, 0, 120) / 120 * 100) + '%';
 $('#d_m1').style.left = pct(10); $('#d_m2').style.left = pct(99);
 $('#d_ok').style.left = pct(10); $('#d_ok').style.width = (89 / 120 * 100) + '%';
-link('#d_r', '#d_n', 0, 120, v => { $('#d_pt').style.left = pct(v); D.forEach((r, i) => TF($('#d_' + i), r[1](v))); });
+cell($('#d_ctl'), { addr: 'A1', value: 45, min: 0, max: 120, vals: [5, 9, 10, 45, 99, 100, 115], on: v => { $('#d_pt').style.left = pct(v); D.forEach((r, i) => TF($('#d_' + i), r[1](v))); } });
 
-/* ---------- 2. Таблиця значень і перемикачі ---------- */
-const ROWS = [[1, 1], [1, 0], [0, 1], [0, 0]];
-const cellTF = t => `<td class="${t ? 'T' : 'F'}">${t ? 'TRUE' : 'FALSE'}</td>`;
-$('#tt').insertAdjacentHTML('beforeend', ROWS.map(([a, b]) => `<tr data-k="${a}${b}">${cellTF(a)}${cellTF(b)}${cellTF(a && b)}${cellTF(a || b)}</tr>`).join(''));
-$('#nt').insertAdjacentHTML('beforeend', [1, 0].map(a => `<tr data-k="${a}">${cellTF(a)}${cellTF(!a)}</tr>`).join(''));
-const SW = { a: true, b: false };
-function swDraw() {
-  [['#sw1', SW.a], ['#sw2', SW.b]].forEach(([id, v]) => { const el = $(id); el.classList.toggle('t', v); el.setAttribute('aria-pressed', v); el.querySelector('b').textContent = v ? 'TRUE' : 'FALSE'; });
-  TF($('#sw_and'), SW.a && SW.b); TF($('#sw_or'), SW.a || SW.b); TF($('#sw_not'), !SW.a);
-  const k = (SW.a ? 1 : 0) + '' + (SW.b ? 1 : 0);
-  document.querySelectorAll('#tt tr[data-k]').forEach(tr => tr.classList.toggle('on', tr.dataset.k === k));
-  document.querySelectorAll('#nt tr[data-k]').forEach(tr => tr.classList.toggle('on', tr.dataset.k === (SW.a ? '1' : '0')));
-}
-$('#sw1').onclick = () => { SW.a = !SW.a; swDraw(); }; $('#sw2').onclick = () => { SW.b = !SW.b; swDraw(); };
-swDraw();
-
-/* ---------- 3. Приклади ---------- */
+/* ---------- 3. Таблиця значень ---------- */
+const cellTF = t => `<td class="${t ? 'T' : 'F'}">${tfs(t)}</td>`;
+$('#tt').insertAdjacentHTML('beforeend', [[1, 1], [1, 0], [0, 1], [0, 0]].map(([a, b]) => `<tr>${cellTF(a)}${cellTF(b)}${cellTF(a && b)}${cellTF(a || b)}</tr>`).join(''));
+$('#nt').insertAdjacentHTML('beforeend', [1, 0].map(a => `<tr>${cellTF(a)}${cellTF(!a)}</tr>`).join(''));
+const yn = t => t ? 'так' : 'ні';
 const EX = [
-  ['<span class="n">AND</span>(A1&gt;9; A1&lt;100)', x => x > 9 && x < 100, x => `${x > 9 ? 'так' : 'ні'} і ${x < 100 ? 'так' : 'ні'}`],
-  ['<span class="n">OR</span>(A1&lt;0; A1&gt;100)', x => x < 0 || x > 100, x => `${x < 0 ? 'так' : 'ні'} або ${x > 100 ? 'так' : 'ні'}`],
-  ['<span class="n">NOT</span>(A1&gt;20)', x => !(x > 20), x => `A1&gt;20 - ${x > 20 ? 'так' : 'ні'}, NOT змінює на протилежне`],
-  ['<span class="n">AND</span>(A1&gt;10; <span class="n">OR</span>(A1=12; A1=15))', x => x > 10 && (x === 12 || x === 15), x => `${x > 10 ? 'так' : 'ні'} і (${x === 12 ? 'так' : 'ні'} або ${x === 15 ? 'так' : 'ні'})`],
-  ['9&lt;A1&lt;100', () => false, () => 'неправильний запис: завжди FALSE', 'bad'],
+  ['<span class="n">AND</span>(A1&gt;9; A1&lt;100)', 'число двоцифрове', x => x > 9 && x < 100, x => `${yn(x > 9)} і ${yn(x < 100)}`],
+  ['<span class="n">OR</span>(A1&lt;0; A1&gt;100)', 'число від\'ємне або більше за 100', x => x < 0 || x > 100, x => `${yn(x < 0)} або ${yn(x > 100)}`],
+  ['<span class="n">NOT</span>(A1&gt;20)', 'число не більше за 20', x => !(x > 20), x => `A1&gt;20 - ${yn(x > 20)}, NOT змінює на протилежне`],
+  ['<span class="n">AND</span>(A1&gt;10; <span class="n">OR</span>(A1=12; A1=15))', 'більше за 10 і дорівнює 12 або 15', x => x > 10 && (x === 12 || x === 15), x => `${yn(x > 10)} і (${yn(x === 12)} або ${yn(x === 15)})`],
 ];
-$('#ex_tbl').innerHTML = EX.map((r, i) => '<tr class="' + (r[3] === 'bad' ? 'bad sep' : '') + '"><td>' + r[0] + '</td><td class="note" id="ex_e' + i + '"></td><td class="val" id="ex_' + i + '"></td></tr>').join('');
-const PRE = [15, 12, 7, 25, 105, -5];
-$('#ex_pre').innerHTML = PRE.map(v => `<button class="btn mono" data-v="${v}">A1 = ${v}</button>`).join('');
-let exSet;
-$('#ex_pre').querySelectorAll('button').forEach(b => b.onclick = () => { $('#ex_n').value = b.dataset.v; $('#ex_r').value = b.dataset.v; exSet(+b.dataset.v); });
-function exDraw(x) {
-  EX.forEach((r, i) => { TF($('#ex_' + i), r[1](x)); $('#ex_e' + i).innerHTML = r[2](x); });
-  $('#ex_pre').querySelectorAll('button').forEach(b => b.classList.toggle('on', +b.dataset.v === x));
-  const first = 9 < x;
-  $('#why1').innerHTML = first ? '<b class="tg">TRUE</b>' : '<b class="a3">FALSE</b>';
-  $('#why2').innerHTML = '<code>' + (first ? 'TRUE' : 'FALSE') + '</code>';
+$('#ex_tbl').innerHTML = '<tr><th>Логічний вираз</th><th class="note">Що перевіряє</th><th class="note">Як обчислюється</th><th>Значення</th></tr>' +
+  EX.map((r, i) => `<tr><td>${r[0]}</td><td class="note">${r[1]}</td><td class="note" id="ex_e${i}"></td><td class="val" id="ex_${i}"></td></tr>`).join('');
+cell($('#ex_ctl'), { addr: 'A1', value: 15, min: -50, max: 200, vals: [15, 12, 7, 25, 105, -5], on: x => EX.forEach((r, i) => { TF($('#ex_' + i), r[2](x)); $('#ex_e' + i).innerHTML = r[3](x); }) });
+const tfb = t => `<b class="${t ? 'tg' : 'tr'}">${tfs(t)}</b>`;
+cell($('#w_ctl'), { addr: 'A1', value: 15, min: -50, max: 200, vals: [15, 5, 150], on: x => {
+  $('#w_g1').innerHTML = tfb(x > 9); $('#w_g2').innerHTML = tfb(x < 100);
+  const g = x > 9 && x < 100; const r = $('#w_gr'); r.textContent = tfs(g); r.className = g ? 'T' : 'F';
+  $('#w_b1').innerHTML = tfb(9 < x); $('#w_b2').textContent = tfs(9 < x) + '<100';
+} });
+
+/* ---------- покрокове обчислення формули (коробки) ---------- */
+const tfb2 = t => `<b class="${t ? 'tg' : 'tr'}">${tfs(t)}</b>`;
+const FN = (f, k, ...kids) => ({ f, k, kids });
+const C = (t, k) => ({ t, k, cls: 'simple' });
+const R = (t, k, cls) => ({ t, k, cls: cls || 'ans' });
+function stepper(host, o) {
+  /* o: { tree, label, steps: () => [{ k, v, now, pick, dim, msg }], result: () => текст } */
+  const html = (nd, d) => nd.f
+    ? `<div class="nest${d % 2 ? ' inner' : ''}" data-k="${nd.k}"><span class="fn">${nd.f}(</span>${nd.kids.map((x, i) => `<span class="kw">${html(x, d + 1)}${i < nd.kids.length - 1 ? '<span>;</span>' : '<span class="fn">)</span>'}</span>`).join('')}<span class="v"></span></div>`
+    : `<div class="nest ${nd.cls}" data-k="${nd.k}">${nd.t}<span class="v"></span></div>`;
+  host.innerHTML = `<div class="nestbox"><b>=</b>${html(o.tree, 0)}</div>
+    <div class="nestbox" style="margin-top:10px"><span class="outl">${o.label}</span><output class="ready"></output></div>`;
+  const el = k => host.querySelector(`[data-k="${k}"]`), out = host.querySelector('output');
+  /* усі кроки показано одразу; значення IF не дублюємо - його видно в рядку результату */
+  const draw = () => {
+    host.querySelectorAll('.nest').forEach(n => n.classList.remove('done', 't', 'f', 'pick', 'dim'));
+    o.steps().forEach(s => {
+      if ('v' in s) { const n = el(s.k), v = n.querySelector(':scope > .v'), b = typeof s.v === 'boolean';
+        n.classList.add('done', b && !s.v ? 'f' : 't'); v.textContent = b ? tfs(s.v) : ''; v.className = 'v ' + (b ? (s.v ? 'T' : 'F') : ''); }
+      if (s.pick) el(s.pick).classList.add('pick');
+      (s.dim || []).forEach(k => el(k).classList.add('dim'));
+    });
+    out.textContent = o.result();
+  };
+  return { all: draw };
 }
-exSet = v => { $('#ex_r').value = v; exDraw(v); };
-link('#ex_r', '#ex_n', -20, 130, exDraw);
-$('#why_btn').onclick = () => { const a = $('#why_ans'), open = a.classList.toggle('hide') === false;
-  $('#why_btn').textContent = open ? 'Сховати відповідь' : 'Показати відповідь'; $('#why_btn').setAttribute('aria-expanded', open); };
+const ifMsg = (n, t, ans) => `Крок ${n}. Умова ${tfb2(t)}, тому IF повертає ${t ? 'другий' : 'третій'} аргумент: ${ans}`;
 
 /* ---------- 4. IF зі складеними умовами ---------- */
 const A = { h: 155, a: 11 };
-function aDraw() {
-  const c1 = A.h >= 150, c2 = A.a >= 12, t = c1 && c2;
-  $('#a_cond').textContent = `AND(${A.h}>=150; ${A.a}>=12) ?`;
-  $('#a_parts').innerHTML = chip(`${A.h}>=150: ${c1 ? 'TRUE' : 'FALSE'}`, c1) + chip(`${A.a}>=12: ${c2 ? 'TRUE' : 'FALSE'}`, c2);
-  branch('a', t, t ? 'Допущено' : 'Не допущено');
-}
-link('#a_hr', '#a_h', 130, 190, v => { A.h = v; aDraw(); });
-link('#a_ar', '#a_a', 8, 17, v => { A.a = v; aDraw(); });
-function oDraw() {
-  const d = $('#o_day').value, c1 = d === 'субота', c2 = d === 'неділя', t = c1 || c2;
-  $('#o_cond').textContent = `OR(B2="субота"; B2="неділя") ?`;
-  $('#o_parts').innerHTML = chip(`"${d}"="субота": ${c1 ? 'TRUE' : 'FALSE'}`, c1) + chip(`"${d}"="неділя": ${c2 ? 'TRUE' : 'FALSE'}`, c2);
-  branch('o', t, t ? 'Вихідний' : 'Робочий день');
-}
-$('#o_day').onchange = oDraw; oDraw();
-link('#nt_r', '#nt_n', -4, 4, b => {
-  const c = b === 0, t = !c;
-  $('#nt_cond').textContent = `NOT(${b}=0) ?`;
-  $('#nt_parts').innerHTML = chip(`${b}=0: ${c ? 'TRUE' : 'FALSE'}`, c) + chip(`NOT: ${t ? 'TRUE' : 'FALSE'}`, t);
-  $('#nt_tv').textContent = t ? `12/${b}` : 'A2/B2';
-  branch('nt', t, t ? fmt(12 / b) : 'Ділити на 0 не можна');
-});
+const stA = stepper($('#st_a'), {
+  tree: FN('IF', 'if', FN('AND', 'and', C('B2&gt;=150', 'c1'), C('C2&gt;=12', 'c2')), R('"Допущено"', 'y'), R('"Не допущено"', 'n')),
+  label: 'У клітинці D2 з\'явиться:',
+  result: () => A.h >= 150 && A.a >= 12 ? 'Допущено' : 'Не допущено',
+  steps: () => { const c1 = A.h >= 150, c2 = A.a >= 12, t = c1 && c2; return [
+    { k: 'c1', v: c1, msg: `Крок 1. B2&gt;=150: ${A.h} &gt;= 150 - ${tfb2(c1)}` },
+    { k: 'c2', v: c2, msg: `Крок 2. C2&gt;=12: ${A.a} &gt;= 12 - ${tfb2(c2)}` },
+    { k: 'and', v: t, msg: `Крок 3. AND - ${tfb2(t)}: ${t ? 'обидві умови TRUE' : 'хоча б одна умова FALSE'}` },
+    { k: 'if', v: t ? 'Допущено' : 'Не допущено', pick: t ? 'y' : 'n', dim: [t ? 'n' : 'y'], msg: ifMsg(4, t, t ? '"Допущено"' : '"Не допущено"') },
+  ]; } });
+cell($('#a_ctl'), { addr: 'B2', cap: 'зріст', value: 155, min: 100, max: 220, vals: [140, 149, 150, 165], on: v => { A.h = v; stA.all(); } });
+cell($('#a_ctl'), { addr: 'C2', cap: 'вік', value: 11, min: 5, max: 20, vals: [10, 11, 12, 14], on: v => { A.a = v; stA.all(); } });
 
-/* ---------- 5. Вікторина: яку функцію обрати? ---------- */
-const ITEMS = [
-  { pic: '🎟️', name: 'Квиток зі знижкою, якщо глядач - школяр або пенсіонер.', ok: 'OR', why: 'Досить однієї умови з двох - це «або».' },
-  { pic: '🏊', name: 'У басейн пускають, якщо є довідка від лікаря і шапочка.', ok: 'AND', why: 'Потрібні обидві умови одночасно - це «і».' },
-  { pic: '🔢', name: 'Число двоцифрове: більше за 9 і менше за 100.', ok: 'AND', why: 'Обидві нерівності мають виконуватися разом.' },
-  { pic: '📅', name: 'День вихідний, якщо це субота або неділя.', ok: 'OR', why: 'Вихідний - будь-який із двох днів.' },
-  { pic: '🌡️', name: 'Попередження, якщо температура нижча за 0 або вища за 30 градусів.', ok: 'OR', why: 'Небезпечно і в мороз, і в спеку - досить однієї умови.' },
-  { pic: '➗', name: 'Ділити можна, якщо дільник не дорівнює нулю.', ok: 'NOT', why: 'Умову «дорівнює нулю» треба заперечити.' },
-  { pic: '🏅', name: 'Похвальний лист, якщо оцінки з математики, мови й історії - 10 і більше.', ok: 'AND', why: 'Мають виконуватися всі три умови.' },
-  { pic: '📝', name: 'Позначка «Перескласти», якщо тест не зараховано.', ok: 'NOT', why: '«Не зараховано» - заперечення умови «зараховано».' },
-];
-const grid = $('#grid'), score = $('#score'), barFill = $('#barFill');
-let right = 0, answered = 0;
-function showScore() { score.textContent = `Правильних відповідей: ${right} з ${ITEMS.length}`; barFill.style.width = (right / ITEMS.length * 100) + '%'; }
-function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-function buildGrid() {
-  right = 0; answered = 0; showScore(); grid.innerHTML = '';
-  shuffle(ITEMS).forEach(it => {
-    const d = document.createElement('div'); d.className = 'item';
-    d.innerHTML = `<div class="badge"></div><div class="pic vf">${it.pic}</div><div class="name">${it.name}</div>
-      <div class="choice"><button data-v="AND">AND</button><button data-v="OR">OR</button><button data-v="NOT">NOT</button></div>
-      <div class="why">${it.why}</div>`;
-    d.querySelectorAll('.choice button').forEach(btn => btn.addEventListener('click', () => {
-      if (d.classList.contains('done')) return;
-      const good = btn.dataset.v === it.ok;
-      btn.classList.add('picked');
-      d.querySelector(`[data-v="${it.ok}"]`).classList.add('answer');
-      d.classList.add('done', good ? 'right' : 'wrong');
-      d.querySelector('.badge').textContent = good ? '✓' : '✗';
-      if (good) right++;
-      showScore();
-    }));
-    grid.appendChild(d);
-  });
-}
-$('#reset1').addEventListener('click', buildGrid);
-buildGrid();
+const stO = stepper($('#st_o'), {
+  tree: FN('IF', 'if', FN('OR', 'or', C('B2="субота"', 'c1'), C('B2="неділя"', 'c2')), R('"Вихідний"', 'y'), R('"Робочий день"', 'n')),
+  label: 'У клітинці C2 з\'явиться:',
+  result: () => ['субота', 'неділя'].includes($('#o_day').value) ? 'Вихідний' : 'Робочий день',
+  steps: () => { const d = $('#o_day').value, c1 = d === 'субота', c2 = d === 'неділя', t = c1 || c2; return [
+    { k: 'c1', v: c1, msg: `Крок 1. B2="субота": "${d}" = "субота" - ${tfb2(c1)}` },
+    { k: 'c2', v: c2, msg: `Крок 2. B2="неділя": "${d}" = "неділя" - ${tfb2(c2)}` },
+    { k: 'or', v: t, msg: `Крок 3. OR - ${tfb2(t)}: ${t ? 'одна з умов TRUE' : 'жодна умова не TRUE'}` },
+    { k: 'if', v: t ? 'Вихідний' : 'Робочий день', pick: t ? 'y' : 'n', dim: [t ? 'n' : 'y'], msg: ifMsg(4, t, t ? '"Вихідний"' : '"Робочий день"') },
+  ]; } });
+$('#o_day').onchange = () => stO.all(); stO.all();
+
+const NT = { b: 3 };
+const stN = stepper($('#st_n'), {
+  tree: FN('IF', 'if', FN('NOT', 'not', C('B2=0', 'c1')), R('A2/B2', 'y', 'simple'), R('"Ділити на 0 не можна"', 'n')),
+  label: 'У клітинці C2 з\'явиться:',
+  result: () => NT.b !== 0 ? fmt(12 / NT.b) : 'Ділити на 0 не можна',
+  steps: () => { const b = NT.b, c = b === 0, t = !c; return [
+    { k: 'c1', v: c, msg: `Крок 1. B2=0: ${b} = 0 - ${tfb2(c)}` },
+    { k: 'not', v: t, msg: `Крок 2. NOT змінює ${tfs(c)} на протилежне - ${tfb2(t)}` },
+    { k: 'if', v: t ? fmt(12 / b) : 'Ділити на 0 не можна', pick: t ? 'y' : 'n', dim: [t ? 'n' : 'y'], msg: ifMsg(3, t, t ? `A2/B2 = 12/${b} = ${fmt(12 / b)}` : '"Ділити на 0 не можна"') },
+  ]; } });
+cell($('#nt_ctl'), { addr: 'B2', cap: 'дільник', value: 3, min: -9, max: 9, vals: [-2, 0, 3, 4], on: v => { NT.b = v; stN.all(); } });
+
+/* ---------- 5а. Вкладені умови ---------- */
+const NS = { x: 15 };
+const stNS = stepper($('#st_ns'), {
+  tree: FN('AND', 'and', C('A1&gt;10', 'c1'), FN('OR', 'or', C('A1=12', 'c2'), C('A1=15', 'c3'))),
+  label: 'У клітинці B1 з\'явиться:',
+  result: () => tfs(NS.x > 10 && (NS.x === 12 || NS.x === 15)),
+  steps: () => { const x = NS.x, c1 = x > 10, c2 = x === 12, c3 = x === 15, o = c2 || c3, t = c1 && o; return [
+    { k: 'c1', v: c1, msg: `Крок 1. A1&gt;10: ${x} &gt; 10 - ${tfb2(c1)}` },
+    { k: 'c2', v: c2, msg: `Крок 2. Внутрішня функція OR, спершу A1=12: ${x} = 12 - ${tfb2(c2)}` },
+    { k: 'c3', v: c3, msg: `Крок 3. Далі A1=15: ${x} = 15 - ${tfb2(c3)}` },
+    { k: 'or', v: o, msg: `Крок 4. OR - ${tfb2(o)}: ${o ? 'одна з умов TRUE' : 'жодна умова не TRUE'}` },
+    { k: 'and', v: t, msg: `Крок 5. Зовнішня AND - ${tfb2(t)}: ${t ? 'обидва аргументи TRUE' : 'хоча б один аргумент FALSE'}` },
+  ]; } });
+cell($('#ns_ctl'), { addr: 'A1', value: 15, min: -50, max: 200, vals: [15, 12, 7, 20], on: v => { NS.x = v; stNS.all(); } });
+
+/* ---------- 5б. Вкладені IF ---------- */
+const NI = { h: 147, a: 13 };
+const stNI = stepper($('#st_ni'), {
+  tree: FN('IF', 'if1', FN('AND', 'and', C('B2&gt;=150', 'c1'), C('C2&gt;=12', 'c2')), R('"Допущено"', 'y1'),
+    FN('IF', 'if2', FN('OR', 'or', C('B2&gt;=145', 'c3'), C('C2&gt;=14', 'c4')), R('"Резерв"', 'y2'), R('"Не допущено"', 'n2'))),
+  label: 'У клітинці D2 з\'явиться:',
+  result: () => NI.h >= 150 && NI.a >= 12 ? 'Допущено' : NI.h >= 145 || NI.a >= 14 ? 'Резерв' : 'Не допущено',
+  steps: () => { const c1 = NI.h >= 150, c2 = NI.a >= 12, t = c1 && c2;
+    const s = [
+      { k: 'c1', v: c1, msg: `Крок 1. B2&gt;=150: ${NI.h} &gt;= 150 - ${tfb2(c1)}` },
+      { k: 'c2', v: c2, msg: `Крок 2. C2&gt;=12: ${NI.a} &gt;= 12 - ${tfb2(c2)}` },
+      { k: 'and', v: t, msg: `Крок 3. AND - ${tfb2(t)}: ${t ? 'обидві умови TRUE' : 'хоча б одна умова FALSE'}` },
+    ];
+    if (t) { s.push({ k: 'if1', v: 'Допущено', pick: 'y1', dim: ['if2'], msg: ifMsg(4, true, '"Допущено"') + '. Внутрішня IF уже не потрібна.' }); return s; }
+    const c3 = NI.h >= 145, c4 = NI.a >= 14, o = c3 || c4, r = o ? 'Резерв' : 'Не допущено';
+    s.push(
+      { now: 'if2', dim: ['y1'], msg: `Крок 4. Умова ${tfb2(false)}, тому IF переходить до третього аргументу - внутрішньої функції IF.` },
+      { k: 'c3', v: c3, msg: `Крок 5. B2&gt;=145: ${NI.h} &gt;= 145 - ${tfb2(c3)}` },
+      { k: 'c4', v: c4, msg: `Крок 6. C2&gt;=14: ${NI.a} &gt;= 14 - ${tfb2(c4)}` },
+      { k: 'or', v: o, msg: `Крок 7. OR - ${tfb2(o)}: ${o ? 'одна з умов TRUE' : 'жодна умова не TRUE'}` },
+      { k: 'if2', v: r, pick: o ? 'y2' : 'n2', dim: [o ? 'n2' : 'y2'], msg: ifMsg(8, o, `"${r}"`) },
+      { k: 'if1', v: r, msg: `Крок 9. Зовнішня IF повертає те, що дала внутрішня: "${r}"` });
+    return s; } });
+cell($('#ni_ctl'), { addr: 'B2', cap: 'зріст', value: 147, min: 100, max: 220, vals: [140, 145, 150, 160], on: v => { NI.h = v; stNI.all(); } });
+cell($('#ni_ctl'), { addr: 'C2', cap: 'вік', value: 13, min: 5, max: 20, vals: [11, 12, 13, 14], on: v => { NI.a = v; stNI.all(); } });
 </script>
 </body>
 </html>
