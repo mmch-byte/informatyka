@@ -1,0 +1,850 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Поняття про хмарні технології</title>
+<style>
+  :root {
+    --forest: #1E5E3A; --leaf: #2E8B57; --paper: #F2F8F4; --bench: #E2EFE6;
+    --ink: #17261D; --sun: #F2B705; --red: #C0392B; --muted: #4F6357; --line: #C9DDD0;
+    --display: "Bahnschrift", "DIN Alternate", "Segoe UI Semibold", "Arial Narrow", sans-serif;
+    --text: "Segoe UI", "Noto Sans", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--text); font-size: 20px; line-height: 1.5; }
+  :focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+
+  /* ---------- шапка-плівка ---------- */
+  header { background: var(--forest); color: #fff; }
+  .title { max-width: 1060px; margin: 0 auto; padding: 22px 20px 6px; display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+  .title h1 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 2.1rem; line-height: 1.1; letter-spacing: -.01em; }
+  .title span { font-family: var(--display); color: #A8D5B8; font-size: 1.05rem; }
+  .strip { position: relative; padding: 22px 0; overflow-x: auto; scrollbar-width: thin; }
+  .strip::before, .strip::after { content: ""; position: absolute; left: 0; right: 0; height: 10px;
+    background: radial-gradient(circle at 9px 5px, var(--paper) 3.2px, transparent 3.6px) 0 0 / 22px 10px repeat-x; min-width: 1700px; }
+  .strip::before { top: 6px; } .strip::after { bottom: 6px; }
+  nav { display: flex; gap: 10px; max-width: 1060px; margin: 0 auto; padding: 0 20px; min-width: max-content; }
+  nav button { font: inherit; cursor: pointer; border: 0; padding: 8px 8px 10px; width: 170px; text-align: left;
+    background: #163F28; color: #CFE6D7; border-radius: 4px; display: flex; flex-direction: column; gap: 8px; }
+  nav .thumb { position: relative; height: 80px; border-radius: 2px; overflow: hidden; background: #0F2E1C;
+    display: grid; place-items: center; font-size: 2.4rem; }
+  nav .cap { display: flex; gap: 8px; align-items: baseline; font-size: .88rem; line-height: 1.25; }
+  nav .cap b { font-family: var(--display); color: var(--sun); font-weight: 600; }
+  nav button.on { background: var(--paper); color: var(--ink); }
+  nav button.on .cap b { color: var(--leaf); }
+  nav button:not(.on) .thumb > * { opacity: .7; filter: saturate(.6); }
+  nav button:not(.on):hover { background: #1F5536; }
+
+  /* ---------- загальне ---------- */
+  main { max-width: 1060px; margin: 0 auto; padding: 34px 20px 60px; }
+  section { display: none; } section.on { display: block; }
+  h2 { font-family: var(--display); font-weight: 600; font-size: 1.85rem; line-height: 1.15; color: var(--forest); margin: 0 0 14px; }
+  h3 { font-family: var(--display); font-weight: 600; font-size: 1.2rem; color: var(--forest); margin: 0 0 10px; }
+  p { margin: 0 0 12px; max-width: 68ch; }
+  .lead { font-size: 1.12rem; }
+  dfn { font-style: normal; font-weight: 700; color: var(--forest); }
+  .def { margin: 18px 0; padding: 14px 18px; background: #fff; border-radius: 6px; max-width: 72ch; box-shadow: inset 4px 0 0 var(--leaf); }
+  .btn { font: inherit; font-size: 1rem; font-weight: 600; cursor: pointer; border-radius: 8px; padding: 9px 18px;
+    border: 2px solid var(--leaf); background: #fff; color: var(--forest); }
+  .btn:hover { background: #E6F3EA; }
+  .btn.on, .btn.main { background: var(--leaf); color: #fff; }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .theory { margin-bottom: 34px; }
+  .bench { background: var(--bench); border-radius: 14px; padding: 24px; }
+  .bench > h3 { font-size: 1.35rem; margin-bottom: 16px; }
+  .hide { display: none !important; }
+  .hint { color: var(--muted); font-size: .95rem; margin-bottom: 12px; }
+  .vf { position: relative; }
+  .vf::before, .vf::after { content: ""; position: absolute; width: 26px; height: 26px; pointer-events: none; z-index: 2; }
+  .vf::before { top: 8px; left: 8px; border-top: 4px solid var(--sun); border-left: 4px solid var(--sun); }
+  .vf::after { bottom: 8px; right: 8px; border-bottom: 4px solid var(--sun); border-right: 4px solid var(--sun); }
+  .subtabs { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 16px; border-bottom: 2px solid var(--leaf); }
+  .subtabs button { font: 600 .98rem var(--display); cursor: pointer; border: 0; background: transparent; color: var(--muted);
+    padding: 8px 16px; border-radius: 8px 8px 0 0; margin-bottom: -2px; border-bottom: 2px solid transparent; }
+  .subtabs button:hover { color: var(--forest); background: #D5E8DC; }
+  .subtabs button.on { background: var(--leaf); color: #fff; border-bottom-color: var(--leaf); }
+  .sub { display: none; } .sub.on { display: block; }
+  .ask { font-family: var(--display); font-weight: 600; color: var(--forest); font-size: 1.2rem; margin: 18px 0 10px; max-width: 68ch; }
+  .answer { max-width: 72ch; padding: 12px 16px; background: #fff; border-radius: 6px; margin-top: 10px; }
+
+  /* ---------- Мета ---------- */
+  .goals { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--forest); max-width: 860px; }
+  .goals li { border-bottom: 1px solid var(--line); }
+  .goals button { font: inherit; width: 100%; display: grid; grid-template-columns: 70px 1fr auto; gap: 16px; align-items: center;
+    padding: 18px 6px; background: none; border: 0; text-align: left; cursor: pointer; color: var(--ink); }
+  .goals button:hover { background: #E6F3EA; }
+  .goals .ico { font-size: 2.4rem; text-align: center; }
+  .goals .txt { font-size: 1.15rem; }
+  .goals .go { font-family: var(--display); color: var(--leaf); font-weight: 600; white-space: nowrap; }
+
+  /* ---------- списки й колонки ---------- */
+  .list { list-style: none; padding: 0; margin: 6px 0 16px; max-width: 820px; border-top: 2px solid var(--forest); }
+  .list li { display: grid; grid-template-columns: 44px 1fr; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+  .list .ico { font-size: 1.5rem; text-align: center; }
+  .facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; max-width: 960px; margin-top: 8px; }
+  .facts div { padding: 4px 22px; border-left: 3px solid var(--leaf); }
+  .facts b { display: block; font-family: var(--display); font-weight: 600; color: var(--forest); font-size: 1.1rem; margin-bottom: 4px; }
+  .facts span { font-size: .95rem; }
+  .pc { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; max-width: 960px; }
+  .pc h3 { padding-bottom: 6px; border-bottom: 3px solid var(--leaf); }
+  .pc .minus h3 { border-color: var(--red); color: var(--red); }
+  .pc ul { list-style: none; padding: 0; margin: 0; }
+  .pc li { padding: 8px 0; border-bottom: 1px solid var(--line); font-size: .95rem; }
+  .pc li b { color: var(--forest); }
+  .pc .minus li b { color: var(--red); }
+
+  /* ---------- 2. Хмара: сцена ---------- */
+  .scene { background: #fff; border-radius: 10px; overflow: hidden; }
+  .scene svg { width: 100%; height: auto; display: block; }
+  .dev { cursor: pointer; }
+  .dev .frame { fill: #fff; stroke: #9DB5A6; stroke-width: 3; }
+  .dev.sel .frame { stroke: var(--sun); stroke-width: 5; }
+  .dev text { font-family: var(--text); font-size: 20px; fill: var(--ink); }
+  .scene .status { font-family: var(--display); font-size: 19px; fill: var(--forest); }
+  .modes { margin-bottom: 14px; }
+
+  /* ---------- 3. Реєстрація і вхід ---------- */
+  .acc { display: grid; grid-template-columns: minmax(280px, 440px) 1fr; gap: 26px; align-items: start; }
+  .card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 0 0 1px var(--line); }
+  .card h4 { margin: 0 0 12px; font-family: var(--display); font-size: 1.25rem; color: var(--forest); text-align: center; }
+  .fld { display: block; margin-bottom: 12px; font-size: .9rem; font-weight: 600; color: var(--muted); }
+  .fld input { display: block; width: 100%; margin-top: 4px; font: inherit; font-size: 1rem; padding: 8px 10px; border: 2px solid var(--line); border-radius: 8px; color: var(--ink); }
+  .fld input:focus { border-color: var(--leaf); outline: none; }
+  .fld.bad input { border-color: var(--red); }
+  .rules { list-style: none; padding: 0; margin: 0; font-size: .95rem; }
+  .rules li { padding: 6px 0; border-bottom: 1px solid var(--line); color: var(--muted); }
+  .rules li::before { content: "✗"; display: inline-block; width: 26px; color: var(--red); font-weight: 800; }
+  .rules li.ok { color: var(--ink); }
+  .rules li.ok::before { content: "✓"; color: var(--leaf); }
+  .meter { height: 10px; border-radius: 99px; background: #E8EEEA; overflow: hidden; margin: 12px 0 4px; }
+  .meter i { display: block; height: 100%; width: 0; transition: width .25s, background .25s; }
+  .msg { min-height: 1.5em; font-weight: 700; margin-top: 8px; }
+  .msg.err { color: var(--red); } .msg.good { color: var(--leaf); }
+  .devs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+  .drive { background: #fff; border-radius: 12px; box-shadow: 0 0 0 1px var(--line); overflow: hidden; }
+  .drive .bar { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #EDF2F0; font-size: .9rem; flex-wrap: wrap; }
+  .drive .bar b { font-size: 1rem; }
+  .drive .bar .who { margin-left: auto; font-weight: 700; color: var(--forest); }
+  .files { list-style: none; margin: 0; padding: 6px 0; }
+  .files li { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; padding: 8px 14px; border-bottom: 1px solid #E8EEEA; font-size: .95rem; }
+  .files .ico { font-size: 1.4rem; }
+  .files .share { font: inherit; font-size: .85rem; font-weight: 600; cursor: pointer; border: 2px solid var(--leaf); background: #fff; color: var(--forest); border-radius: 8px; padding: 3px 10px; }
+  .sharebox { margin: 10px 14px 14px; padding: 12px 14px; border-radius: 10px; background: #F4F8F5; box-shadow: 0 0 0 1px var(--line); font-size: .95rem; }
+  .sharebox .row { margin-top: 8px; }
+  .sharebox select { font: inherit; font-size: .95rem; padding: 5px 8px; border-radius: 8px; border: 2px solid var(--line); }
+  .link { font-family: Consolas, monospace; font-size: .85rem; background: #fff; padding: 4px 8px; border-radius: 6px; word-break: break-all; }
+
+  /* ---------- 4. Оренда чи купівля ---------- */
+  .calc { display: grid; grid-template-columns: auto 1fr; gap: 26px; align-items: start; }
+  .xl { border-collapse: collapse; font-size: 1rem; background: #fff; }
+  .xl th, .xl td { border: 1px solid #B9C9BE; padding: 6px 10px; }
+  .xl th { background: #E9EFEB; font-weight: 600; color: var(--muted); font-size: .85rem; }
+  .xl td.lab { font-weight: 600; }
+  .xl td.val { text-align: center; font-family: var(--display); font-size: 1.25rem; color: #C25E00; min-width: 70px; }
+  .pm { font: inherit; font-weight: 800; width: 36px; height: 36px; border-radius: 8px; border: 2px solid var(--leaf); background: #fff; color: var(--forest); cursor: pointer; }
+  .quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .quick button { font: inherit; font-size: .9rem; font-weight: 600; padding: 5px 12px; border-radius: 8px; border: 2px solid var(--line); background: #fff; cursor: pointer; }
+  .quick button.on { border-color: var(--leaf); background: var(--leaf); color: #fff; }
+  .bars { display: flex; flex-direction: column; gap: 14px; }
+  .bars .lbl { display: flex; justify-content: space-between; font-weight: 600; font-size: .95rem; }
+  .bars .track { height: 30px; background: #fff; border-radius: 6px; overflow: hidden; }
+  .bars .track i { display: block; height: 100%; transition: width .3s; }
+  .verdict { font-family: var(--display); font-size: 1.15rem; color: var(--forest); margin-top: 6px; }
+
+  /* ---------- картки вибору (фотокартки) ---------- */
+  .scorebar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+  .score { font-family: var(--display); font-size: 1.15rem; color: var(--forest); white-space: nowrap; }
+  .pbar { flex: 1; min-width: 140px; height: 10px; background: #fff; border-radius: 99px; overflow: hidden; }
+  .pbar i { display: block; height: 100%; width: 0; background: var(--leaf); transition: width .3s; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 18px; }
+  .item { position: relative; background: #fff; padding: 10px 10px 12px; border-radius: 3px;
+    box-shadow: 0 1px 0 var(--line), 0 6px 14px -8px rgba(23, 38, 29, .35); display: flex; flex-direction: column; gap: 10px; }
+  .item .pic { height: 74px; background: #DCEBE1; display: grid; place-items: center; font-size: 2.4rem; }
+  .item .name { flex: 1; font-weight: 600; font-size: .92rem; line-height: 1.3; padding-right: 26px; }
+  .item .choice { display: grid; grid-template-columns: 1fr; gap: 6px; }
+  .item .choice button { font: inherit; font-size: .86rem; font-weight: 700; padding: 7px 4px; border-radius: 6px; cursor: pointer; background: #fff; border: 2px solid var(--leaf); color: var(--forest); line-height: 1.25; }
+  .item:not(.done) .choice button:hover { background: var(--leaf); color: #fff; }
+  .item.done .choice button { opacity: .3; cursor: default; }
+  .item.done .choice button.answer { opacity: 1; color: #fff; background: var(--leaf); }
+  .item.done .choice button.picked:not(.answer) { opacity: 1; color: #fff; background: var(--red); border-color: var(--red); }
+  .item .why { display: none; font-size: .82rem; color: var(--muted); line-height: 1.3; }
+  .item.done .why { display: block; }
+  .item .badge { position: absolute; top: 14px; right: 14px; width: 30px; height: 30px; border-radius: 50%;
+    display: none; place-items: center; color: #fff; font-weight: 800; }
+  .item.right .badge { display: grid; background: var(--leaf); }
+  .item.wrong .badge { display: grid; background: var(--red); }
+  .grid.wide { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+
+  /* ---------- 6. Безпека ---------- */
+  .wire svg { width: 100%; height: auto; display: block; }
+  .wire text { font-family: var(--text); }
+  .switch { display: inline-flex; border: 2px solid var(--leaf); border-radius: 10px; overflow: hidden; }
+  .switch button { font: inherit; font-size: .95rem; font-weight: 600; border: 0; padding: 7px 14px; background: #fff; color: var(--forest); cursor: pointer; }
+  .switch button.on { background: var(--leaf); color: #fff; }
+  .msgin { font: inherit; font-size: 1rem; padding: 8px 10px; border: 2px solid var(--line); border-radius: 8px; flex: 1; min-width: 200px; }
+  .box3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+  .box3 > div { background: #fff; border-radius: 10px; padding: 10px 12px; box-shadow: 0 0 0 1px var(--line); font-size: .92rem; min-height: 92px; }
+  .box3 b { display: block; font-family: var(--display); color: var(--forest); margin-bottom: 4px; }
+  .box3 .hk b { color: var(--red); }
+  .mono { font-family: Consolas, monospace; word-break: break-all; }
+  .vault { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .vault .files li { grid-template-columns: 34px 1fr; }
+  .vault .files li.gone { opacity: .25; text-decoration: line-through; }
+
+  @media (max-width: 860px) {
+    .acc, .calc, .vault { grid-template-columns: 1fr; }
+    .facts, .pc { grid-template-columns: 1fr; gap: 14px; }
+    .box3 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    html, body { font-size: 17px; }
+    .title h1 { font-size: 1.6rem; }
+    nav button { width: 140px; } nav .thumb { height: 64px; font-size: 2rem; }
+    main { padding-top: 24px; }
+    .bench { padding: 14px; }
+    .goals button { grid-template-columns: 48px 1fr; } .goals .go { display: none; }
+    .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .grid.wide { grid-template-columns: 1fr; }
+    .subtabs button { padding: 8px 10px; font-size: .9rem; }
+    .files li { grid-template-columns: 28px 1fr; }
+    .files .share { grid-column: 2; justify-self: start; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="title"><h1>Поняття про хмарні технології</h1><span>Інформатика, 6 клас, урок №10</span></div>
+  <div class="strip">
+    <nav aria-label="Частини уроку">
+      <button class="on" data-tab="t0"><span class="thumb"><span>🎯</span></span><span class="cap"><b>1</b>Мета уроку</span></button>
+      <button data-tab="t1"><span class="thumb"><span>☁️</span></span><span class="cap"><b>2</b>Хмарні обчислення</span></button>
+      <button data-tab="t2"><span class="thumb"><span>🔑</span></span><span class="cap"><b>3</b>Реєстрація і вхід</span></button>
+      <button data-tab="t3"><span class="thumb"><span>💷</span></span><span class="cap"><b>4</b>Програми в хмарі</span></button>
+      <button data-tab="t4"><span class="thumb"><span>⚖️</span></span><span class="cap"><b>5</b>Хмара чи свій комп'ютер</span></button>
+      <button data-tab="t5"><span class="thumb"><span>🔒</span></span><span class="cap"><b>6</b>Безпека і хакери</span></button>
+      <button data-tab="t6"><span class="thumb"><span>➕</span></span><span class="cap"><b>7</b>Переваги і недоліки</span></button>
+      <button data-tab="t7"><span class="thumb"><span>📝</span></span><span class="cap"><b>8</b>Повторення розділу</span></button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ===== Мета ===== -->
+  <section id="t0" class="on">
+    <h2>Сьогодні на уроці ми з вами:</h2>
+    <ul class="goals">
+      <li><button data-go="t1"><span class="ico">☁️</span><span class="txt">з'ясуємо значення понять «хмара», «хмарні обчислення», «хакер»;</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t6"><span class="ico">⚖️</span><span class="txt">обговоримо основні переваги та недоліки хмарних обчислень;</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t7"><span class="ico">📝</span><span class="txt">узагальнимо та систематизуємо знання з розділу «Мережеві технології».</span><span class="go">Відкрити</span></button></li>
+    </ul>
+  </section>
+
+  <!-- ===== 1. Хмарні обчислення ===== -->
+  <section id="t1">
+    <div class="theory">
+      <h2>Хмарні обчислення</h2>
+      <p class="lead">В інтернеті є особливий сервіс, який дає змогу зберігати й опрацьовувати дані віддалено. Це - <dfn>хмарні обчислення</dfn>.</p>
+      <p>Дані зберігаються на потужних комп'ютерах - <dfn>серверах</dfn>, які можуть бути зовсім в інших містах. Сервери великі, стоять у великих будівлях далеко від нас, тому їх і назвали «хмарними».</p>
+      <div class="def"><dfn>Хмара</dfn> - це сервер або мережа розподілених центрів опрацювання даних, де зберігаються дані та програми, якими люди користуються через глобальну мережу.</div>
+    </div>
+    <div class="bench">
+      <h3>Спробуй сам: де зберегти реферат?</h3>
+      <div class="row modes">
+        <div class="switch" role="group" aria-label="Де зберігати">
+          <button data-mode="cloud" class="on">У хмарі</button><button data-mode="local">Лише на пристрої</button>
+        </div>
+        <button class="btn" id="cloudReset">Почати знову</button>
+      </div>
+      <p class="hint" id="cloudHint">Обери пристрій і збережи на ньому файл. Потім відкрий його з іншого пристрою.</p>
+      <div class="row" style="margin-bottom:12px">
+        <button class="btn main" id="saveBtn">Зберегти реферат</button>
+        <button class="btn" id="openBtn">Відкрити реферат</button>
+      </div>
+      <p class="verdict" id="stTxt" style="margin:0 0 10px"></p>
+      <div class="scene vf"><svg id="cloudSvg" viewBox="0 0 900 420" role="img" aria-label="Пристрої, мережа і хмара з серверами"></svg></div>
+    </div>
+  </section>
+
+  <!-- ===== 2. Реєстрація і вхід ===== -->
+  <section id="t2">
+    <div class="theory">
+      <h2>Доступ до хмари: логін і пароль</h2>
+      <p class="lead">До даних на сервері можна дістатися через мережу з будь-якого комп'ютера за зареєстрованим іменем користувача (<dfn>логіном</dfn>) і <dfn>паролем</dfn>.</p>
+      <div class="def">Хмарне сховище - це ще один пристрій зберігання даних: <dfn>віртуальний флеш-накопичувач або диск</dfn>, який завжди з тобою там, де є інтернет.</div>
+      <div class="facts">
+        <div><b>1. Реєстрація</b><span>Один раз створюєш обліковий запис: логін і надійний пароль.</span></div>
+        <div><b>2. Вхід</b><span>На будь-якому пристрої вводиш логін і пароль.</span></div>
+        <div><b>3. Робота</b><span>Створюєш папки, завантажуєш файли, надаєш доступ іншим.</span></div>
+      </div>
+      <p class="hint" style="margin-top:14px">Обліковий запис Google дітям до 13 років створюють разом з батьками.</p>
+    </div>
+    <div class="bench">
+      <h3>Спробуй сам: зареєструйся у хмарному сховищі</h3>
+      <div class="subtabs">
+        <button class="on" data-sub="s21">Реєстрація</button><button data-sub="s22">Вхід з іншого пристрою</button><button data-sub="s23">Надати доступ</button>
+      </div>
+      <div class="sub on" id="s21">
+        <div class="acc">
+          <div class="card">
+            <h4>Створи обліковий запис</h4>
+            <label class="fld">Ім'я<input id="rName" autocomplete="off" placeholder="Олена"></label>
+            <label class="fld">Логін<input id="rLogin" autocomplete="off" placeholder="olena.kovalenko"></label>
+            <label class="fld">Пароль<input id="rPass" type="text" autocomplete="off"></label>
+            <label class="fld">Повтори пароль<input id="rPass2" type="text" autocomplete="off"></label>
+            <button class="btn main" id="rGo" disabled>Зареєструватися</button>
+            <div class="msg" id="rMsg"></div>
+          </div>
+          <div>
+            <h3>Чи надійний пароль?</h3>
+            <div class="meter"><i id="meter"></i></div>
+            <p class="hint" id="meterTxt">Почни вводити пароль</p>
+            <ul class="rules" id="rules">
+              <li data-r="len">щонайменше 8 символів</li>
+              <li data-r="low">малі латинські літери</li>
+              <li data-r="up">великі латинські літери</li>
+              <li data-r="dig">цифри</li>
+              <li data-r="sym">спеціальні символи: ! # _ - ?</li>
+              <li data-r="name">пароль не містить ім'я чи логін</li>
+              <li data-r="same">паролі в обох полях однакові</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="sub" id="s22">
+        <p class="hint">Уяви: ти в школі, а свого ноутбука з тобою немає. Обери пристрій і увійди у свій обліковий запис.</p>
+        <div class="devs" id="devs">
+          <button class="btn on" data-dev="💻 Шкільний комп'ютер">💻 Шкільний комп'ютер</button>
+          <button class="btn" data-dev="📱 Телефон">📱 Телефон</button>
+          <button class="btn" data-dev="📟 Планшет">📟 Планшет</button>
+        </div>
+        <div class="acc">
+          <div class="card" id="loginCard">
+            <h4>Вхід</h4>
+            <label class="fld">Логін<input id="lLogin" autocomplete="off"></label>
+            <label class="fld">Пароль<input id="lPass" type="password" autocomplete="off"></label>
+            <button class="btn main" id="lGo">Увійти</button>
+            <div class="msg" id="lMsg"></div>
+          </div>
+          <div class="drive" id="drive1">
+            <div class="bar"><b>Мій диск</b><span id="devName"></span><span class="who" id="who1">вхід не виконано</span></div>
+            <ul class="files" id="files1"><li><span class="ico">🔒</span><span>Щоб побачити файли, увійди в обліковий запис.</span></li></ul>
+          </div>
+        </div>
+      </div>
+      <div class="sub" id="s23">
+        <p class="hint">Створи папку, завантаж у неї проєкт і надай доступ за посиланням - так само, як у Завданні 3 картки.</p>
+        <div class="row" style="margin-bottom:12px">
+          <button class="btn" id="mkFolder">Створити папку</button>
+          <button class="btn" id="upFile" disabled>Завантажити файл</button>
+          <button class="btn" id="resetDrive">Почати знову</button>
+        </div>
+        <div class="drive">
+          <div class="bar"><b id="path">Мій диск</b><span class="who">Хмарне сховище</span></div>
+          <ul class="files" id="files2"></ul>
+          <div class="sharebox hide" id="sharebox">
+            <b>Надати доступ: <span id="shName"></span></b>
+            <div class="row">
+              <span>Загальний доступ:</span>
+              <select id="shWho"><option value="me">Обмежений (лише я)</option><option value="link">Усі, хто має посилання</option></select>
+              <select id="shRole"><option>Читач</option><option>Коментатор</option><option>Редактор</option></select>
+            </div>
+            <div class="row"><button class="btn main" id="copyLink">Копіювати посилання</button></div>
+            <div class="msg" id="shMsg"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 3. Програми в хмарі ===== -->
+  <section id="t3">
+    <div class="theory">
+      <h2>Програми в хмарі</h2>
+      <p class="lead">Хмарні обчислення дають змогу користуватися програмами <dfn>без встановлення</dfn> на власний комп'ютер і відкривати свої файли з будь-якого комп'ютера, що має доступ до інтернету.</p>
+      <p>Доступ до таких програм може бути безкоштовним, або програму можна <dfn>орендувати</dfn> за невелику плату.</p>
+      <div class="def">Дизайнер хоче працювати в спеціальній програмі. Купити її для свого комп'ютера коштує <dfn>500 фунтів стерлінгів</dfn>, а орендувати в хмарі - <dfn>5 фунтів стерлінгів на місяць</dfn>.</div>
+      <p class="ask">Скільки часу дизайнер зможе користуватися хмарною програмою, поки не витратить усю суму покупки?</p>
+      <button class="btn" data-toggle="ans3">Показати відповідь</button>
+      <div class="answer hide" id="ans3">500 : 5 = <b>100 місяців</b>, тобто понад 8 років. Якщо програма потрібна ненадовго, вигідніше орендувати її в хмарі.</div>
+    </div>
+    <div class="bench">
+      <h3>Спробуй сам: купити чи орендувати?</h3>
+      <div class="calc">
+        <div>
+          <table class="xl">
+            <tr><th></th><th>A</th><th>B</th></tr>
+            <tr><th>1</th><td class="lab">Місяців роботи</td><td class="val"><span class="row" style="justify-content:center;gap:8px"><button class="pm" id="mMinus" aria-label="Менше">−</button><span id="months">12</span><button class="pm" id="mPlus" aria-label="Більше">+</button></span></td></tr>
+            <tr><th>2</th><td class="lab">Купівля</td><td class="val">500 £</td></tr>
+            <tr><th>3</th><td class="lab">Оренда</td><td class="val" id="rentCell"></td></tr>
+          </table>
+          <div class="quick" id="quick"></div>
+        </div>
+        <div>
+          <div class="bars">
+            <div><div class="lbl"><span>Купівля</span><span>500 £</span></div><div class="track"><i id="barBuy" style="background:#7A8F82"></i></div></div>
+            <div><div class="lbl"><span>Оренда в хмарі</span><span id="rentTxt"></span></div><div class="track"><i id="barRent" style="background:var(--leaf)"></i></div></div>
+          </div>
+          <p class="verdict" id="verdict"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. Хмара чи свій комп'ютер ===== -->
+  <section id="t4">
+    <div class="theory">
+      <h2>Чому хмари стають популярнішими?</h2>
+      <p class="lead">Хмарні обчислення швидко розвиваються, бо ними зручно користуватися:</p>
+      <ul class="list">
+        <li><span class="ico">🖥️</span><span>не потрібні власні потужні комп'ютери;</span></li>
+        <li><span class="ico">💿</span><span>менше витрат на купівлю програм і їх постійне оновлення;</span></li>
+        <li><span class="ico">🛠️</span><span>економія коштів на утримання технічних фахівців;</span></li>
+        <li><span class="ico">📱</span><span>доступ з різних пристроїв, без прив'язки до робочого місця;</span></li>
+        <li><span class="ico">🗄️</span><span>необмежений обсяг збереження даних.</span></li>
+      </ul>
+      <p class="ask">Поміркуйте, чому, коли користуєшся хмарними обчисленнями, дані «переміщуються» разом з тобою?</p>
+      <button class="btn" data-toggle="ans4">Показати відповідь</button>
+      <div class="answer hide" id="ans4">Дані зберігаються не на твоєму пристрої, а на сервері в інтернеті. Увійди у свій обліковий запис на будь-якому пристрої з інтернетом - і твої файли будуть там.</div>
+    </div>
+    <div class="bench">
+      <h3>Спробуй сам: склади схему порівняння</h3>
+      <p class="hint">Порівнюємо за трьома ознаками: доступ, грошові витрати, обслуговування. Куди належить кожне твердження?</p>
+      <div class="scorebar"><div class="score" id="score4"></div><div class="pbar"><i id="bar4"></i></div><button class="btn" id="reset4">Почати знову</button></div>
+      <div class="grid" id="grid4"></div>
+    </div>
+  </section>
+
+  <!-- ===== 5. Безпека ===== -->
+  <section id="t5">
+    <div class="theory">
+      <h2>Безпека даних у хмарі</h2>
+      <p class="lead">Хмарні обчислення бувають дуже корисними, але не завжди підходять кожному: усе залежить від того, для чого ти користуєшся комп'ютером.</p>
+      <div class="facts">
+        <div><b>Резервні копії</b><span>Більшість постачальників хмарних сховищ роблять резервні копії файлів, які зберігають на своїх серверах.</span></div>
+        <div><b>Шифрування</b><span>Дані користувачів шифрують, щоб уникнути загроз безпеці.</span></div>
+        <div><b>Хакери</b><span>Іноді дані в хмарі стають мішенню для хакерів, які хочуть викрасти особисті дані людей.</span></div>
+      </div>
+      <div class="def"><dfn>Хакер</dfn> - це людина, яка робить щось протизаконне з комп'ютером, наприклад, краде чиїсь файли чи особисті дані.</div>
+      <p>Кожного разу, коли файл надсилається через мережу, є ймовірність, що його перехопить хакер.</p>
+    </div>
+    <div class="bench">
+      <h3>Спробуй сам: як хмара захищає дані</h3>
+      <div class="subtabs"><button class="on" data-sub="s51">Шифрування</button><button data-sub="s52">Резервна копія</button></div>
+      <div class="sub on" id="s51">
+        <div class="row" style="margin-bottom:12px">
+          <span style="font-weight:600">Шифрування:</span>
+          <div class="switch" role="group" aria-label="Шифрування"><button data-enc="1" class="on">Увімкнено</button><button data-enc="0">Вимкнено</button></div>
+        </div>
+        <div class="row" style="margin-bottom:12px">
+          <input class="msgin" id="secret" value="Мій пароль: Kit#Sonce_27" aria-label="Повідомлення">
+          <button class="btn main" id="sendMsg">Надіслати в хмару</button>
+        </div>
+        <div class="wire vf"><svg id="wireSvg" viewBox="0 0 900 230" role="img" aria-label="Пересилання повідомлення через мережу"></svg></div>
+        <div class="box3">
+          <div><b>Ти надсилаєш</b><span id="bxSend" class="mono">-</span></div>
+          <div class="hk"><b>Бачить хакер у мережі</b><span id="bxHack" class="mono">-</span></div>
+          <div><b>Отримує хмара</b><span id="bxCloud" class="mono">-</span></div>
+        </div>
+        <p class="verdict" id="encVerdict"></p>
+      </div>
+      <div class="sub" id="s52">
+        <div class="row" style="margin-bottom:12px">
+          <span style="font-weight:600">Резервна копія:</span>
+          <div class="switch" role="group" aria-label="Резервна копія"><button data-bak="1" class="on">Є</button><button data-bak="0">Немає</button></div>
+        </div>
+        <div class="row" style="margin-bottom:12px">
+          <button class="btn" id="hackDel">Хакер видаляє дані</button>
+          <button class="btn main" id="restore" disabled>Відновити з резервної копії</button>
+        </div>
+        <div class="vault">
+          <div class="drive"><div class="bar"><b>Мій диск</b></div><ul class="files" id="vMain"></ul></div>
+          <div class="drive" id="vBakBox"><div class="bar"><b>Резервна копія на іншому сервері</b></div><ul class="files" id="vBak"></ul></div>
+        </div>
+        <p class="verdict" id="bakVerdict"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 6. Переваги і недоліки ===== -->
+  <section id="t6">
+    <div class="theory">
+      <h2>Переваги і недоліки хмарних обчислень</h2>
+      <div class="pc">
+        <div>
+          <h3>Переваги</h3>
+          <ul>
+            <li><b>Зберігання:</b> хмара допомагає економити місце на комп'ютері.</li>
+            <li><b>Резервне копіювання:</b> якщо комп'ютер загубиться чи зламається, файли й програми залишаться в безпеці на сторонньому ресурсі.</li>
+            <li><b>Незалежність:</b> доступ до файлів є будь-де, тож можна працювати віддалено.</li>
+          </ul>
+        </div>
+        <div class="minus">
+          <h3>Недоліки</h3>
+          <ul>
+            <li><b>Підключення:</b> щоб користуватися хмарним сховищем, потрібен швидкий інтернет.</li>
+            <li><b>Безпека:</b> надсилання даних може бути ризикованим, навіть якщо їх шифрують.</li>
+            <li><b>Програмне забезпечення:</b> багато онлайн-програм не мають усіх функцій повної версії.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="bench">
+      <h3>Спробуй сам: перевага чи недолік?</h3>
+      <div class="scorebar"><div class="score" id="score6"></div><div class="pbar"><i id="bar6"></i></div><button class="btn" id="reset6">Почати знову</button></div>
+      <div class="grid" id="grid6"></div>
+    </div>
+  </section>
+
+  <!-- ===== 7. Повторення ===== -->
+  <section id="t7">
+    <div class="theory">
+      <h2>Повторення розділу «Мережеві технології»</h2>
+      <p class="lead">Пригадай, що ти вже знаєш: сервіси інтернету, реєстрацію, цифровий слід і паролі, факти й судження, спілкування в мережі. Обери правильну відповідь у кожній картці.</p>
+    </div>
+    <div class="bench">
+      <h3>Спробуй сам: вікторина</h3>
+      <div class="scorebar"><div class="score" id="score7"></div><div class="pbar"><i id="bar7"></i></div><button class="btn" id="reset7">Почати знову</button></div>
+      <div class="grid wide" id="grid7"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; if (parent) parent.appendChild(e); return e; }
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function animate(ms, step, done) {
+  if (reduce) { step(1); if (done) done(); return; }
+  const t0 = performance.now();
+  const f = t => { const k = Math.min(1, (t - t0) / ms); step(k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2); if (k < 1) requestAnimationFrame(f); else if (done) done(); };
+  requestAnimationFrame(f);
+}
+
+/* ---------- вкладки ---------- */
+function openTab(id) {
+  $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === id));
+  $$('section').forEach(s => s.classList.toggle('on', s.id === id));
+  const f = $(`nav [data-tab="${id}"]`); if (f) f.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  window.scrollTo(0, 0);
+}
+$$('nav button').forEach(b => b.addEventListener('click', () => openTab(b.dataset.tab)));
+$$('[data-go]').forEach(g => g.addEventListener('click', () => openTab(g.dataset.go)));
+$$('.subtabs').forEach(st => st.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+  st.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+  st.parentElement.querySelectorAll('.sub').forEach(s => s.classList.toggle('on', s.id === b.dataset.sub));
+})));
+$$('[data-toggle]').forEach(b => b.addEventListener('click', () => {
+  const a = document.getElementById(b.dataset.toggle), hid = a.classList.toggle('hide');
+  b.textContent = hid ? 'Показати відповідь' : 'Сховати відповідь';
+}));
+
+/* ---------- 1. Сцена: пристрої і хмара ---------- */
+const svg = $('#cloudSvg');
+const DEVS = [
+  { id: 'home', name: 'Домашній комп\'ютер', x: 110, y: 90, kind: 'pc' },
+  { id: 'school', name: 'Шкільний комп\'ютер', x: 110, y: 300, kind: 'pc' },
+  { id: 'phone', name: 'Телефон', x: 330, y: 330, kind: 'phone' },
+];
+const CL = { x: 690, y: 150 };
+let mode = 'cloud', selDev = 'home', where = new Set(), inCloud = false, busy = false;
+function drawScene() {
+  svg.innerHTML = '';
+  const defs = el('defs', {}, svg);
+  const g1 = el('linearGradient', { id: 'sky', x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+  el('stop', { offset: 0, 'stop-color': '#EAF5FF' }, g1); el('stop', { offset: 1, 'stop-color': '#FFFFFF' }, g1);
+  const g2 = el('linearGradient', { id: 'cl', x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+  el('stop', { offset: 0, 'stop-color': '#FFFFFF' }, g2); el('stop', { offset: 1, 'stop-color': '#CFE3F5' }, g2);
+  el('rect', { x: 0, y: 0, width: 900, height: 420, fill: 'url(#sky)' }, svg);
+  // мережа
+  DEVS.forEach(d => {
+    const ln = el('line', { x1: d.x + 60, y1: d.y, x2: CL.x - 40, y2: CL.y + 40, stroke: mode === 'cloud' ? '#2E8B57' : '#C9DDD0', 'stroke-width': 3, 'stroke-dasharray': '8 7' }, svg);
+  });
+  el('text', { x: 470, y: 205, 'text-anchor': 'middle', 'font-size': 15, fill: '#4F6357', transform: 'rotate(-12 470 205)', 'font-family': 'Segoe UI' }, svg, 'інтернет');
+  // хмара з будівлею серверів
+  const c = el('g', { transform: `translate(${CL.x} ${CL.y})` }, svg);
+  el('path', { d: 'M-150 40 a55 55 0 0 1 40-80 a75 75 0 0 1 135-20 a60 60 0 0 1 105 40 a45 45 0 0 1 -10 60 z', fill: 'url(#cl)', stroke: '#9CC3E4', 'stroke-width': 3 }, c);
+  // будівля дата-центру під хмарою
+  el('rect', { x: -95, y: 70, width: 190, height: 150, rx: 6, fill: '#3A4A5C' }, c);
+  for (let i = 0; i < 4; i++) { const r = el('g', { transform: `translate(${-80 + i * 42} 88)` }, c);
+    el('rect', { x: 0, y: 0, width: 34, height: 118, rx: 3, fill: '#24303D' }, r);
+    for (let k = 0; k < 6; k++) { el('rect', { x: 4, y: 6 + k * 19, width: 26, height: 13, rx: 2, fill: '#33424F' }, r);
+      el('circle', { cx: 25, cy: 12.5 + k * 19, r: 2.4, fill: (i + k) % 3 ? '#5BE08A' : '#F2B705' }, r); } }
+  el("text", { x: 0, y: 248, "text-anchor": "middle", "font-size": 20, fill: '#17261D', 'font-family': 'Segoe UI' }, c, 'сервери хмари');
+  if (inCloud) fileIcon(c, -18, -38, 'cloudFile');
+  // пристрої
+  DEVS.forEach(d => {
+    const g = el('g', { class: 'dev' + (d.id === selDev ? ' sel' : ''), transform: `translate(${d.x} ${d.y})`, tabindex: 0, role: 'button', 'aria-label': d.name }, svg);
+    if (d.kind === 'pc') {
+      el('rect', { x: -70, y: -50, width: 140, height: 92, rx: 8, class: 'frame' }, g);
+      el('rect', { x: -60, y: -41, width: 120, height: 72, rx: 3, fill: '#DCEBE1' }, g);
+      el('rect', { x: -12, y: 42, width: 24, height: 14, fill: '#9DB5A6' }, g);
+      el('rect', { x: -38, y: 56, width: 76, height: 7, rx: 3, fill: '#9DB5A6' }, g);
+    } else {
+      el('rect', { x: -30, y: -55, width: 60, height: 112, rx: 12, class: 'frame' }, g);
+      el('rect', { x: -23, y: -44, width: 46, height: 86, rx: 3, fill: '#DCEBE1' }, g);
+    }
+    el('text', { x: 0, y: d.kind === 'pc' ? 84 : 78, 'text-anchor': 'middle' }, g, d.name);
+    if (where.has(d.id)) fileIcon(g, -18, d.kind === 'pc' ? -30 : -28);
+    g.addEventListener('click', () => { if (!busy) { selDev = d.id; drawScene(); } });
+    g.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && !busy) { e.preventDefault(); selDev = d.id; drawScene(); } });
+  });
+}
+let statusText = '';
+function fileIcon(parent, x, y, id) {
+  const g = el('g', { transform: `translate(${x} ${y})` }, parent); if (id) g.id = id;
+  el('path', { d: 'M0 0 h26 l10 10 v36 h-36 z', fill: '#fff', stroke: '#2E8B57', 'stroke-width': 2.5 }, g);
+  el('path', { d: 'M26 0 v10 h10', fill: 'none', stroke: '#2E8B57', 'stroke-width': 2.5 }, g);
+  for (let i = 0; i < 3; i++) el('rect', { x: 6, y: 18 + i * 8, width: 24, height: 3, fill: '#9DB5A6' }, g);
+  return g;
+}
+function fly(from, to, done) {
+  busy = true;
+  const f = fileIcon(svg, from.x, from.y);
+  animate(1100, k => f.setAttribute('transform', `translate(${from.x + (to.x - from.x) * k} ${from.y + (to.y - from.y) * k - Math.sin(k * Math.PI) * 40})`), () => { busy = false; done(); });
+}
+const devById = id => DEVS.find(d => d.id === id);
+function setStatus(t) { statusText = t; $("#stTxt").textContent = t; }
+$('#saveBtn').addEventListener('click', () => {
+  if (busy) return; const d = devById(selDev);
+  if (mode === 'local') { where.add(d.id); setStatus(`Реферат збережено лише на пристрої «${d.name}»`); drawScene(); return; }
+  where.add(d.id); drawScene();
+  fly({ x: d.x - 18, y: d.y - 30 }, { x: CL.x - 18, y: CL.y - 38 }, () => { inCloud = true; setStatus('Реферат збережено в хмарі'); drawScene(); });
+});
+$('#openBtn').addEventListener('click', () => {
+  if (busy) return; const d = devById(selDev);
+  if (where.has(d.id) && mode === 'local') { setStatus(`Реферат відкрито на пристрої «${d.name}»`); drawScene(); return; }
+  if (mode === 'cloud' && inCloud) {
+    fly({ x: CL.x - 18, y: CL.y - 38 }, { x: d.x - 18, y: d.y - 30 }, () => { where.add(d.id); setStatus(`Реферат відкрито з хмари: ${d.name}`); drawScene(); });
+    return;
+  }
+  setStatus(mode === 'local' ? 'На цьому пристрої реферату немає' : 'Спочатку збережи реферат'); drawScene();
+});
+$$('[data-mode]').forEach(b => b.addEventListener('click', () => {
+  mode = b.dataset.mode; $$('[data-mode]').forEach(x => x.classList.toggle('on', x === b)); resetScene();
+}));
+function resetScene() { where = new Set(); inCloud = false; selDev = "home"; setStatus(mode === 'cloud' ? 'Файли зберігаються на серверах хмари' : 'Файли зберігаються лише на пристрої'); drawScene(); }
+$('#cloudReset').addEventListener('click', resetScene);
+resetScene();
+
+/* ---------- 2. Реєстрація ---------- */
+let account = null;
+const RULES = {
+  len: p => p.length >= 8, low: p => /[a-z]/.test(p), up: p => /[A-Z]/.test(p), dig: p => /\d/.test(p), sym: p => /[^A-Za-z0-9Ѐ-ӿ\s]/.test(p),
+  name: (p, n, l) => p.length > 0 && !(n && p.toLowerCase().includes(n.toLowerCase())) && !(l && l.split(/[._-]/).some(w => w.length > 2 && p.toLowerCase().includes(w.toLowerCase()))),
+  same: (p, n, l, p2) => p.length > 0 && p === p2,
+};
+function checkReg() {
+  const n = $('#rName').value.trim(), l = $('#rLogin').value.trim(), p = $('#rPass').value, p2 = $('#rPass2').value;
+  let okCount = 0;
+  $$('#rules li').forEach(li => { const ok = RULES[li.dataset.r](p, n, l, p2); li.classList.toggle('ok', ok); if (ok && li.dataset.r !== 'same') okCount++; });
+  const lvl = p ? okCount : 0, m = $('#meter');
+  m.style.width = (lvl / 6 * 100) + '%';
+  m.style.background = lvl <= 3 ? "#C0392B" : lvl <= 5 ? '#F2B705' : '#2E8B57';
+  $('#meterTxt').textContent = !p ? 'Почни вводити пароль' : lvl <= 3 ? "Слабкий пароль: його легко вгадати" : lvl <= 5 ? 'Середній пароль: додай те, чого бракує' : 'Надійний пароль';
+  const allOk = [...$$('#rules li')].every(li => li.classList.contains('ok'));
+  $('#rGo').disabled = !(allOk && n && /^[a-z0-9._-]{3,}$/i.test(l));
+  $('#rLogin').parentElement.classList.toggle('bad', l.length > 0 && !/^[a-z0-9._-]{3,}$/i.test(l));
+  $('#rMsg').textContent = l.length > 0 && !/^[a-z0-9._-]{3,}$/i.test(l) ? 'Логін: латинські літери, цифри, крапка' : ''; $('#rMsg').className = 'msg err';
+}
+['#rName', '#rLogin', '#rPass', '#rPass2'].forEach(s => $(s).addEventListener('input', checkReg));
+$('#rGo').addEventListener('click', () => {
+  account = { name: $('#rName').value.trim(), login: $('#rLogin').value.trim(), pass: $('#rPass').value };
+  $('#rMsg').className = 'msg good';
+  $('#rMsg').textContent = 'Обліковий запис створено! Тепер увійди з іншого пристрою.';
+  $('#lLogin').value = account.login;
+});
+checkReg();
+$$('#devs button').forEach(b => b.addEventListener('click', () => {
+  $$('#devs button').forEach(x => x.classList.toggle('on', x === b)); $('#devName').textContent = b.dataset.dev;
+}));
+$('#devName').textContent = $('#devs .on').dataset.dev;
+$('#lGo').addEventListener('click', () => {
+  const l = $('#lLogin').value.trim(), p = $('#lPass').value, m = $('#lMsg');
+  m.className = 'msg err';
+  if (!account) { m.textContent = 'Спочатку зареєструйся на закладці «Реєстрація»'; return; }
+  if (l !== account.login || p !== account.pass) { m.textContent = 'Неправильний логін або пароль'; return; }
+  m.className = 'msg good'; m.textContent = 'Вхід виконано';
+  $('#who1').textContent = account.name;
+  $('#files1').innerHTML = [['📁', 'Інформатика 6 клас'], ['📄', 'Реферат про хмари.docx'], ['🖼️', 'Фото з екскурсії.jpg'], ['🐱', 'Хмара_проєкт.sb3']]
+    .map(f => `<li><span class="ico">${f[0]}</span><span>${f[1]}</span><span></span></li>`).join('');
+});
+
+/* ---------- 2c. Надати доступ ---------- */
+let folder = false, uploaded = false, inFolder = false, shareFile = null;
+function renderDrive() {
+  const L = $('#files2'); L.innerHTML = '';
+  $('#path').textContent = inFolder ? 'Мій диск › Інформатика 6 клас' : 'Мій диск';
+  const items = [];
+  if (!inFolder) {
+    if (folder) items.push({ ico: '📁', name: 'Інформатика 6 клас', open: true });
+    items.push({ ico: '📄', name: 'Реферат про хмари.docx' });
+  } else {
+    items.push({ ico: '⬅️', name: '..', back: true });
+    if (uploaded) items.push({ ico: '🐱', name: 'Хмара_Прізвище.sb3', share: true });
+    else items.push({ ico: '', name: 'Папка порожня' });
+  }
+  items.forEach(it => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span class="ico">${it.ico}</span><span>${it.name}</span><span></span>`;
+    if (it.open || it.back) { const b = document.createElement('button'); b.className = 'share'; b.textContent = it.back ? 'Назад' : 'Відкрити';
+      b.addEventListener('click', () => { inFolder = !it.back; $('#upFile').disabled = !inFolder || uploaded; $('#sharebox').classList.add('hide'); renderDrive(); }); li.lastChild.appendChild(b); }
+    if (it.share) { const b = document.createElement('button'); b.className = 'share'; b.textContent = 'Надати доступ';
+      b.addEventListener('click', () => { shareFile = it.name; $('#shName').textContent = it.name; $('#shMsg').textContent = ''; $('#sharebox').classList.remove('hide'); }); li.lastChild.appendChild(b); }
+    L.appendChild(li);
+  });
+}
+$('#mkFolder').addEventListener('click', () => { folder = true; $('#mkFolder').disabled = true; renderDrive(); });
+$('#upFile').addEventListener('click', () => { uploaded = true; $('#upFile').disabled = true; renderDrive(); });
+$('#resetDrive').addEventListener('click', () => { folder = uploaded = inFolder = false; $('#mkFolder').disabled = false; $('#upFile').disabled = true; $('#sharebox').classList.add('hide'); renderDrive(); });
+$('#copyLink').addEventListener('click', () => {
+  const m = $('#shMsg');
+  if ($('#shWho').value === 'me') { m.className = 'msg err'; m.textContent = 'Доступ обмежений: учитель не зможе відкрити посилання. Обери «Усі, хто має посилання».'; return; }
+  if ($('#shRole').value !== 'Читач') { m.className = 'msg err'; m.textContent = `Роль «${$('#shRole').value}» дозволяє змінювати файл. Для здачі роботи досить ролі «Читач».`; return; }
+  m.className = 'msg good'; m.innerHTML = 'Посилання скопійовано: <span class="link">https://хмара.приклад/file/7Kq2Xa9</span> Встав його у Classroom.';
+});
+renderDrive();
+
+/* ---------- 3. Купити чи орендувати ---------- */
+let months = 12;
+const QUICK = [1, 6, 12, 24, 60, 100, 120];
+QUICK.forEach(q => { const b = document.createElement('button'); b.textContent = q; b.addEventListener('click', () => { months = q; calc(); }); $('#quick').appendChild(b); });
+function calc() {
+  const rent = months * 5, max = Math.max(500, rent);
+  $('#months').textContent = months; $('#rentCell').textContent = rent + ' £'; $('#rentTxt').textContent = rent + ' £';
+  $('#barBuy').style.width = (500 / max * 100) + '%'; $('#barRent').style.width = (rent / max * 100) + '%';
+  $$('#quick button').forEach(b => b.classList.toggle('on', +b.textContent === months));
+  $('#verdict').textContent = rent < 500 ? `Оренда дешевша на ${500 - rent} £` : rent === 500 ? 'Оренда коштує стільки ж, скільки купівля' : `Купівля дешевша на ${rent - 500} £`;
+}
+$('#mMinus').addEventListener('click', () => { if (months > 1) { months--; calc(); } });
+$('#mPlus').addEventListener('click', () => { if (months < 150) { months++; calc(); } });
+calc();
+
+/* ---------- картки вибору ---------- */
+function quiz(gridSel, scoreSel, barSel, resetSel, items, render) {
+  const grid = $(gridSel); let right = 0;
+  const show = () => { $(scoreSel).textContent = `Правильних відповідей: ${right} з ${items.length}`; $(barSel).style.width = (right / items.length * 100) + '%'; };
+  function build() {
+    right = 0; show(); grid.innerHTML = '';
+    shuffle(items).forEach(it => {
+      const opts = it.shuffle ? shuffle(it.opts) : it.opts;
+      const d = document.createElement('div'); d.className = 'item';
+      d.innerHTML = `<div class="badge"></div>${it.pic ? `<div class="pic">${it.pic}</div>` : ''}<div class="name">${it.q}</div>
+        <div class="choice">${opts.map(o => `<button data-v="${o}">${o}</button>`).join('')}</div><div class="why">${it.why}</div>`;
+      d.querySelectorAll('.choice button').forEach(btn => btn.addEventListener('click', () => {
+        if (d.classList.contains('done')) return;
+        const good = btn.dataset.v === it.a;
+        d.querySelectorAll('.choice button').forEach(x => { if (x.dataset.v === it.a) x.classList.add('answer'); });
+        btn.classList.add('picked');
+        d.classList.add('done', good ? 'right' : 'wrong');
+        d.querySelector('.badge').textContent = good ? '✓' : '✗';
+        if (good) right++; show();
+      }));
+      grid.appendChild(d);
+    });
+  }
+  $(resetSel).addEventListener('click', build); build();
+}
+const H = 'Хмарні ресурси', P = 'Власний комп\'ютер';
+quiz('#grid4', '#score4', '#bar4', '#reset4', [
+  { pic: '🌍', q: 'Файли відкриваються з будь-якого пристрою, де є інтернет', opts: [H, P], a: H, why: 'Доступ: файли на сервері, а не на пристрої' },
+  { pic: '🏠', q: 'Файли можна відкрити лише на тому комп\'ютері, де їх збережено', opts: [H, P], a: P, why: 'Доступ: файли лежать тільки на цьому диску' },
+  { pic: '💳', q: 'Програмою можна користуватися безкоштовно або за невелику щомісячну плату', opts: [H, P], a: H, why: 'Витрати: оренду платять частинами' },
+  { pic: '💰', q: 'Потрібно одразу купити потужний комп\'ютер і програми', opts: [H, P], a: P, why: 'Витрати: усе купують одразу' },
+  { pic: '🛠️', q: 'Сервери оновлює й ремонтує компанія-постачальник', opts: [H, P], a: H, why: 'Обслуговування: про сервери дбають фахівці компанії' },
+  { pic: '🔧', q: 'Оновлювати програми й лагодити комп\'ютер доводиться самому', opts: [H, P], a: P, why: 'Обслуговування: власник дбає про все сам' },
+  { pic: '📶', q: 'Без інтернету файли недоступні', opts: [H, P], a: H, why: 'Хмара працює лише через мережу' },
+  { pic: '✈️', q: 'Можна працювати навіть у літаку без інтернету', opts: [H, P], a: P, why: 'Програма й файли вже є на комп\'ютері' },
+], null);
+const PL = 'Перевага', MN = 'Недолік';
+quiz('#grid6', '#score6', '#bar6', '#reset6', [
+  { pic: '💔', q: 'Ноутбук Дмитра зламався, але всі фото збереглися', opts: [PL, MN], a: PL, why: 'Резервне копіювання: файли на сторонньому ресурсі' },
+  { pic: '📵', q: 'У селі зник інтернет, і Олена не може відкрити свою презентацію', opts: [PL, MN], a: MN, why: 'Підключення: без інтернету хмара недоступна' },
+  { pic: '📱', q: 'Після перенесення фото в хмару на телефоні звільнилося місце', opts: [PL, MN], a: PL, why: 'Зберігання: економія місця на пристрої' },
+  { pic: '🏫', q: 'Ірина почала реферат у школі, а закінчила вдома', opts: [PL, MN], a: PL, why: 'Незалежність: доступ до файлів будь-де' },
+  { pic: '🎛️', q: 'В онлайн-редакторі немає фільтра, який є у повній програмі', opts: [PL, MN], a: MN, why: 'Програмне забезпечення: менше функцій' },
+  { pic: '📨', q: 'Під час пересилання файл можуть перехопити', opts: [PL, MN], a: MN, why: 'Безпека: надсилати дані завжди трохи ризиковано' },
+], null);
+quiz('#grid7', '#score7', '#bar7', '#reset7', [
+  { q: 'Що таке хмара в інформатиці?', shuffle: 1, opts: ['Сервер або мережа центрів, де зберігаються дані та програми', 'Хмара на небі, через яку йде сигнал', 'Флешка з великим обсягом пам\'яті'], a: 'Сервер або мережа центрів, де зберігаються дані та програми', why: 'Хмара - це сервери, до яких звертаються через мережу' },
+  { q: 'Як дістатися до своїх файлів у хмарі?', shuffle: 1, opts: ['Увійти через інтернет за логіном і паролем', 'Лише з того комп\'ютера, де файл створено', 'Через Bluetooth'], a: 'Увійти через інтернет за логіном і паролем', why: 'Доступ до хмари - з будь-якого пристрою з інтернетом' },
+  { q: 'Хто такий хакер?', shuffle: 1, opts: ['Людина, яка робить щось протизаконне з комп\'ютером', 'Людина, яка створює ігри', 'Адміністратор шкільної мережі'], a: 'Людина, яка робить щось протизаконне з комп\'ютером', why: 'Наприклад, краде чиїсь файли чи особисті дані' },
+  { q: 'Який пароль найнадійніший?', shuffle: 1, opts: ['Kit#Sonce_27', '12345678', 'Olena2014'], a: 'Kit#Sonce_27', why: 'Є великі й малі літери, цифри й символи, немає імені' },
+  { q: 'Що таке цифровий слід?', shuffle: 1, opts: ['Усі дії людини в інтернеті, які залишають записи', 'Відбитки пальців на екрані', 'Список програм на комп\'ютері'], a: 'Усі дії людини в інтернеті, які залишають записи', why: 'Дописи, коментарі, фото, пошукові запити' },
+  { q: 'Що з цього - факт?', shuffle: 1, opts: ['Київ - столиця України', 'Літо - найкраща пора року', 'Ця гра найцікавіша'], a: 'Київ - столиця України', why: 'Факт можна перевірити, а судження - це думка' },
+  { q: 'Чим Веб 2.0 відрізняється від Веб 1.0?', shuffle: 1, opts: ['Користувачі самі додають вміст: дописи, коментарі, відео', 'Сайти можна лише читати', 'Інтернет працює без комп\'ютерів'], a: 'Користувачі самі додають вміст: дописи, коментарі, відео', why: 'У Веб 1.0 сторінки були лише для читання' },
+  { q: 'Що робити, якщо в мережі хтось погрожує чи ображає?', shuffle: 1, opts: ['Розповісти дорослим, яким довіряєш', 'Відповісти так само', 'Нікому нічого не казати'], a: 'Розповісти дорослим, яким довіряєш', why: 'Дорослі допоможуть, а повідомлення варто зберегти' },
+], null);
+
+/* ---------- 5a. Шифрування ---------- */
+let enc = true;
+const wire = $('#wireSvg');
+const ABC = 'абвгґдеєжзиіїйклмнопрстуфхцчшщьюяabcdefghijklmnopqrstuvwxyz0123456789';
+function scramble(s) { let out = ''; for (const ch of s) { const lo = ch.toLowerCase(), i = ABC.indexOf(lo); out += i < 0 ? (ch === ' ' ? '%' : '#') : ABC[(i * 7 + 13) % ABC.length]; } return out; }
+function drawWire(k, payload, stage) {
+  wire.innerHTML = '';
+  el('rect', { x: 0, y: 0, width: 900, height: 230, fill: '#fff' }, wire);
+  el('line', { x1: 130, y1: 120, x2: 760, y2: 120, stroke: '#2E8B57', 'stroke-width': 4, 'stroke-dasharray': '10 8' }, wire);
+  el('text', { x: 300, y: 108, 'text-anchor': 'middle', 'font-size': 15, fill: '#4F6357' }, wire, 'мережа');
+  // відправник
+  const s = el('g', { transform: 'translate(70 120)' }, wire);
+  el('rect', { x: -50, y: -40, width: 100, height: 66, rx: 6, fill: '#fff', stroke: '#9DB5A6', 'stroke-width': 3 }, s);
+  el('rect', { x: -42, y: -32, width: 84, height: 50, rx: 3, fill: '#DCEBE1' }, s);
+  el('text', { x: 0, y: 52, 'text-anchor': 'middle', 'font-size': 15, fill: '#17261D' }, s, 'Ти');
+  // хакер: силует у капюшоні з ноутбуком
+  const h = el('g', { transform: 'translate(460 185)' }, wire);
+  el('path', { d: 'M-34 40 q0-46 34-50 q34 4 34 50 z', fill: '#3B3F47' }, h);
+  el('path', { d: 'M-24 -18 q0-34 24-36 q24 2 24 36 q-6 16 -24 16 q-18 0 -24-16 z', fill: '#3B3F47' }, h);
+  el('ellipse', { cx: 0, cy: -16, rx: 13, ry: 15, fill: '#1E2127' }, h);
+  el('rect', { x: -26, y: 14, width: 52, height: 30, rx: 3, fill: '#9AA3AE' }, h);
+  el('text', { x: 62, y: 10, 'font-size': 15, fill: '#C0392B', 'font-weight': 700 }, h, 'хакер');
+  el('line', { x1: 460, y1: 150, x2: 460, y2: 124, stroke: '#C0392B', 'stroke-width': 2, 'stroke-dasharray': '4 4' }, wire);
+  // хмара
+  const c = el('g', { transform: 'translate(820 120)' }, wire);
+  el('path', { d: 'M-70 25 a30 30 0 0 1 20-48 a40 40 0 0 1 72-10 a32 32 0 0 1 50 30 a24 24 0 0 1 -6 28 z', fill: '#EAF5FF', stroke: '#9CC3E4', 'stroke-width': 3 }, c);
+  el('text', { x: 0, y: 52, 'text-anchor': 'middle', 'font-size': 15, fill: '#17261D' }, c, 'хмара');
+  if (payload != null) {
+    const x = 130 + (760 - 130) * k;
+    const pk = el('g', { transform: `translate(${x} 120)` }, wire);
+    el('rect', { x: -26, y: -18, width: 52, height: 36, rx: 6, fill: enc ? '#2E8B57' : '#F2B705' }, pk);
+    el('text', { x: 0, y: 7, 'text-anchor': 'middle', 'font-size': 20 }, pk, enc ? '🔒' : '✉️');
+  }
+}
+drawWire(0, null);
+$$('[data-enc]').forEach(b => b.addEventListener('click', () => { enc = b.dataset.enc === '1'; $$('[data-enc]').forEach(x => x.classList.toggle('on', x === b)); drawWire(0, null); ['#bxSend', '#bxHack', '#bxCloud'].forEach(s => $(s).textContent = '-'); $('#encVerdict').textContent = ''; }));
+$('#sendMsg').addEventListener('click', () => {
+  const m = $('#secret').value || 'Привіт!';
+  $('#bxSend').textContent = m; $('#bxHack').textContent = '...'; $('#bxCloud').textContent = '...'; $('#encVerdict').textContent = '';
+  $('#sendMsg').disabled = true;
+  animate(1800, k => drawWire(k, m), () => {
+    $('#bxHack').textContent = enc ? scramble(m) : m;
+    $('#bxCloud').textContent = m;
+    $('#encVerdict').textContent = enc ? 'Хакер перехопив лише незрозумілі символи. Хмара розшифрувала повідомлення.' : 'Без шифрування хакер прочитав усе повідомлення!';
+    $('#encVerdict').style.color = enc ? '' : 'var(--red)';
+    $('#sendMsg').disabled = false;
+  });
+});
+
+/* ---------- 5b. Резервна копія ---------- */
+const VFILES = [['📄', 'Реферат про хмари.docx'], ['🖼️', 'Фото з екскурсії.jpg'], ['🐱', 'Хмара_проєкт.sb3'], ['📊', 'Оцінки за чверть.xlsx']];
+let bak = true, deleted = false;
+function renderVault() {
+  $('#vMain').innerHTML = VFILES.map(f => `<li class="${deleted ? 'gone' : ''}"><span class="ico">${f[0]}</span><span>${f[1]}</span></li>`).join('');
+  $('#vBak').innerHTML = bak ? VFILES.map(f => `<li><span class="ico">${f[0]}</span><span>${f[1]}</span></li>`).join('') : '<li><span class="ico">∅</span><span>Резервної копії немає</span></li>';
+  $('#restore').disabled = !deleted || !bak; $('#hackDel').disabled = deleted;
+}
+$$('[data-bak]').forEach(b => b.addEventListener('click', () => { bak = b.dataset.bak === '1'; $$('[data-bak]').forEach(x => x.classList.toggle('on', x === b)); deleted = false; $('#bakVerdict').textContent = ''; renderVault(); }));
+$('#hackDel').addEventListener('click', () => {
+  deleted = true; renderVault();
+  $('#bakVerdict').textContent = bak ? 'Дані видалено, але власник хмари має резервну копію.' : 'Дані видалено, і відновити їх нема з чого.';
+  $('#bakVerdict').style.color = bak ? '' : 'var(--red)';
+});
+$('#restore').addEventListener('click', () => { deleted = false; renderVault(); $('#bakVerdict').style.color = ''; $('#bakVerdict').textContent = 'Дані успішно відновлено з резервної копії!'; });
+renderVault();
+</script>
+</body>
+</html>
