@@ -112,6 +112,7 @@
   .card h4 { margin: 0 0 12px; font-family: var(--display); font-size: 1.25rem; color: var(--forest); text-align: center; }
   .fld { display: block; margin-bottom: 12px; font-size: .9rem; font-weight: 600; color: var(--muted); }
   .fld input { display: block; width: 100%; margin-top: 4px; font: inherit; font-size: 1rem; padding: 8px 10px; border: 2px solid var(--line); border-radius: 8px; color: var(--ink); }
+  .fld input::placeholder { color: #B4C2B9; font-style: italic; font-weight: 400; }
   .fld input:focus { border-color: var(--leaf); outline: none; }
   .fld.bad input { border-color: var(--red); }
   .rules { list-style: none; padding: 0; margin: 0; font-size: .95rem; }
@@ -176,7 +177,6 @@
     display: none; place-items: center; color: #fff; font-weight: 800; }
   .item.right .badge { display: grid; background: var(--leaf); }
   .item.wrong .badge { display: grid; background: var(--red); }
-  .grid.wide { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
 
   /* ---------- 6. Безпека ---------- */
   .wire svg { width: 100%; height: auto; display: block; }
@@ -207,7 +207,6 @@
     .bench { padding: 14px; }
     .goals button { grid-template-columns: 48px 1fr; } .goals .go { display: none; }
     .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
-    .grid.wide { grid-template-columns: 1fr; }
     .subtabs button { padding: 8px 10px; font-size: .9rem; }
     .files li { grid-template-columns: 28px 1fr; }
     .files .share { grid-column: 2; justify-self: start; }
@@ -226,7 +225,6 @@
       <button data-tab="t4"><span class="thumb"><span>⚖️</span></span><span class="cap"><b>5</b>Хмара чи свій комп'ютер</span></button>
       <button data-tab="t5"><span class="thumb"><span>🔒</span></span><span class="cap"><b>6</b>Безпека і хакери</span></button>
       <button data-tab="t6"><span class="thumb"><span>➕</span></span><span class="cap"><b>7</b>Переваги і недоліки</span></button>
-      <button data-tab="t7"><span class="thumb"><span>📝</span></span><span class="cap"><b>8</b>Повторення розділу</span></button>
     </nav>
   </div>
 </header>
@@ -237,8 +235,7 @@
     <h2>Сьогодні на уроці ми з вами:</h2>
     <ul class="goals">
       <li><button data-go="t1"><span class="ico">☁️</span><span class="txt">з'ясуємо значення понять «хмара», «хмарні обчислення», «хакер»;</span><span class="go">Відкрити</span></button></li>
-      <li><button data-go="t6"><span class="ico">⚖️</span><span class="txt">обговоримо основні переваги та недоліки хмарних обчислень;</span><span class="go">Відкрити</span></button></li>
-      <li><button data-go="t7"><span class="ico">📝</span><span class="txt">узагальнимо та систематизуємо знання з розділу «Мережеві технології».</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t6"><span class="ico">⚖️</span><span class="txt">обговоримо основні переваги та недоліки хмарних обчислень.</span><span class="go">Відкрити</span></button></li>
     </ul>
   </section>
 
@@ -294,7 +291,7 @@
             <label class="fld">Логін<input id="rLogin" autocomplete="off" placeholder="olena.kovalenko"></label>
             <label class="fld">Пароль<input id="rPass" type="text" autocomplete="off"></label>
             <label class="fld">Повтори пароль<input id="rPass2" type="text" autocomplete="off"></label>
-            <button class="btn main" id="rGo" disabled>Зареєструватися</button>
+            <button class="btn main" id="rGo">Зареєструватися</button>
             <div class="msg" id="rMsg"></div>
           </div>
           <div>
@@ -497,19 +494,6 @@
       <div class="grid" id="grid6"></div>
     </div>
   </section>
-
-  <!-- ===== 7. Повторення ===== -->
-  <section id="t7">
-    <div class="theory">
-      <h2>Повторення розділу «Мережеві технології»</h2>
-      <p class="lead">Пригадай, що ти вже знаєш: сервіси інтернету, реєстрацію, цифровий слід і паролі, факти й судження, спілкування в мережі. Обери правильну відповідь у кожній картці.</p>
-    </div>
-    <div class="bench">
-      <h3>Спробуй сам: вікторина</h3>
-      <div class="scorebar"><div class="score" id="score7"></div><div class="pbar"><i id="bar7"></i></div><button class="btn" id="reset7">Почати знову</button></div>
-      <div class="grid wide" id="grid7"></div>
-    </div>
-  </section>
 </main>
 
 <script>
@@ -647,15 +631,23 @@ function checkReg() {
   m.style.background = lvl <= 3 ? "#C0392B" : lvl <= 5 ? '#F2B705' : '#2E8B57';
   $('#meterTxt').textContent = !p ? 'Почни вводити пароль' : lvl <= 3 ? "Слабкий пароль: його легко вгадати" : lvl <= 5 ? 'Середній пароль: додай те, чого бракує' : 'Надійний пароль';
   const allOk = [...$$('#rules li')].every(li => li.classList.contains('ok'));
-  $('#rGo').disabled = !(allOk && n && /^[a-z0-9._-]{3,}$/i.test(l));
   $('#rLogin').parentElement.classList.toggle('bad', l.length > 0 && !/^[a-z0-9._-]{3,}$/i.test(l));
   $('#rMsg').textContent = l.length > 0 && !/^[a-z0-9._-]{3,}$/i.test(l) ? 'Логін: латинські літери, цифри, крапка' : ''; $('#rMsg').className = 'msg err';
 }
 ['#rName', '#rLogin', '#rPass', '#rPass2'].forEach(s => $(s).addEventListener('input', checkReg));
 $('#rGo').addEventListener('click', () => {
-  account = { name: $('#rName').value.trim(), login: $('#rLogin').value.trim(), pass: $('#rPass').value };
-  $('#rMsg').className = 'msg good';
-  $('#rMsg').textContent = 'Обліковий запис створено! Тепер увійди з іншого пристрою.';
+  const n = $('#rName').value.trim(), l = $('#rLogin').value.trim(), p = $('#rPass').value, p2 = $('#rPass2').value, m = $('#rMsg');
+  const ok = r => $(`#rules [data-r="${r}"]`).classList.contains('ok');
+  m.className = 'msg err';
+  if (!n) { m.textContent = "Введи ім'я"; $('#rName').focus(); return; }
+  if (!l) { m.textContent = 'Введи логін'; $('#rLogin').focus(); return; }
+  if (!/^[a-z0-9._-]{3,}$/i.test(l)) { m.textContent = 'Логін: латинські літери, цифри, крапка'; $('#rLogin').focus(); return; }
+  if (!p) { m.textContent = 'Введи пароль'; $('#rPass').focus(); return; }
+  if (!['len', 'low', 'up', 'dig', 'sym', 'name'].every(ok)) { m.textContent = 'Пароль ще не надійний: подивись, чого бракує'; $('#rPass').focus(); return; }
+  if (!ok('same')) { m.textContent = p2 ? 'Паролі не однакові' : 'Повтори пароль'; $('#rPass2').focus(); return; }
+  account = { name: n, login: l, pass: p };
+  m.className = 'msg good';
+  m.textContent = 'Обліковий запис створено! Тепер увійди з іншого пристрою.';
   $('#lLogin').value = account.login;
 });
 checkReg();
@@ -768,16 +760,6 @@ quiz('#grid6', '#score6', '#bar6', '#reset6', [
   { pic: '🏫', q: 'Ірина почала реферат у школі, а закінчила вдома', opts: [PL, MN], a: PL, why: 'Незалежність: доступ до файлів будь-де' },
   { pic: '🎛️', q: 'В онлайн-редакторі немає фільтра, який є у повній програмі', opts: [PL, MN], a: MN, why: 'Програмне забезпечення: менше функцій' },
   { pic: '📨', q: 'Під час пересилання файл можуть перехопити', opts: [PL, MN], a: MN, why: 'Безпека: надсилати дані завжди трохи ризиковано' },
-], null);
-quiz('#grid7', '#score7', '#bar7', '#reset7', [
-  { q: 'Що таке хмара в інформатиці?', shuffle: 1, opts: ['Сервер або мережа центрів, де зберігаються дані та програми', 'Хмара на небі, через яку йде сигнал', 'Флешка з великим обсягом пам\'яті'], a: 'Сервер або мережа центрів, де зберігаються дані та програми', why: 'Хмара - це сервери, до яких звертаються через мережу' },
-  { q: 'Як дістатися до своїх файлів у хмарі?', shuffle: 1, opts: ['Увійти через інтернет за логіном і паролем', 'Лише з того комп\'ютера, де файл створено', 'Через Bluetooth'], a: 'Увійти через інтернет за логіном і паролем', why: 'Доступ до хмари - з будь-якого пристрою з інтернетом' },
-  { q: 'Хто такий хакер?', shuffle: 1, opts: ['Людина, яка робить щось протизаконне з комп\'ютером', 'Людина, яка створює ігри', 'Адміністратор шкільної мережі'], a: 'Людина, яка робить щось протизаконне з комп\'ютером', why: 'Наприклад, краде чиїсь файли чи особисті дані' },
-  { q: 'Який пароль найнадійніший?', shuffle: 1, opts: ['Kit#Sonce_27', '12345678', 'Olena2014'], a: 'Kit#Sonce_27', why: 'Є великі й малі літери, цифри й символи, немає імені' },
-  { q: 'Що таке цифровий слід?', shuffle: 1, opts: ['Усі дії людини в інтернеті, які залишають записи', 'Відбитки пальців на екрані', 'Список програм на комп\'ютері'], a: 'Усі дії людини в інтернеті, які залишають записи', why: 'Дописи, коментарі, фото, пошукові запити' },
-  { q: 'Що з цього - факт?', shuffle: 1, opts: ['Київ - столиця України', 'Літо - найкраща пора року', 'Ця гра найцікавіша'], a: 'Київ - столиця України', why: 'Факт можна перевірити, а судження - це думка' },
-  { q: 'Чим Веб 2.0 відрізняється від Веб 1.0?', shuffle: 1, opts: ['Користувачі самі додають вміст: дописи, коментарі, відео', 'Сайти можна лише читати', 'Інтернет працює без комп\'ютерів'], a: 'Користувачі самі додають вміст: дописи, коментарі, відео', why: 'У Веб 1.0 сторінки були лише для читання' },
-  { q: 'Що робити, якщо в мережі хтось погрожує чи ображає?', shuffle: 1, opts: ['Розповісти дорослим, яким довіряєш', 'Відповісти так само', 'Нікому нічого не казати'], a: 'Розповісти дорослим, яким довіряєш', why: 'Дорослі допоможуть, а повідомлення варто зберегти' },
 ], null);
 
 /* ---------- 5a. Шифрування ---------- */
