@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вчимось «читати» діаграми</title>
+<style>
+  :root {
+    --forest: #1E5E3A; --leaf: #2E8B57; --paper: #F2F8F4; --bench: #E2EFE6; --ink: #17261D;
+    --sun: #F2B705; --red: #C0392B; --muted: #4F6357; --line: #C9DDD0;
+    --blue: #1F66C1; --blue-soft: #E2EDFB; --leaf-soft: #E3F3EA; --red-soft: #FBE6E4;
+    --display: "Bahnschrift", "DIN Alternate", "Segoe UI Semibold", "Arial Narrow", sans-serif;
+    --text: "Segoe UI", "Noto Sans", Roboto, Arial, sans-serif;
+    --mono: Consolas, "Cascadia Mono", "Courier New", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--text); font-size: 20px; line-height: 1.5; }
+  :focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+
+  /* ---------- шапка-плівка ---------- */
+  header { background: var(--forest); color: #fff; }
+  .title { max-width: 1060px; margin: 0 auto; padding: 22px 20px 6px; display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+  .title h1 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 2.1rem; line-height: 1.1; letter-spacing: -.01em; }
+  .title span { font-family: var(--display); color: #A8D5B8; font-size: 1.05rem; }
+  .strip { position: relative; padding: 22px 0; overflow-x: auto; scrollbar-width: thin; }
+  .strip::before, .strip::after { content: ""; position: absolute; left: 0; right: 0; height: 10px;
+    background: radial-gradient(circle at 9px 5px, var(--paper) 3.2px, transparent 3.6px) 0 0 / 22px 10px repeat-x; min-width: 1100px; }
+  .strip::before { top: 6px; } .strip::after { bottom: 6px; }
+  nav { display: flex; gap: 10px; max-width: 1060px; margin: 0 auto; padding: 0 20px; min-width: max-content; }
+  nav button { font: inherit; cursor: pointer; border: 0; padding: 8px 8px 10px; flex: 1 1 0; min-width: 200px; text-align: left;
+    background: #163F28; color: #CFE6D7; border-radius: 4px; display: flex; flex-direction: column; gap: 8px; }
+  nav .thumb { position: relative; height: 84px; border-radius: 2px; overflow: hidden; background: #0F2E1C; display: grid; place-items: center; }
+  nav .thumb.emo { font-size: 2.6rem; }
+  nav .thumb svg { height: 62px; width: auto; }
+  nav .cap { display: flex; gap: 8px; align-items: baseline; font-size: .9rem; line-height: 1.25; }
+  nav .cap b { font-family: var(--display); color: var(--sun); font-weight: 600; }
+  nav button.on { background: var(--paper); color: var(--ink); }
+  nav button.on .cap b { color: var(--leaf); }
+  nav button:not(.on) .thumb { opacity: .8; }
+  nav button:not(.on):hover { background: #1F5536; }
+
+  /* ---------- загальне ---------- */
+  main { max-width: 1060px; margin: 0 auto; padding: 30px 20px 60px; }
+  section { display: none; } section.on { display: block; }
+  h2 { font-family: var(--display); font-weight: 600; font-size: 1.8rem; line-height: 1.15; color: var(--forest); margin: 0 0 12px; }
+  h3 { font-family: var(--display); font-weight: 600; font-size: 1.2rem; color: var(--forest); margin: 0 0 8px; }
+  p { margin: 0 0 10px; max-width: 72ch; }
+  .lead { font-size: 1.08rem; }
+  dfn { font-style: normal; font-weight: 700; color: var(--forest); }
+  .def { margin: 14px 0; padding: 12px 18px; background: #fff; border-radius: 6px; max-width: 76ch; box-shadow: inset 4px 0 0 var(--leaf); }
+  .btn { font: inherit; font-size: .95rem; font-weight: 600; cursor: pointer; border-radius: 8px; padding: 6px 14px;
+    border: 2px solid var(--leaf); background: #fff; color: var(--forest); }
+  .btn:hover { background: #E6F3EA; }
+  .btn.on { background: var(--leaf); color: #fff; }
+  .theory { margin-bottom: 26px; }
+  .bench { background: var(--bench); border-radius: 14px; padding: 18px 22px 20px; }
+  .hint { margin: 0 0 12px; color: var(--muted); font-size: .92rem; }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+
+  /* цілі */
+  .goals { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--forest); max-width: 860px; }
+  .goals li { border-bottom: 1px solid var(--line); }
+  .goals button { font: inherit; width: 100%; display: grid; grid-template-columns: 70px 1fr auto; gap: 16px; align-items: center;
+    padding: 18px 6px; background: none; border: 0; text-align: left; cursor: pointer; color: var(--ink); }
+  .goals button:hover { background: #E6F3EA; }
+  .goals .ico { font-size: 2.4rem; text-align: center; }
+  .goals .gtxt { font-size: 1.15rem; }
+  .goals .go { font-family: var(--display); color: var(--leaf); font-weight: 600; white-space: nowrap; }
+
+  /* списки й факти */
+  .lines { list-style: none; margin: 8px 0 0; padding: 0; max-width: 860px; border-top: 1px solid var(--line); }
+  .lines li { padding: 8px 4px; border-bottom: 1px solid var(--line); }
+  .lines b { color: var(--forest); }
+  .facts { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); max-width: 980px; margin-top: 10px; }
+  .facts > div { padding: 2px 20px; border-left: 3px solid var(--leaf); }
+  .facts > div:first-child { padding-left: 16px; }
+  .facts > div > b { display: block; font-family: var(--display); font-weight: 600; color: var(--forest); font-size: 1.05rem; margin-bottom: 2px; }
+  .facts span { font-size: .93rem; }
+
+  /* таблиці */
+  .ftable { border-collapse: collapse; width: 100%; max-width: 940px; margin: 6px 0 4px; font-size: .93rem; background: #fff; }
+  .ftable th { text-align: left; font-family: var(--display); font-weight: 600; color: #fff; background: var(--forest); padding: 7px 12px; }
+  .ftable td { padding: 7px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .ftable td:first-child { font-weight: 700; color: var(--forest); white-space: nowrap; }
+
+  /* аркуш-джерело даних */
+  .sheet { border-collapse: collapse; background: #fff; font-size: .82rem; }
+  .sheet th, .sheet td { border: 1px solid var(--line); padding: 3px 8px; text-align: center; transition: background .2s, opacity .2s; }
+  .sheet th { background: #EDF2EF; color: var(--muted); font: 600 .78rem var(--mono); }
+  .sheet td.h { font-weight: 700; }
+  .sheet td:nth-child(2) { text-align: left; }
+  .sheet .dim { opacity: .3; }
+  .sheet .pick { background: #FFF4CC; }
+
+  /* підсторінки */
+  .subtabs { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 14px; border-bottom: 2px solid var(--leaf); }
+  .subtabs button { font: 600 .98rem var(--display); cursor: pointer; border: 0; background: transparent; color: var(--muted);
+    padding: 8px 16px; border-radius: 8px 8px 0 0; margin-bottom: -2px; border-bottom: 2px solid transparent; }
+  .subtabs button:hover { color: var(--forest); background: #D5E8DC; }
+  .subtabs button.on { background: var(--leaf); color: #fff; border-bottom-color: var(--leaf); }
+  .sub { display: none; } .sub.on { display: block; }
+
+  /* діаграма */
+  .chartbox { position: relative; background: #fff; border-radius: 10px; padding: 6px; max-width: 760px; }
+  .chartbox svg { display: block; width: 100%; height: auto; font-family: var(--text); }
+  .chartbox svg text { user-select: none; }
+  [hidden] { display: none !important; }
+  .duo { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; justify-items: start; }
+  .duo .chartbox { width: 100%; }
+  .typecap { font-weight: 600; color: var(--forest); margin: 0 0 10px; min-height: 1.5em; }
+
+  /* питання */
+  .quiz { margin-top: 14px; max-width: 760px; }
+  .qcard { background: #fff; border-radius: 10px; padding: 14px 18px; border-top: 4px solid var(--leaf); }
+  .qnum { font: 600 .85rem var(--display); color: var(--muted); margin-bottom: 4px; }
+  .qtext { font-weight: 600; margin-bottom: 10px; }
+  .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opts button { font: inherit; font-size: .95rem; cursor: pointer; padding: 6px 14px; border-radius: 8px; border: 2px solid var(--line); background: #fff; color: var(--ink); }
+  .opts button:hover:not(:disabled) { border-color: var(--leaf); }
+  .opts button.ok { border-color: var(--leaf); background: var(--leaf-soft); color: var(--forest); font-weight: 700; }
+  .opts button.bad { border-color: var(--red); background: var(--red-soft); color: var(--red); }
+  .opts button:disabled { cursor: default; }
+  .why { margin: 10px 0 0; font-size: .93rem; min-height: 1.4em; }
+  .why.ok { color: var(--forest); } .why.bad { color: var(--red); }
+  .qnav { display: flex; gap: 10px; align-items: center; margin-top: 12px; }
+  .score { font-weight: 700; color: var(--forest); }
+
+  /* відповідь під кнопкою */
+  .discuss { margin-top: 16px; max-width: 760px; }
+  .answer { display: none; margin-top: 10px; padding: 10px 16px; background: #fff; border-radius: 6px; box-shadow: inset 4px 0 0 var(--leaf); }
+  .answer.on { display: block; }
+
+  /* редактор діаграм */
+  .editor { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+  .panel { background: #fff; border-radius: 10px; border: 1px solid var(--line); overflow: hidden; font-size: .9rem; }
+  .panel .ph { font: 600 1.05rem var(--display); padding: 10px 14px; border-bottom: 1px solid var(--line); color: var(--forest); }
+  .ptabs { display: flex; border-bottom: 1px solid var(--line); }
+  .ptabs button { flex: 1; font: 600 .92rem var(--display); border: 0; background: #fff; padding: 8px; cursor: pointer; color: var(--muted); border-bottom: 3px solid transparent; }
+  .ptabs button.on { color: var(--leaf); border-bottom-color: var(--leaf); }
+  .ppage { display: none; padding: 6px 0; } .ppage.on { display: block; }
+  .panel details { border-bottom: 1px solid #E6EEE9; }
+  .panel summary { cursor: pointer; padding: 8px 14px; font-weight: 600; list-style: none; }
+  .panel summary::before { content: "›"; display: inline-block; width: 16px; color: var(--muted); transition: transform .2s; }
+  .panel details[open] summary::before { transform: rotate(90deg); }
+  .panel details[open] summary { color: var(--leaf); }
+  .pbody { padding: 2px 14px 12px 30px; display: grid; gap: 8px; }
+  .pbody label { display: grid; gap: 3px; color: var(--muted); font-size: .82rem; }
+  .pbody select, .pbody input[type=text] { font: inherit; font-size: .9rem; padding: 4px 8px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); background: #fff; }
+  .pbody .chk { display: flex; gap: 8px; align-items: center; color: var(--ink); font-size: .9rem; }
+  .pbody .chk input { width: 18px; height: 18px; accent-color: var(--leaf); }
+  .sw { display: flex; flex-wrap: wrap; gap: 6px; }
+  .sw button { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px var(--line); cursor: pointer; }
+  .sw button.on { box-shadow: 0 0 0 3px var(--forest); }
+  .mini { display: flex; flex-wrap: wrap; gap: 6px; }
+  .mini button { font: inherit; font-size: .85rem; padding: 3px 10px; border-radius: 6px; border: 1.5px solid var(--line); background: #fff; cursor: pointer; color: var(--forest); }
+  .mini button.on { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+  .ctx { position: absolute; display: none; background: #fff; border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 18px rgba(0,0,0,.15); z-index: 5; min-width: 210px; padding: 4px 0; font-size: .9rem; }
+  .ctx.on { display: block; }
+  .ctx button { display: block; width: 100%; text-align: left; font: inherit; border: 0; background: none; padding: 6px 14px; cursor: pointer; }
+  .ctx button:hover { background: #E6F3EA; }
+
+  @media (max-width: 860px) {
+    .facts { grid-template-columns: 1fr; gap: 10px; }
+    .facts > div { padding-left: 16px; }
+    .editor, .duo { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    html, body { font-size: 17px; }
+    .title h1 { font-size: 1.5rem; }
+    nav button { min-width: 150px; } nav .thumb { height: 60px; } nav .thumb svg { height: 46px; } nav .thumb.emo { font-size: 2rem; }
+    main { padding-top: 22px; }
+    .bench { padding: 14px 10px; }
+    .goals button { grid-template-columns: 48px 1fr; } .goals .go { display: none; }
+    .ftable td, .ftable th { padding: 6px; } .ftable td:first-child { white-space: normal; }
+    .subtabs button { padding: 7px 10px; font-size: .9rem; }
+    .chartbox { padding: 2px; }
+    .sheet { font-size: .72rem; } .sheet th, .sheet td { padding: 2px 5px; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="title"><h1>Вчимось «читати» діаграми</h1><span>Інформатика, 8 клас, урок №16</span></div>
+  <div class="strip">
+    <nav aria-label="Частини уроку">
+      <button class="on" data-tab="t0"><span class="thumb emo">🎯</span><span class="cap"><b>1</b>Мета уроку</span></button>
+      <button data-tab="t1"><span class="thumb"><svg viewBox="0 0 80 60"><rect x="8" y="30" width="12" height="26" fill="#2E8B57"/><rect x="24" y="14" width="12" height="42" fill="#1F66C1"/><rect x="44" y="22" width="12" height="34" fill="#2E8B57"/><rect x="60" y="6" width="12" height="50" fill="#1F66C1"/><text x="66" y="5" font-size="9" fill="#F2B705" text-anchor="middle">50</text></svg></span><span class="cap"><b>2</b>Як «читати» діаграму</span></button>
+      <button data-tab="t2"><span class="thumb"><svg viewBox="0 0 80 60"><circle cx="24" cy="30" r="20" fill="#1F66C1"/><path d="M24 30 L24 10 A20 20 0 0 1 43 36 Z" fill="#2E8B57"/><path d="M24 30 L43 36 A20 20 0 0 1 28 50 Z" fill="#F2B705"/><polyline points="50,48 58,30 66,36 76,12" fill="none" stroke="#A8E6BE" stroke-width="3"/></svg></span><span class="cap"><b>3</b>Який тип діаграми обрати?</span></button>
+      <button data-tab="t3"><span class="thumb emo">🎨</span><span class="cap"><b>4</b>Як змінювати складові діаграми</span></button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ===== 1. Мета ===== -->
+  <section id="t0" class="on">
+    <h2>Сьогодні на уроці ми з вами:</h2>
+    <ul class="goals">
+      <li><button data-go="t1"><span class="ico">🔍</span><span class="gtxt">дізнаємось, як «читати» діаграму, побудовану на основі даних таблиці;</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t2"><span class="ico">📊</span><span class="gtxt">з'ясуємо, який тип діаграм краще обирати для відображення різних типів даних;</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t3"><span class="ico">🎨</span><span class="gtxt">навчимося змінювати властивості окремих складових діаграми.</span><span class="go">Відкрити</span></button></li>
+    </ul>
+  </section>
+
+  <!-- ===== 2. Як читати діаграму ===== -->
+  <section id="t1">
+    <div class="theory">
+      <h2>Як «читати» діаграму, побудовану на основі даних таблиці?</h2>
+      <p class="lead">Ви вже вмієте створювати стовпчасті та кругові діаграми в табличному процесорі. Після побудови діаграми важливо навчитися її інтерпретувати.</p>
+      <div class="def"><dfn>«Читати» діаграму</dfn> означає інтерпретувати її: пояснювати, що на ній відображено, і робити висновки.</div>
+      <p>Щоб діаграму правильно інтерпретувати, вона має містити всі потрібні складові. Якщо деяких немає, діаграму складно аналізувати.</p>
+      <div class="facts" style="--n:4">
+        <div><b>Назва діаграми</b><span>про що діаграма</span></div>
+        <div><b>Підписи на осях</b><span>категорії й значення даних</span></div>
+        <div><b>Легенда</b><span>який колір якому ряду даних відповідає</span></div>
+        <div><b>Підписи даних</b><span>точні числа біля стовпців, секторів чи точок</span></div>
+      </div>
+      <p style="margin-top:14px">Кругова діаграма може бути побудована лише для одного ряду даних - коли дані є складовими одного цілого. Інші типи, як правило, показують кілька рядів даних. Наприклад, стовпчаста діаграма до таблиці «Путівки» дає змогу порівняти попит на тури до різних міст у кожному місяці або продаж путівок до одного міста за три місяці.</p>
+    </div>
+    <div class="bench">
+      <div class="subtabs">
+        <button class="on" data-sub="s1a">Складові діаграми</button>
+        <button data-sub="s1b">Що буде без них?</button>
+        <button data-sub="s1c">Читаємо діаграму</button>
+      </div>
+      <div class="sub on" id="s1a">
+        <p class="hint">Обери складову - її буде виділено на діаграмі.</p>
+        <div class="btns" id="partBtns"></div>
+        <div class="chartbox" id="c1a"></div>
+      </div>
+      <div class="sub" id="s1b">
+        <p class="hint">Вимикай і вмикай складові. Спробуй прочитати діаграму без них.</p>
+        <div class="btns" id="togBtns"></div>
+        <div class="chartbox" id="c1b"></div>
+        <div class="discuss">
+          <h3>Які труднощі можуть виникнути під час читання діаграми, якщо вона не містить назви, легенди, підписів даних?</h3>
+          <button class="btn" data-ans="a1">Показати відповідь</button>
+          <div class="answer" id="a1">Без назви незрозуміло, про що діаграма. Без легенди невідомо, який колір якому місту відповідає. Без підписів даних точні числа доводиться вгадувати за висотою стовпців, тому порівняти близькі значення важко. Без підписів на осях незрозуміло, до якого місяця належить група стовпців.</div>
+        </div>
+      </div>
+      <div class="sub" id="s1c">
+        <p class="hint">Відповідай на питання, дивлячись на діаграму.</p>
+        <div class="chartbox" id="c1c"></div>
+        <div class="quiz" id="q1"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 3. Типи діаграм ===== -->
+  <section id="t2">
+    <div class="theory">
+      <h2>Який тип діаграми обрати?</h2>
+      <p class="lead">Табличний процесор будує діаграми різних типів. Кожний тип має кілька видів: плоскі та об'ємні, звичайні, з накопиченням чи нормовані з накопиченням.</p>
+      <div class="def">Перш ніж обрати тип діаграми, виділяють <dfn>джерело даних</dfn> - діапазон клітинок таблиці з даними, на основі яких буде створюватися діаграма. Джерело даних має містити числові дані.</div>
+      <p>Назви типів у різних табличних процесорах можуть дещо відрізнятися (синоніми), але їхнє призначення однакове. Щоб правильно обрати тип, треба розуміти, що саме показує кожен із них.</p>
+      <table class="ftable">
+        <tr><th>Тип діаграми</th><th>Що показує</th></tr>
+        <tr><td>Стовпчаста (вертикальна гістограма)</td><td>Зміну даних за певний період і співвідношення окремих значень. Категорії - по горизонталі, значення - по вертикалі.</td></tr>
+        <tr><td>Стовпчаста з накопиченням</td><td>Внесок окремих елементів у загальну суму.</td></tr>
+        <tr><td>Лінійчата (горизонтальна гістограма)</td><td>Співвідношення окремих компонентів.</td></tr>
+        <tr><td>Кругова (секторна)</td><td>Величину кожного елемента й внесок кожного в загальну суму. Лише один ряд даних. Добре підкреслює значний елемент.</td></tr>
+        <tr><td>Лінія (графік)</td><td>Точки даних з'єднані лініями. Показує тенденції зміни даних за однакові проміжки часу.</td></tr>
+        <tr><td>Пелюсткова (сітчаста)</td><td>Кожна категорія має власну вісь. Дає змогу порівняти загальні значення кількох наборів даних.</td></tr>
+        <tr><td>Нестандартні</td><td>Дані подано позначками, розмір яких відповідає значенню; позначки можуть бути на картах та інших зображеннях.</td></tr>
+      </table>
+    </div>
+    <div class="bench">
+      <div class="subtabs">
+        <button class="on" data-sub="s2a">Одні дані - різні типи</button>
+        <button data-sub="s2b">Маленькі частки на круговій</button>
+        <button data-sub="s2c">Яку діаграму обрати?</button>
+      </div>
+      <div class="sub on" id="s2a">
+        <p class="hint">Обери тип діаграми для тих самих даних.</p>
+        <div class="btns" id="typeBtns"></div>
+        <div class="btns" id="qBtns" hidden></div>
+        <p class="typecap" id="typeCap"></p>
+        <div class="duo">
+          <table class="sheet" id="src"></table>
+          <div class="chartbox" id="c2a"></div>
+        </div>
+      </div>
+      <div class="sub" id="s2b">
+        <p class="hint">Маленькі частки на круговій діаграмі погано видно. Їх можна об'єднати в один сектор «Інші» й показати окремою діаграмою поруч із основною.</p>
+        <div class="btns" id="pieBtns"></div>
+        <div class="chartbox" id="c2b"></div>
+      </div>
+      <div class="sub" id="s2c">
+        <p class="hint">Обери тип діаграми, який найкраще підходить для даних.</p>
+        <div class="quiz" id="q2" style="margin-top:0"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. Зміна властивостей ===== -->
+  <section id="t3">
+    <div class="theory">
+      <h2>Як змінювати властивості окремих складових діаграми?</h2>
+      <p class="lead">Після створення діаграму можна розміщувати в будь-якому місці аркуша, вилучати, форматувати й редагувати: змінювати її розмір і зовнішній вигляд окремих складових.</p>
+      <div class="facts">
+        <div><b>Місце й розмір</b><span>Діаграму найчастіше розміщують поруч або після даних. Складні діаграми роблять більшими, прості - меншими.</span></div>
+        <div><b>Вибір діаграми</b><span>Перед переміщенням, зміною розміру чи вилученням діаграму вибирають клацанням в області діаграми.</span></div>
+        <div><b>Як з об'єктами</b><span>Переміщення, зміна розміру й вилучення - так само, як для будь-якого об'єкта програми.</span></div>
+      </div>
+      <h3 style="margin-top:18px">Як змінити властивості</h3>
+      <ul class="lines">
+        <li><b>Вкладка Оформлення Редактора діаграм.</b> Редактор з'являється після виділення діаграми. Тут змінюють тип, джерело даних, параметри й місце розміщення.</li>
+        <li><b>Контекстне меню.</b> Клацнути правою кнопкою миші у вільному місці області діаграми й вибрати потрібну вказівку.</li>
+        <li><b>Подвійне клацання на об'єкті.</b> Двічі клацнути лівою кнопкою на потрібній складовій і змінити розмір шрифту, колір ряду даних, область побудови тощо.</li>
+      </ul>
+    </div>
+    <div class="bench">
+      <p class="hint">Змінюй діаграму в редакторі. Двічі клацни на назві, ряду даних чи легенді - відкриється потрібний розділ. Права кнопка миші на діаграмі відкриває контекстне меню.</p>
+      <div class="editor">
+        <div class="chartbox" id="c3" style="max-width:none"><div class="ctx" id="ctx"></div><div id="c3svg"></div></div>
+        <div class="panel">
+          <div class="ph">Редактор діаграм</div>
+          <div class="ptabs"><button data-pt="pp1">Налаштувати</button><button class="on" data-pt="pp2">Оформлення</button></div>
+          <div class="ppage" id="pp1">
+            <div class="pbody" style="padding-left:14px">
+              <label>Тип діаграми</label>
+              <div class="mini" id="e_type"></div>
+              <label>Джерело даних</label>
+              <div style="font:700 .9rem var(--mono)">A1:C8</div>
+            </div>
+          </div>
+          <div class="ppage on" id="pp2">
+            <details id="d_style"><summary>Стиль діаграми</summary><div class="pbody"><label>Колір фону</label><div class="sw" id="e_bg"></div></div></details>
+            <details id="d_titles"><summary>Заголовки діаграми й осей</summary><div class="pbody">
+              <label>Заголовок<select id="e_tsel"><option value="title">Назва діаграми</option><option value="xTitle">Назва горизонтальної осі</option><option value="yTitle">Назва вертикальної осі</option></select></label>
+              <label>Текст заголовка<input type="text" id="e_ttext"></label>
+            </div></details>
+            <details id="d_series"><summary>Ряд даних</summary><div class="pbody">
+              <label>Ряд<select id="e_ssel"></select></label>
+              <label>Колір</label><div class="sw" id="e_scol"></div>
+              <span class="chk"><input type="checkbox" id="e_lbl"><label for="e_lbl" style="color:var(--ink);font-size:.9rem">Підписи даних</label></span>
+              <div id="e_lineopts"><label>Товщина лінії</label><div class="mini" id="e_lw"></div>
+              <span class="chk" style="margin-top:6px"><input type="checkbox" id="e_mk"><label for="e_mk" style="color:var(--ink);font-size:.9rem">Точки на лінії</label></span></div>
+            </div></details>
+            <details id="d_legend"><summary>Легенда</summary><div class="pbody">
+              <label>Розташування<select id="e_leg"><option value="right">Праворуч</option><option value="bottom">Унизу</option><option value="top">Угорі</option><option value="none">Немає</option></select></label>
+            </div></details>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+function openTab(id) {
+  $$('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === id));
+  $$('section').forEach(s => s.classList.toggle('on', s.id === id));
+  const f = document.querySelector(`nav [data-tab="${id}"]`); if (f) f.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  window.scrollTo(0, 0); redraw();
+}
+$$('nav button').forEach(b => b.addEventListener('click', () => openTab(b.dataset.tab)));
+$$('[data-go]').forEach(g => g.addEventListener('click', () => openTab(g.dataset.go)));
+$$('.subtabs').forEach(st => st.querySelectorAll('button').forEach(b => b.addEventListener('click', () => {
+  st.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+  st.parentElement.querySelectorAll(':scope > .sub').forEach(s => s.classList.toggle('on', s.id === b.dataset.sub));
+  redraw();
+})));
+$$('[data-ans]').forEach(b => b.addEventListener('click', () => {
+  const a = document.getElementById(b.dataset.ans); a.classList.toggle('on');
+  b.textContent = a.classList.contains('on') ? 'Сховати відповідь' : 'Показати відповідь';
+}));
+const narrow = () => window.innerWidth < 600;
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+const fmt = x => String(Math.round(x * 10) / 10).replace('.', ',');
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+function btnGroup(host, items, onPick, multi) {
+  host.innerHTML = items.map(([k, t, on]) => `<button class="btn${on ? ' on' : ''}" data-k="${k}">${t}</button>`).join('');
+  host.querySelectorAll('button').forEach(b => b.onclick = () => {
+    if (multi) b.classList.toggle('on'); else host.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    onPick(b.dataset.k, b.classList.contains('on'));
+  });
+}
+
+/* ================= побудова діаграм (SVG) ================= */
+const PAL = ['#2E8B57', '#1F66C1', '#F2B705', '#C9650A', '#7B4FA8', '#3AA6B9', '#8C8C8C', '#6B8E23'];
+const tw = (s, f) => String(s).length * f * 0.56;
+function nice(max) {
+  if (max <= 0) return { top: 1, step: 1 };
+  const raw = max / 5, p = Math.pow(10, Math.floor(Math.log10(raw))), m = raw / p;
+  const s = (m <= 1 ? 1 : m <= 2 ? 2 : m <= 2.5 ? 2.5 : m <= 5 ? 5 : 10) * p;
+  return { top: Math.ceil(max / s - 1e-9) * s, step: s };
+}
+function legendBox(items, pos, avail, F) {
+  if (pos === 'none' || !items.length) return { svg: () => '', w: 0, h: 0 };
+  if (pos === 'right') {
+    const w = Math.min(190, Math.max(...items.map(i => tw(i.name, F))) + 30), h = items.length * (F + 9);
+    return { w, h, svg: (x, y) => items.map((it, i) => `<g data-s="${it.s ?? ''}"><rect x="${x}" y="${y + i * (F + 9)}" width="${F - 2}" height="${F - 2}" rx="2" fill="${it.color}"/><text x="${x + F + 6}" y="${y + i * (F + 9) + F - 3}" font-size="${F}" fill="#33443A">${esc(it.name)}</text></g>`).join('') };
+  }
+  const rows = [[]]; let cur = 0;
+  items.forEach(it => { const w = tw(it.name, F) + F + 22; if (cur + w > avail && rows[rows.length - 1].length) { rows.push([]); cur = 0; } rows[rows.length - 1].push({ ...it, w }); cur += w; });
+  const h = rows.length * (F + 9);
+  return { w: avail, h, svg: (x, y) => rows.map((r, ri) => { const rw = r.reduce((a, b) => a + b.w, 0); let cx = x + (avail - rw) / 2;
+    return r.map(it => { const s = `<g data-s="${it.s ?? ''}"><rect x="${cx}" y="${y + ri * (F + 9)}" width="${F - 2}" height="${F - 2}" rx="2" fill="${it.color}"/><text x="${cx + F + 4}" y="${y + ri * (F + 9) + F - 3}" font-size="${F}" fill="#33443A">${esc(it.name)}</text></g>`; cx += it.w; return s; }).join(''); }).join('') };
+}
+function chart(o) {
+  let W = o.W || 640, H = o.H || 400; const F = o.F || 14;
+  if (narrow()) { W = Math.min(W, 460); H = Math.max(H, 420); }
+  const ser = o.series.map((s, i) => ({ ...s, color: s.color || PAL[i % PAL.length], i }));
+  const P = {}; const add = (k, s) => { (P[k] = P[k] || []).push(s); };
+  const show = k => !(o.hide && o.hide.includes(k));
+  const lab = i => o.labels === true || (o.labels instanceof Set && o.labels.has(i));
+  add('area', `<rect x="1" y="1" width="${W - 2}" height="${H - 2}" rx="6" fill="${o.bg || '#fff'}" stroke="#C9DDD0"/>`);
+  let T = 14;
+  if (o.title && show('title')) { add('title', `<text x="${W / 2}" y="${T + F + 6}" text-anchor="middle" font-size="${F + 6}" font-weight="700" fill="#17261D">${esc(o.title)}</text>`); T += F + 20; }
+  const isPie = o.type === 'pie' || o.type === 'pie2';
+  let legItems = isPie ? o.cats.map((c, i) => ({ name: c, color: (o.pieColors || PAL)[i % PAL.length] })) : ser.map(s => ({ name: s.name, color: s.color, s: s.i }));
+  let pos = show('legend') ? (o.legend || 'right') : 'none';
+  if (pos === 'right' && narrow() && !o.keepRight) pos = 'bottom';
+  const LG = legendBox(legItems, pos, W - 40, F);
+  let R = W - 16, B = H - 12;
+  if (pos === 'right') { R -= LG.w + 14; add('legend', LG.svg(R + 18, T + (H - T - 12 - LG.h) / 2)); }
+  if (pos === 'bottom') { B -= LG.h + 6; add('legend', LG.svg(20, B + 8)); }
+  if (pos === 'top') { add('legend', LG.svg(20, T)); T += LG.h + 8; }
+  if (isPie) return finish(o, W, H, P, pie(o, ser, 16, R, T + 4, B, F, add, lab));
+  if (o.type === 'radar') { radar(o, ser, 16, R, T, B, F, add, lab, show); return finish(o, W, H, P); }
+
+  /* осі */
+  const horiz = o.type === 'bar';
+  const n = o.cats.length;
+  let max;
+  if (o.type === 'stack') max = Math.max(...o.cats.map((_, j) => ser.reduce((a, s) => a + s.data[j], 0)));
+  else if (o.type === 'norm') max = 100;
+  else max = Math.max(...ser.flatMap(s => s.data));
+  const nv = o.type === 'norm' ? { top: 100, step: 20 } : nice(max * (lab(0) || o.labels ? 1.08 : 1));
+  const valTxt = v => o.type === 'norm' ? v + '%' : fmt(v);
+  let L = 16;
+  if (o.yTitle && show('axtitles')) { add('axtitles', `<text transform="translate(${L + F / 2 + 2} ${(T + B) / 2}) rotate(-90)" text-anchor="middle" font-size="${F + 1}" fill="#33443A">${esc(o.yTitle)}</text>`); L += F + 10; }
+  if (o.xTitle && show('axtitles')) { add('axtitles', `<text x="${(L + R) / 2 + 20}" y="${B - 2}" text-anchor="middle" font-size="${F + 1}" fill="#33443A">${esc(o.xTitle)}</text>`); B -= F + 12; }
+  const catW = horiz ? Math.max(...o.cats.map(c => tw(c, F))) + 10 : 0;
+  const valW = horiz ? 0 : Math.max(tw(valTxt(nv.top), F), tw('0', F)) + 10;
+  if (show('vals') || show('cats')) { if (horiz) { L += catW; B -= F + 10; } else { L += valW; B -= F + 12; } }
+  else { L += 6; B -= 6; }
+  T += 8;
+  const span = horiz ? (R - L) : (B - T);
+  const vpos = v => horiz ? L + v / nv.top * span : B - v / nv.top * span;
+  /* сітка й значення осі */
+  let grid = '';
+  for (let v = 0; v <= nv.top + 1e-9; v += nv.step) {
+    const p = vpos(v);
+    grid += horiz ? `<line x1="${p}" x2="${p}" y1="${T}" y2="${B}" stroke="#E3EAE6"/>` : `<line x1="${L}" x2="${R}" y1="${p}" y2="${p}" stroke="#E3EAE6"/>`;
+    if (show('vals')) add('vals', horiz ? `<text x="${p}" y="${B + F + 4}" text-anchor="middle" font-size="${F - 1}" fill="#5C6B62">${valTxt(Math.round(v * 100) / 100)}</text>` : `<text x="${L - 6}" y="${p + F / 2 - 2}" text-anchor="end" font-size="${F - 1}" fill="#5C6B62">${valTxt(Math.round(v * 100) / 100)}</text>`);
+  }
+  add('grid', grid + (horiz ? `<line x1="${L}" x2="${L}" y1="${T}" y2="${B}" stroke="#9AA9A0"/>` : `<line x1="${L}" x2="${R}" y1="${B}" y2="${B}" stroke="#9AA9A0"/>`));
+  const gs = (horiz ? (B - T) : (R - L)) / n;
+  const gpos = j => (horiz ? T : L) + gs * (j + .5);
+  if (show('cats')) o.cats.forEach((c, j) => add('cats', horiz ? `<text x="${L - 6}" y="${gpos(j) + F / 2 - 2}" text-anchor="end" font-size="${F}" fill="#33443A">${esc(c)}</text>` : `<text x="${gpos(j)}" y="${B + F + 6}" text-anchor="middle" font-size="${F}" fill="#33443A">${esc(c)}</text>`));
+  const LF = Math.max(10, F - 2);
+  if (o.type === 'line') {
+    ser.forEach(s => {
+      const pts = s.data.map((v, j) => [gpos(j), vpos(v)]);
+      let g = `<g data-s="${s.i}" style="cursor:pointer"><polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="${s.color}" stroke-width="${s.lw || 3}" stroke-linejoin="round"/>`;
+      if (s.markers !== false) g += pts.map(p => `<circle cx="${p[0]}" cy="${p[1]}" r="${(s.lw || 3) + 1.5}" fill="${s.color}"/>`).join('');
+      g += `<polyline points="${pts.map(p => p.join(',')).join(' ')}" fill="none" stroke="transparent" stroke-width="14"/></g>`;
+      add('data', g);
+      if (lab(s.i)) add('labels', pts.map((p, j) => `<text x="${p[0]}" y="${p[1] - 9}" text-anchor="middle" font-size="${LF}" font-weight="600" fill="#17261D" paint-order="stroke" stroke="#fff" stroke-width="3">${fmt(s.data[j])}</text>`).join(''));
+    });
+  } else {
+    const m = ser.length, stacked = o.type === 'stack' || o.type === 'norm';
+    const inner = gs * (stacked ? .5 : .78), bw = stacked ? inner : inner / m;
+    ser.forEach(s => {
+      let g = `<g data-s="${s.i}" style="cursor:pointer">`, lb = '';
+      o.cats.forEach((_, j) => {
+        let v0 = 0, v = s.data[j];
+        if (stacked) { const tot = ser.reduce((a, t) => a + t.data[j], 0); for (let k = 0; k < s.i; k++) v0 += ser[k].data[j]; if (o.type === 'norm') { v0 = v0 / tot * 100; v = v / tot * 100; } }
+        const off = stacked ? -inner / 2 : -inner / 2 + s.i * bw;
+        const a = vpos(v0), b = vpos(v0 + v), c = gpos(j) + off;
+        if (horiz) g += `<rect x="${a}" y="${c}" width="${Math.max(0, b - a)}" height="${bw - (stacked ? 0 : 1)}" fill="${s.color}"/>`;
+        else g += `<rect x="${c}" y="${b}" width="${bw - (stacked ? 0 : 1)}" height="${Math.max(0, a - b)}" fill="${s.color}"/>`;
+        if (lab(s.i)) {
+          const txt = o.type === 'norm' ? Math.round(v) + '%' : fmt(s.data[j]);
+          if (stacked) { if (Math.abs(a - b) > LF + 2) lb += horiz ? `<text x="${(a + b) / 2}" y="${c + bw / 2 + LF / 2 - 2}" text-anchor="middle" font-size="${LF}" font-weight="600" fill="#fff">${txt}</text>` : `<text x="${c + bw / 2}" y="${(a + b) / 2 + LF / 2 - 2}" text-anchor="middle" font-size="${LF}" font-weight="600" fill="#fff">${txt}</text>`; }
+          else lb += horiz ? `<text x="${b + 4}" y="${c + bw / 2 + LF / 2 - 2}" font-size="${LF}" font-weight="600" fill="#17261D">${txt}</text>` : `<text x="${c + bw / 2}" y="${b - 4}" text-anchor="middle" font-size="${LF}" font-weight="600" fill="#17261D">${txt}</text>`;
+        }
+      });
+      add('data', g + '</g>'); if (lb) add('labels', lb);
+    });
+  }
+  return finish(o, W, H, P);
+}
+function pie(o, ser, L, R, T, B, F, add, lab) {
+  const s = ser[o.pieIdx || 0], vals = s.data, tot = vals.reduce((a, b) => a + b, 0);
+  const cols = o.pieColors || PAL;
+  const arc = (cx, cy, r, a0, a1, col, extra = '') => {
+    if (a1 - a0 >= Math.PI * 2 - 1e-6) return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${col}" stroke="#fff" stroke-width="2" ${extra}/>`;
+    const p = a => [cx + r * Math.cos(a), cy + r * Math.sin(a)];
+    const [x0, y0] = p(a0), [x1, y1] = p(a1);
+    return `<path d="M${cx},${cy} L${x0},${y0} A${r},${r} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${x1},${y1} Z" fill="${col}" stroke="#fff" stroke-width="2" ${extra}/>`;
+  };
+  const labelAt = (cx, cy, r, a0, a1, txt, small) => {
+    const a = (a0 + a1) / 2, rr = small ? r + 16 : r * .64;
+    const x = cx + rr * Math.cos(a), y = cy + rr * Math.sin(a);
+    const anchor = small ? (Math.cos(a) > .2 ? 'start' : Math.cos(a) < -.2 ? 'end' : 'middle') : 'middle';
+    return `<text x="${x}" y="${y + F / 2 - 2}" text-anchor="${anchor}" font-size="${F - 1}" font-weight="600" fill="${small ? '#17261D' : '#fff'}" ${small ? '' : 'paint-order="stroke" stroke="rgba(0,0,0,.25)" stroke-width="2"'}>${txt}</text>`;
+  };
+  const pct = v => fmt(v / tot * 100) + '%';
+  if (o.type === 'pie') {
+    const cx = (L + R) / 2, cy = (T + B) / 2, r = Math.min(R - L, B - T) / 2 - 26;
+    let a = -Math.PI / 2, g = '', lb = '';
+    vals.forEach((v, i) => { const a1 = a + v / tot * Math.PI * 2; g += arc(cx, cy, r, a, a1, cols[i % cols.length]); if (lab(0)) lb += labelAt(cx, cy, r, a, a1, o.pieValues ? fmt(v) : pct(v), (a1 - a) < .5); a = a1; });
+    add('data', g); if (lb) add('labels', lb);
+    return;
+  }
+  /* pie2: маленькі частки - в окрему діаграму */
+  const small = vals.map((v, i) => v / tot < (o.thr || .05) ? i : -1).filter(i => i >= 0);
+  const big = vals.map((v, i) => i).filter(i => !small.includes(i));
+  const other = small.reduce((a, i) => a + vals[i], 0);
+  const w = R - L, cx1 = L + w * .31, cy = (T + B) / 2, r1 = Math.min(w * .28, (B - T) / 2 - 24);
+  const cx2 = L + w * .8, r2 = r1 * .55;
+  const oa = other / tot * Math.PI * 2;
+  let a = oa / 2, g = '', lb = '';
+  big.forEach(i => { const a1 = a + vals[i] / tot * Math.PI * 2; g += arc(cx1, cy, r1, a, a1, cols[i % cols.length]); lb += labelAt(cx1, cy, r1, a, a1, pct(vals[i]), (a1 - a) < .4); a = a1; });
+  g += arc(cx1, cy, r1, -oa / 2, oa / 2, '#B9C6BE'); lb += `<text x="${cx1 + r1 * .66}" y="${cy + F / 2 - 2}" text-anchor="middle" font-size="${F - 1}" font-weight="700" fill="#17261D">Інші ${pct(other)}</text>`;
+  const e1 = [cx1 + r1 * Math.cos(-oa / 2), cy + r1 * Math.sin(-oa / 2)], e2 = [cx1 + r1 * Math.cos(oa / 2), cy + r1 * Math.sin(oa / 2)];
+  g += `<line x1="${e1[0]}" y1="${e1[1]}" x2="${cx2}" y2="${cy - r2}" stroke="#9AA9A0"/><line x1="${e2[0]}" y1="${e2[1]}" x2="${cx2}" y2="${cy + r2}" stroke="#9AA9A0"/>`;
+  let b = -Math.PI / 2;
+  small.forEach(i => { const b1 = b + vals[i] / other * Math.PI * 2; g += arc(cx2, cy, r2, b, b1, cols[i % cols.length]); lb += labelAt(cx2, cy, r2, b, b1, pct(vals[i]), false); b = b1; });
+  add('data', g); if (lab(0)) add('labels', lb);
+}
+function radar(o, ser, L, R, T, B, F, add, lab, show) {
+  const n = o.cats.length, cx = (L + R) / 2, cy = (T + B) / 2 + 4, r = Math.min(R - L, B - T) / 2 - 30;
+  const max = Math.max(...ser.flatMap(s => s.data)), nv = nice(max);
+  const ang = j => -Math.PI / 2 + j * 2 * Math.PI / n;
+  const pt = (j, v) => [cx + v / nv.top * r * Math.cos(ang(j)), cy + v / nv.top * r * Math.sin(ang(j))];
+  let g = '';
+  for (let v = nv.step; v <= nv.top + 1e-9; v += nv.step) g += `<polygon points="${o.cats.map((_, j) => pt(j, v).join(',')).join(' ')}" fill="none" stroke="#E3EAE6"/>`;
+  o.cats.forEach((_, j) => { const [x, y] = pt(j, nv.top); g += `<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="#D3DED7"/>`; });
+  add('grid', g);
+  if (show('cats')) o.cats.forEach((c, j) => { const [x, y] = pt(j, nv.top * 1.14); add('cats', `<text x="${x}" y="${y + F / 2 - 2}" text-anchor="middle" font-size="${F}" fill="#33443A">${esc(c)}</text>`); });
+  ser.forEach(s => { const pts = s.data.map((v, j) => pt(j, v).join(',')).join(' ');
+    add('data', `<g data-s="${s.i}"><polygon points="${pts}" fill="${s.color}" fill-opacity=".12" stroke="${s.color}" stroke-width="3"/></g>`);
+    if (lab(s.i)) add('labels', s.data.map((v, j) => { const [x, y] = pt(j, v); return `<text x="${x}" y="${y - 6}" text-anchor="middle" font-size="${F - 2}" font-weight="600" fill="#17261D">${fmt(v)}</text>`; }).join(''));
+  });
+}
+const ORDER = ['area', 'grid', 'vals', 'cats', 'data', 'labels', 'axtitles', 'title', 'legend'];
+function finish(o, W, H, P) {
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(o.title || 'Діаграма')}">` + ORDER.filter(k => P[k]).map(k => `<g data-part="${k}">${P[k].join('')}</g>`).join('') + '</svg>';
+}
+function render(host, o) {
+  host.innerHTML = chart(o);
+  if (o.hl) {
+    const svg = host.querySelector('svg');
+    const parts = o.hl === 'cats' ? ['cats'] : [o.hl];
+    svg.querySelectorAll('g[data-part]').forEach(g => { if (!parts.includes(g.dataset.part) && g.dataset.part !== 'area' && o.hl !== 'area') g.style.opacity = .28; });
+    parts.forEach(pn => { const g = svg.querySelector(`g[data-part="${pn}"]`); if (!g) return;
+      const bb = g.getBBox(), pad = pn === 'area' ? -2 : 5;
+      svg.insertAdjacentHTML('beforeend', `<rect x="${bb.x - pad}" y="${bb.y - pad}" width="${bb.width + 2 * pad}" height="${bb.height + 2 * pad}" rx="6" fill="none" stroke="#F2B705" stroke-width="4"/>`); });
+  }
+}
+
+/* ================= 2. Як читати діаграму ================= */
+const TOURS = {
+  title: 'Продаж туристичних путівок', cats: ['квітень', 'травень', 'червень'],
+  series: [['Одеса', [12, 45, 120]], ['Херсон', [3, 10, 35]], ['Бердянськ', [4, 13, 60]], ['Хургада', [112, 135, 68]], ['Шарм-Ель-Шейх', [126, 145, 80]], ['Анталія', [68, 167, 210]], ['Кемер', [45, 180, 230]]].map(([name, data]) => ({ name, data })),
+};
+const tourChart = extra => ({ type: 'col', W: 700, H: 420, F: 14, labels: true, ...TOURS, ...extra });
+let hlPart = 'title';
+btnGroup($('#partBtns'), [['title', 'Назва діаграми', 1], ['legend', 'Легенда'], ['data', 'Значення даних'], ['labels', 'Підписи значень даних'], ['cats', 'Категорії даних (підписи на горизонтальній осі)'], ['area', 'Область діаграми']], k => { hlPart = k; redraw(); });
+const hidden = new Set();
+btnGroup($('#togBtns'), [['title', 'Назва діаграми', 1], ['legend', 'Легенда', 1], ['labels', 'Підписи даних', 1], ['cats', 'Підписи на осях', 1]], (k, on) => { if (on) hidden.delete(k); else hidden.add(k); redraw(); }, true);
+
+/* вікторина */
+function quiz(host, items, chartFn) {
+  let list, idx, score;
+  const start = () => { list = shuffle(items); idx = 0; score = 0; show(); };
+  const show = () => {
+    if (idx >= list.length) { host.innerHTML = `<div class="qcard"><div class="qtext">Правильних відповідей: <span class="score">${score} з ${list.length}</span></div><button class="btn" id="${host.id}_re">Ще раз</button></div>`; host.querySelector('button').onclick = start; return; }
+    const q = list[idx];
+    host.innerHTML = `<div class="qcard"><div class="qnum">Питання ${idx + 1} з ${list.length}</div><div class="qtext">${q.q}</div><div class="opts">${shuffle(q.o).map(x => `<button>${x}</button>`).join('')}</div><p class="why"></p><div class="qnav"><button class="btn" hidden>Далі</button></div></div>`;
+    const why = host.querySelector('.why'), next = host.querySelector('.qnav .btn');
+    host.querySelectorAll('.opts button').forEach(b => b.onclick = () => {
+      const ok = b.textContent === q.a; if (ok) score++;
+      host.querySelectorAll('.opts button').forEach(x => { x.disabled = true; if (x.textContent === q.a) x.classList.add('ok'); });
+      if (!ok) b.classList.add('bad');
+      why.className = 'why ' + (ok ? 'ok' : 'bad'); why.textContent = (ok ? 'Правильно. ' : 'Ні. ') + q.why;
+      next.hidden = false; next.textContent = idx === list.length - 1 ? 'Результат' : 'Далі'; next.focus();
+    });
+    next.onclick = () => { idx++; show(); };
+  };
+  start();
+}
+quiz($('#q1'), [
+  { q: 'До якого міста у квітні продали найбільше путівок?', o: ['Хургада', 'Шарм-Ель-Шейх', 'Анталія', 'Кемер'], a: 'Шарм-Ель-Шейх', why: 'У групі «квітень» найвищий стовпець - Шарм-Ель-Шейх, 126 путівок.' },
+  { q: 'До якого міста в червні продали найменше путівок?', o: ['Херсон', 'Бердянськ', 'Одеса', 'Хургада'], a: 'Херсон', why: 'У групі «червень» найнижчий стовпець - Херсон, 35 путівок.' },
+  { q: 'Як змінювався продаж путівок до Кемера?', o: ['зростав щомісяця', 'зменшувався щомісяця', 'спочатку зростав, потім зменшувався', 'не змінювався'], a: 'зростав щомісяця', why: 'Путівок до Кемера продали 45, потім 180, потім 230 - щомісяця більше.' },
+  { q: 'Як змінювався продаж путівок до Хургади?', o: ['зростав щомісяця', 'зменшувався щомісяця', 'спочатку зростав, потім зменшувався', 'не змінювався'], a: 'спочатку зростав, потім зменшувався', why: 'До Хургади продали 112, потім 135, а в червні лише 68 путівок.' },
+  { q: 'Яку найбільшу кількість путівок продали в одне місто за місяць?', o: ['180', '210', '230', '250'], a: '230', why: 'Найвищий стовпець на діаграмі - Кемер у червні, 230 путівок.' },
+  { q: 'У якому місяці до Одеси продали найбільше путівок?', o: ['квітень', 'травень', 'червень'], a: 'червень', why: 'Стовпці Одеси: 12, 45 і 120 - найвищий у червні.' },
+], null);
+
+/* ================= 3. Типи діаграм ================= */
+const CARS = { title: 'Продаж автомобілів', cats: ['I квартал', 'II квартал', 'III квартал', 'IV квартал'],
+  series: [['Іванов', [23, 20, 13, 16]], ['Сергієнко', [8, 12, 10, 14]], ['Ткачук', [18, 14, 13, 10]], ['Маслянко', [11, 6, 7, 9]]].map(([name, data]) => ({ name, data })) };
+const TYPES = {
+  col: ['Стовпчаста', 'Порівнює значення в кожному кварталі й показує зміну даних за період.'],
+  stack: ['З накопиченням', 'Висота стовпця - загальний продаж у кварталі, частини - внесок кожного консультанта.'],
+  norm: ['Нормована з накопиченням', 'Кожен стовпець - 100%: видно частку кожного консультанта в продажах кварталу.'],
+  bar: ['Лінійчата', 'Горизонтальні стовпці: зручно порівнювати окремі компоненти.'],
+  pie: ['Кругова', 'Лише один ряд даних: частка кожного консультанта в продажах обраного кварталу.'],
+  line: ['Лінія', 'Тенденції: продажі Ткачука зменшувалися протягом року, а інші консультанти в IV кварталі продали більше, ніж у III.'],
+  radar: ['Пелюсткова', 'Кожен квартал має власну вісь. Найбільша площа - найбільші продажі загалом.'],
+};
+let ctype = 'col', cq = 0;
+btnGroup($('#typeBtns'), Object.entries(TYPES).map(([k, v], i) => [k, v[0], i === 0]), k => { ctype = k; redraw(); });
+btnGroup($('#qBtns'), CARS.cats.map((c, i) => [i, c, i === 0]), k => { cq = +k; redraw(); });
+function srcTable() {
+  const L = 'ABCDE';
+  let h = `<tr><th></th>${[...L].map(x => `<th>${x}</th>`).join('')}</tr><tr><th>1</th><td class="h"></td>${CARS.cats.map((c, j) => `<td class="h" data-c="${j}">${c}</td>`).join('')}</tr>`;
+  CARS.series.forEach((s, i) => { h += `<tr><th>${i + 2}</th><td class="h">${s.name}</td>${s.data.map((v, j) => `<td data-c="${j}">${v}</td>`).join('')}</tr>`; });
+  $('#src').innerHTML = h;
+  $('#src').querySelectorAll('td[data-c]').forEach(td => { td.classList.toggle('dim', ctype === 'pie' && +td.dataset.c !== cq); td.classList.toggle('pick', ctype === 'pie' && +td.dataset.c === cq); });
+}
+const POP = { title: 'Як учні добираються до школи', cats: ['Пішки', 'Автобус', 'Авто батьків', 'Тролейбус', 'Велосипед', 'Самокат', 'Таксі'], series: [{ name: 'Учні', data: [180, 95, 60, 40, 12, 8, 5] }] };
+let ptype = 'pie';
+btnGroup($('#pieBtns'), [['pie', 'Кругова', 1], ['pie2', 'Кругова з вторинною']], k => { ptype = k; redraw(); });
+quiz($('#q2'), [
+  { q: 'Кількість учнів у кожному класі школи', o: ['Стовпчаста', 'Кругова', 'Лінія', 'Пелюсткова'], a: 'Стовпчаста', why: 'Порівнюємо окремі значення - висоти стовпців.' },
+  { q: 'Температура повітря щодня протягом місяця', o: ['Стовпчаста', 'Кругова', 'Лінія', 'Пелюсткова'], a: 'Лінія', why: 'Графік показує, як дані змінюються за однакові проміжки часу.' },
+  { q: 'Частка кожного предмета в розкладі уроків на тиждень', o: ['Стовпчаста', 'Кругова', 'Лінія', 'Пелюсткова'], a: 'Кругова', why: 'Предмети - частини одного цілого (усіх уроків тижня), ряд даних один.' },
+  { q: 'Кількість голів кожної команди в шкільному турнірі', o: ['Стовпчаста', 'Кругова', 'Лінія', 'Пелюсткова'], a: 'Стовпчаста', why: 'Команди - окремі категорії, їхні результати порівнюють за висотою стовпців.' },
+  { q: 'Кількість відвідувачів сайту щогодини протягом доби', o: ['Стовпчаста', 'Кругова', 'Лінія', 'Пелюсткова'], a: 'Лінія', why: 'Важлива тенденція зміни даних за однакові проміжки часу.' },
+  { q: 'Вміст вітамінів A, B, C, D, E у трьох сортах овочів - який сорт найкорисніший загалом', o: ['Стовпчаста', 'Кругова', 'Лінія', 'Пелюсткова'], a: 'Пелюсткова', why: 'Кожен вітамін має свою вісь, а сорт з найбільшою площею - найкорисніший.' },
+  { q: 'Частки білків, жирів і вуглеводів у шкільному обіді', o: ['Стовпчаста', 'Кругова', 'Лінія', 'Пелюсткова'], a: 'Кругова', why: 'Це складові одного цілого - видно внесок кожної частини.' },
+  { q: 'Результати двох класів з п\'яти вправ (біг, стрибки, підтягування…) - який клас сильніший загалом', o: ['Стовпчаста', 'Кругова', 'Лінія', 'Пелюсткова'], a: 'Пелюсткова', why: 'Пелюсткова діаграма порівнює загальні значення кількох наборів даних.' },
+]);
+
+/* ================= 4. Редактор діаграм ================= */
+const TEMP = { cats: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Нд'], series: [{ name: 'Київ', data: [3, 5, 4, 7, 8, 6, 9] }, { name: 'Львів', data: [2, 3, 5, 4, 6, 7, 5] }] };
+const ST = { type: 'line', title: 'Температура повітря', xTitle: '', yTitle: '', legend: 'right', bg: '#FFFFFF',
+  colors: ['#2E8B57', '#1F66C1'], labels: new Set(), lw: [3, 3], mk: [true, true], sel: 0 };
+const BG = ['#FFFFFF', '#FFF8E6', '#EEF6F1', '#EAF1FB', '#F4F4F4'];
+const SC = ['#2E8B57', '#1F66C1', '#F2B705', '#C9650A', '#7B4FA8', '#8C8C8C', '#17261D'];
+function editorChart() {
+  return { type: ST.type, W: 640, H: 400, F: 15, title: ST.title, xTitle: ST.xTitle, yTitle: ST.yTitle, legend: ST.legend, bg: ST.bg, labels: ST.labels, keepRight: false,
+    cats: TEMP.cats, series: TEMP.series.map((s, i) => ({ ...s, color: ST.colors[i], lw: ST.lw[i], markers: ST.mk[i] })) };
+}
+function drawEditor() {
+  const host = $('#c3svg'); host.innerHTML = chart(editorChart());
+  const svg = host.querySelector('svg');
+  svg.querySelectorAll('g[data-part="data"] g[data-s], g[data-part="legend"] g[data-s]').forEach(g => g.addEventListener('dblclick', e => { e.stopPropagation();
+    if (g.closest('[data-part="legend"]')) openSec('d_legend'); else { ST.sel = +g.dataset.s; syncPanel(); openSec('d_series'); } }));
+  const tg = svg.querySelector('g[data-part="title"]'); if (tg) tg.addEventListener('dblclick', e => { e.stopPropagation(); $('#e_tsel').value = 'title'; syncPanel(); openSec('d_titles'); });
+  const ag = svg.querySelector('g[data-part="axtitles"]'); if (ag) ag.addEventListener('dblclick', e => { e.stopPropagation(); openSec('d_titles'); });
+  svg.addEventListener('dblclick', () => openSec('d_style'));
+}
+function openSec(id) {
+  $$('#pp1, #pp2').forEach(p => p.classList.toggle('on', p.id === 'pp2'));
+  $$('.ptabs button').forEach(b => b.classList.toggle('on', b.dataset.pt === 'pp2'));
+  $$('.panel details').forEach(d => d.open = d.id === id);
+}
+$$('.panel details').forEach(d => d.addEventListener('toggle', () => { if (d.open) $$('.panel details').forEach(x => { if (x !== d) x.open = false; }); }));
+$$('.ptabs button').forEach(b => b.onclick = () => { $$('.ptabs button').forEach(x => x.classList.toggle('on', x === b)); $$('.ppage').forEach(p => p.classList.toggle('on', p.id === b.dataset.pt)); });
+function mini(host, items, cur, onPick) {
+  host.innerHTML = items.map(([k, t]) => `<button data-k="${k}" class="${String(k) === String(cur) ? 'on' : ''}">${t}</button>`).join('');
+  host.querySelectorAll('button').forEach(b => b.onclick = () => { onPick(b.dataset.k); });
+}
+function swatches(host, cols, cur, onPick) {
+  host.innerHTML = cols.map(c => `<button style="background:${c}" data-c="${c}" class="${c === cur ? 'on' : ''}" aria-label="${c}"></button>`).join('');
+  host.querySelectorAll('button').forEach(b => b.onclick = () => onPick(b.dataset.c));
+}
+function syncPanel() {
+  mini($('#e_type'), [['col', 'Стовпчаста'], ['line', 'Лінія'], ['bar', 'Лінійчата']], ST.type, k => { ST.type = k; syncPanel(); drawEditor(); });
+  swatches($('#e_bg'), BG, ST.bg, c => { ST.bg = c; syncPanel(); drawEditor(); });
+  $('#e_ttext').value = ST[$('#e_tsel').value];
+  $('#e_ssel').innerHTML = TEMP.series.map((s, i) => `<option value="${i}" ${i === ST.sel ? 'selected' : ''}>${s.name}</option>`).join('');
+  swatches($('#e_scol'), SC, ST.colors[ST.sel], c => { ST.colors[ST.sel] = c; syncPanel(); drawEditor(); });
+  $('#e_lbl').checked = ST.labels.has(ST.sel);
+  $('#e_lineopts').hidden = ST.type !== 'line';
+  mini($('#e_lw'), [[1, '1'], [2, '2'], [3, '3'], [5, '5']], ST.lw[ST.sel], k => { ST.lw[ST.sel] = +k; syncPanel(); drawEditor(); });
+  $('#e_mk').checked = ST.mk[ST.sel];
+  $('#e_leg').value = ST.legend;
+}
+$('#e_tsel').onchange = syncPanel;
+$('#e_ttext').oninput = () => { ST[$('#e_tsel').value] = $('#e_ttext').value; drawEditor(); };
+$('#e_ssel').onchange = () => { ST.sel = +$('#e_ssel').value; syncPanel(); };
+$('#e_lbl').onchange = () => { if ($('#e_lbl').checked) ST.labels.add(ST.sel); else ST.labels.delete(ST.sel); drawEditor(); };
+$('#e_mk').onchange = () => { ST.mk[ST.sel] = $('#e_mk').checked; drawEditor(); };
+$('#e_leg').onchange = () => { ST.legend = $('#e_leg').value; drawEditor(); };
+/* контекстне меню */
+const ctx = $('#ctx');
+ctx.innerHTML = [['pp1', 'Тип діаграми'], ['d_style', 'Стиль діаграми'], ['d_titles', 'Заголовки діаграми й осей'], ['d_series', 'Ряд даних'], ['d_legend', 'Легенда']].map(([k, t]) => `<button data-k="${k}">${t}</button>`).join('');
+ctx.querySelectorAll('button').forEach(b => b.onclick = () => { ctx.classList.remove('on');
+  if (b.dataset.k === 'pp1') { $$('.ppage').forEach(p => p.classList.toggle('on', p.id === 'pp1')); $$('.ptabs button').forEach(x => x.classList.toggle('on', x.dataset.pt === 'pp1')); } else openSec(b.dataset.k); });
+$('#c3').addEventListener('contextmenu', e => { e.preventDefault(); const r = $('#c3').getBoundingClientRect();
+  ctx.style.left = Math.min(e.clientX - r.left, r.width - 220) + 'px'; ctx.style.top = (e.clientY - r.top) + 'px'; ctx.classList.add('on'); });
+document.addEventListener('click', e => { if (!ctx.contains(e.target)) ctx.classList.remove('on'); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') ctx.classList.remove('on'); });
+
+/* ================= малювання видимих діаграм ================= */
+function redraw() {
+  if ($('#t1').classList.contains('on')) {
+    if ($('#s1a').classList.contains('on')) render($('#c1a'), tourChart({ hl: hlPart }));
+    if ($('#s1b').classList.contains('on')) render($('#c1b'), tourChart({ hide: [...hidden].flatMap(k => k === 'cats' ? ['cats', 'vals'] : [k]) }));
+    if ($('#s1c').classList.contains('on')) render($('#c1c'), tourChart({}));
+  }
+  if ($('#t2').classList.contains('on')) {
+    if ($('#s2a').classList.contains('on')) {
+      $('#qBtns').hidden = ctype !== 'pie';
+      $('#typeCap').textContent = TYPES[ctype][1];
+      srcTable();
+      const o = { ...CARS, type: ctype, W: 600, H: 380, F: 14, labels: ctype === 'pie' || ctype === 'stack' || ctype === 'norm' };
+      if (ctype === 'pie') { o.cats = CARS.series.map(s => s.name); o.series = [{ name: CARS.cats[cq], data: CARS.series.map(s => s.data[cq]) }]; o.title = 'Продаж автомобілів, ' + CARS.cats[cq]; o.pieValues = true; }
+      render($('#c2a'), o);
+    }
+    if ($('#s2b').classList.contains('on')) render($('#c2b'), { ...POP, type: ptype, W: 680, H: 400, F: 14, labels: true, thr: .05 });
+  }
+  if ($('#t3').classList.contains('on')) drawEditor();
+}
+syncPanel();
+let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(redraw, 150); });
+redraw();
+</script>
+</body>
+</html>
