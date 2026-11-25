@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Інформаційна модель і комп'ютерний експеримент</title>
+<style>
+  :root {
+    --forest: #1E5E3A; --leaf: #2E8B57; --paper: #F2F8F4; --bench: #E2EFE6; --ink: #17261D;
+    --sun: #F2B705; --red: #C0392B; --muted: #4F6357; --line: #C9DDD0;
+    --blue: #1F66C1; --blue-soft: #E2EDFB; --leaf-soft: #E3F3EA; --red-soft: #FBE6E4; --sun-soft: #FFF4CC;
+    --display: "Bahnschrift", "DIN Alternate", "Segoe UI Semibold", "Arial Narrow", sans-serif;
+    --text: "Segoe UI", "Noto Sans", Roboto, Arial, sans-serif;
+    --mono: Consolas, "Cascadia Mono", "Courier New", monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--text); font-size: 20px; line-height: 1.5; }
+  :focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; }
+  [hidden] { display: none !important; }
+
+  /* ---------- шапка-плівка ---------- */
+  header { background: var(--forest); color: #fff; }
+  .title { max-width: 1060px; margin: 0 auto; padding: 22px 20px 6px; display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+  .title h1 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 2.1rem; line-height: 1.1; letter-spacing: -.01em; }
+  .title span { font-family: var(--display); color: #A8D5B8; font-size: 1.05rem; }
+  .strip { position: relative; padding: 22px 0; overflow-x: auto; scrollbar-width: thin; }
+  .strip::before, .strip::after { content: ""; position: absolute; left: 0; right: 0; height: 10px;
+    background: radial-gradient(circle at 9px 5px, var(--paper) 3.2px, transparent 3.6px) 0 0 / 22px 10px repeat-x; min-width: 1100px; }
+  .strip::before { top: 6px; } .strip::after { bottom: 6px; }
+  nav { display: flex; gap: 10px; max-width: 1060px; margin: 0 auto; padding: 0 20px; min-width: max-content; }
+  nav button { font: inherit; cursor: pointer; border: 0; padding: 8px 8px 10px; flex: 1 1 0; min-width: 150px; text-align: left;
+    background: #163F28; color: #CFE6D7; border-radius: 4px; display: flex; flex-direction: column; gap: 8px; }
+  nav .thumb { position: relative; height: 76px; border-radius: 2px; overflow: hidden; background: #0F2E1C; display: grid; place-items: center; font-size: 2.4rem; }
+  nav .cap { display: flex; gap: 8px; align-items: baseline; font-size: .86rem; line-height: 1.25; }
+  nav .cap b { font-family: var(--display); color: var(--sun); font-weight: 600; }
+  nav button.on { background: var(--paper); color: var(--ink); }
+  nav button.on .cap b { color: var(--leaf); }
+  nav button:not(.on) .thumb { opacity: .8; }
+  nav button:not(.on):hover { background: #1F5536; }
+
+  /* ---------- загальне ---------- */
+  main { max-width: 1060px; margin: 0 auto; padding: 30px 20px 60px; }
+  section { display: none; } section.on { display: block; }
+  h2 { font-family: var(--display); font-weight: 600; font-size: 1.8rem; line-height: 1.15; color: var(--forest); margin: 0 0 12px; }
+  h3 { font-family: var(--display); font-weight: 600; font-size: 1.2rem; color: var(--forest); margin: 0 0 8px; }
+  p { margin: 0 0 10px; max-width: 72ch; }
+  .lead { font-size: 1.08rem; }
+  dfn { font-style: normal; font-weight: 700; color: var(--forest); }
+  .def { margin: 14px 0; padding: 12px 18px; background: #fff; border-radius: 6px; max-width: 76ch; box-shadow: inset 4px 0 0 var(--leaf); }
+  .btn { font: inherit; font-size: .95rem; font-weight: 600; cursor: pointer; border-radius: 8px; padding: 6px 14px;
+    border: 2px solid var(--leaf); background: #fff; color: var(--forest); }
+  .btn:hover { background: #E6F3EA; }
+  .btn.on, .btn.main { background: var(--leaf); color: #fff; }
+  .btn.main:hover { background: var(--forest); }
+  .btn:disabled { opacity: .45; cursor: default; }
+  .theory { margin-bottom: 26px; }
+  .bench { background: var(--bench); border-radius: 14px; padding: 18px 22px 20px; margin-bottom: 22px; }
+  .hint { margin: 0 0 12px; color: var(--muted); font-size: .92rem; }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+
+  /* цілі */
+  .goals { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--forest); max-width: 860px; }
+  .goals li { border-bottom: 1px solid var(--line); }
+  .goals button { font: inherit; width: 100%; display: grid; grid-template-columns: 70px 1fr auto; gap: 16px; align-items: center;
+    padding: 14px 6px; background: none; border: 0; text-align: left; cursor: pointer; color: var(--ink); }
+  .goals button:hover { background: #E6F3EA; }
+  .goals .ico { font-size: 2.2rem; text-align: center; }
+  .goals .gtxt { font-size: 1.1rem; }
+  .goals .go { font-family: var(--display); color: var(--leaf); font-weight: 600; white-space: nowrap; }
+
+  /* факти в колонках */
+  .facts { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 14px 0; max-width: 980px; margin-top: 10px; }
+  .facts > div { padding: 2px 20px; border-left: 3px solid var(--leaf); }
+  .facts > div > b { display: block; font-family: var(--display); font-weight: 600; color: var(--forest); font-size: 1.05rem; margin-bottom: 2px; }
+  .facts span { font-size: .93rem; }
+
+  /* підсторінки */
+  .subtabs { display: flex; flex-wrap: wrap; gap: 0; margin: 0 0 14px; border-bottom: 2px solid var(--leaf); }
+  .subtabs button { font: 600 .98rem var(--display); cursor: pointer; border: 0; background: transparent; color: var(--muted);
+    padding: 8px 16px; border-radius: 8px 8px 0 0; margin-bottom: -2px; border-bottom: 2px solid transparent; }
+  .subtabs button:hover { color: var(--forest); background: #D5E8DC; }
+  .subtabs button.on { background: var(--leaf); color: #fff; border-bottom-color: var(--leaf); }
+  .sub { display: none; } .sub.on { display: block; }
+
+  /* модель магазину */
+  .model { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .mpart { background: #fff; border-radius: 10px; padding: 10px 14px; border: 2px solid transparent; transition: border-color .2s, opacity .2s, background .2s; }
+  .mpart h4 { margin: 0 0 6px; font: 600 1rem var(--display); color: var(--forest); }
+  .mpart ul { margin: 0; padding-left: 18px; font-size: .9rem; }
+  .model.focus .mpart { opacity: .35; }
+  .model.focus .mpart.pick { opacity: 1; border-color: var(--sun); background: var(--sun-soft); }
+  .mexplain { margin-top: 10px; min-height: 3em; font-size: .95rem; }
+
+  /* етапи */
+  .steps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-bottom: 12px; }
+  .steps button { font: inherit; cursor: pointer; border: 2px solid var(--line); background: #fff; border-radius: 10px; padding: 8px 6px; text-align: center; font-size: .85rem; color: var(--ink); line-height: 1.25; }
+  .steps button b { display: block; font: 600 1.4rem var(--display); color: var(--leaf); }
+  .steps button.on { border-color: var(--leaf); background: var(--leaf-soft); }
+  .steps button.done { border-color: var(--leaf); }
+  .stepcard { background: #fff; border-radius: 10px; padding: 12px 18px; box-shadow: inset 4px 0 0 var(--leaf); min-height: 5.5em; }
+
+  /* ланцюжок подій */
+  .chain { display: flex; flex-wrap: nowrap; align-items: center; gap: 6px; margin: 10px 0; }
+  .node { background: #fff; border: 2px solid var(--line); border-radius: 10px; padding: 8px 12px; font-size: .92rem; flex: 1 1 0; min-width: 0; transition: all .35s; }
+  .node.ind { border-style: dashed; }
+  .node.lit { border-color: var(--leaf); background: var(--leaf-soft); box-shadow: 0 0 0 3px rgba(46,139,87,.2); }
+  .node.lit.ind { border-color: var(--blue); background: var(--blue-soft); box-shadow: 0 0 0 3px rgba(31,102,193,.2); }
+  .arr { color: var(--line); font-size: 1.3rem; transition: color .35s; }
+  .arr.lit { color: var(--leaf); }
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: .85rem; color: var(--muted); }
+  .legend i { display: inline-block; width: 22px; height: 14px; border-radius: 4px; vertical-align: -2px; margin-right: 6px; border: 2px solid var(--leaf); background: var(--leaf-soft); }
+  .legend i.ind { border: 2px dashed var(--blue); background: var(--blue-soft); }
+  .log { font-size: .92rem; min-height: 1.5em; color: var(--forest); font-weight: 600; }
+
+  /* таблиці */
+  .ftable { border-collapse: collapse; width: 100%; max-width: 940px; margin: 6px 0 4px; font-size: .9rem; background: #fff; }
+  .ftable th { text-align: left; font-family: var(--display); font-weight: 600; color: #fff; background: var(--forest); padding: 7px 12px; }
+  .ftable td { padding: 7px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .ftable td:first-child { font-weight: 700; color: var(--forest); }
+
+  /* способи (акордеон) */
+  .ways { max-width: 900px; border-top: 1px solid var(--line); }
+  .ways details { border-bottom: 1px solid var(--line); }
+  .ways summary { cursor: pointer; padding: 9px 4px; font-weight: 600; color: var(--forest); list-style: none; }
+  .ways summary::before { content: "›"; display: inline-block; width: 18px; color: var(--muted); transition: transform .2s; }
+  .ways details[open] summary::before { transform: rotate(90deg); }
+  .ways details > div { padding: 0 4px 10px 22px; font-size: .95rem; }
+
+  /* клітинки з числами */
+  .ctrls { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 10px 16px; margin-bottom: 12px; }
+  .ncell { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px 10px; }
+  .nlab { display: flex; align-items: center; gap: 8px; font-size: .92rem; font-weight: 600; color: var(--forest); margin-bottom: 6px; }
+  .addr { font: 600 .78rem var(--mono); color: var(--muted); background: #EDF2EF; border: 1px solid var(--line); border-radius: 4px; padding: 0 6px; }
+  .nrow { display: inline-flex; align-items: stretch; border: 2px solid var(--leaf); border-radius: 8px; overflow: hidden; }
+  .nrow input { font: 600 1.05rem var(--mono); width: 5ch; text-align: center; border: 0; padding: 4px 2px; color: var(--ink); -moz-appearance: textfield; appearance: textfield; }
+  .nrow input::-webkit-outer-spin-button, .nrow input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .pm { font: 700 1.1rem var(--text); width: 40px; border: 0; background: var(--leaf-soft); color: var(--forest); cursor: pointer; }
+  .pm:hover { background: #CDE8D7; }
+  .quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .quick button { font: 600 .85rem var(--mono); padding: 3px 10px; border-radius: 6px; border: 1.5px solid var(--line); background: #fff; color: var(--forest); cursor: pointer; }
+  .quick button.on { background: var(--leaf); border-color: var(--leaf); color: #fff; }
+  .stage { background: #fff; border-radius: 10px; padding: 6px; }
+  .stage svg { display: block; width: 100%; height: auto; font-family: var(--text); }
+  .note { margin-top: 10px; padding: 8px 14px; border-radius: 8px; font-size: .93rem; }
+  .note.warn { background: var(--red-soft); color: var(--red); }
+  .note.ok { background: var(--leaf-soft); color: var(--forest); }
+  .runs { border-collapse: collapse; background: #fff; font-size: .85rem; margin-top: 12px; width: 100%; max-width: 620px; }
+  .runs th, .runs td { border: 1px solid var(--line); padding: 4px 10px; text-align: center; }
+  .runs th { background: #EDF2EF; color: var(--muted); font-weight: 600; }
+  .runs tr.best td { background: var(--sun-soft); font-weight: 700; }
+
+  /* питання */
+  .quiz { margin-top: 14px; max-width: 760px; }
+  .qcard { background: #fff; border-radius: 10px; padding: 14px 18px; border-top: 4px solid var(--leaf); }
+  .qnum { font: 600 .85rem var(--display); color: var(--muted); margin-bottom: 4px; }
+  .qtext { font-weight: 600; margin-bottom: 10px; }
+  .opts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .opts button { font: inherit; font-size: .95rem; cursor: pointer; padding: 6px 14px; border-radius: 8px; border: 2px solid var(--line); background: #fff; color: var(--ink); }
+  .opts button:hover:not(:disabled) { border-color: var(--leaf); }
+  .opts button.ok { border-color: var(--leaf); background: var(--leaf-soft); color: var(--forest); font-weight: 700; }
+  .opts button.bad { border-color: var(--red); background: var(--red-soft); color: var(--red); }
+  .opts button:disabled { cursor: default; }
+  .why { margin: 10px 0 0; font-size: .93rem; min-height: 1.4em; }
+  .why.ok { color: var(--forest); } .why.bad { color: var(--red); }
+  .qnav { display: flex; gap: 10px; align-items: center; margin-top: 12px; }
+  .score { font-weight: 700; color: var(--forest); }
+
+  @media (max-width: 860px) {
+    .facts, .ctrls { grid-template-columns: 1fr; }
+    .model { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .steps { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  }
+  @media (max-width: 600px) {
+    html, body { font-size: 17px; }
+    .title h1 { font-size: 1.45rem; }
+    nav button { min-width: 120px; } nav .thumb { height: 54px; font-size: 1.8rem; }
+    main { padding-top: 22px; }
+    .bench { padding: 14px 10px; }
+    .goals button { grid-template-columns: 44px 1fr; } .goals .go { display: none; }
+    .subtabs button { padding: 7px 10px; font-size: .9rem; }
+    .model { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4px; }
+    .steps button { font-size: 0; padding: 6px 2px; } .steps button b { font-size: 1.2rem; }
+    .chain { flex-wrap: wrap; } .node { flex: 1 1 100%; } .chain .arr { transform: rotate(90deg); flex: 1 1 100%; text-align: center; line-height: 1; }
+    .ftable td, .ftable th { padding: 6px; }
+    .stage svg text { font-size: 24px; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="title"><h1>Інформаційна модель і комп'ютерний експеримент</h1><span>Інформатика, 8 клас, урок №17</span></div>
+  <div class="strip">
+    <nav aria-label="Частини уроку">
+      <button class="on" data-tab="t0"><span class="thumb">🎯</span><span class="cap"><b>1</b>Мета уроку</span></button>
+      <button data-tab="t1"><span class="thumb">🧩</span><span class="cap"><b>2</b>Що таке інформаційна модель</span></button>
+      <button data-tab="t2"><span class="thumb">⛓️</span><span class="cap"><b>3</b>Як події впливають на модель</span></button>
+      <button data-tab="t3"><span class="thumb">🔬</span><span class="cap"><b>4</b>Причина і наслідок</span></button>
+      <button data-tab="t4"><span class="thumb">🖥️</span><span class="cap"><b>5</b>Комп'ютерне моделювання</span></button>
+      <button data-tab="t5"><span class="thumb">🚀</span><span class="cap"><b>6</b>Комп'ютерний експеримент</span></button>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ===== 1. Мета ===== -->
+  <section id="t0" class="on">
+    <h2>Сьогодні на уроці ми з вами:</h2>
+    <ul class="goals">
+      <li><button data-go="t1"><span class="ico">🧩</span><span class="gtxt">з'ясуємо, що таке інформаційна модель;</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t2"><span class="ico">⛓️</span><span class="gtxt">дізнаємось, як події впливають на модель;</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t3"><span class="ico">🔬</span><span class="gtxt">розглянемо, як підтвердити причинно-наслідковий зв'язок у готовій моделі;</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t4"><span class="ico">📈</span><span class="gtxt">дізнаємось, як вивчити результати та ризики зміни стану моделі внаслідок зміни значень властивостей;</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t4"><span class="ico">🖥️</span><span class="gtxt">з'ясуємо, для чого використовується комп'ютерне моделювання;</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t5"><span class="ico">🚀</span><span class="gtxt">розглянемо, як реалізовують комп'ютерний експеримент.</span><span class="go">Відкрити</span></button></li>
+    </ul>
+  </section>
+
+  <!-- ===== 2. Інформаційна модель ===== -->
+  <section id="t1">
+    <div class="theory">
+      <h2>Що таке інформаційна модель?</h2>
+      <div class="def"><dfn>Інформаційна модель</dfn> - це набір даних, що відображає структуру та функціонування реальної системи або процесу.</div>
+      <p>Вона складається з <b>об'єктів</b> (елементів системи), <b>параметрів</b> (властивостей об'єктів), <b>зв'язків</b> між параметрами та об'єктами і <b>правил</b> (алгоритмів, з яких починається взаємодія об'єктів).</p>
+    </div>
+    <div class="bench">
+      <h3>Розберемо модель шкільного буфету</h3>
+      <p class="hint">Натисни на складову, щоб побачити її в моделі.</p>
+      <div class="btns" id="partBtns"></div>
+      <div class="model" id="model">
+        <div class="mpart" data-p="obj"><h4>Об'єкти</h4><ul><li>товари: булочки, сік, яблука</li><li>покупці (учні)</li><li>склад буфету</li></ul></div>
+        <div class="mpart" data-p="par"><h4>Параметри</h4><ul><li>ціна товару</li><li>кількість товару на складі</li><li>кількість покупців на перерві</li></ul></div>
+        <div class="mpart" data-p="rel"><h4>Зв'язки</h4><ul><li>більше покупців - швидше зменшується товар</li><li>вища ціна - менше покупок</li></ul></div>
+        <div class="mpart" data-p="rul"><h4>Правила</h4><ul><li>якщо булочок менше 10, замовити доставку</li><li>продаж лише на перервах</li></ul></div>
+      </div>
+      <div class="mexplain" id="mexplain"></div>
+    </div>
+    <div class="bench">
+      <h3>Етапи створення інформаційної моделі</h3>
+      <p class="hint">Побудова інформаційної моделі завжди передує створенню комп'ютерної моделі. Натискай етапи по черзі.</p>
+      <div class="steps" id="steps"></div>
+      <div class="stepcard" id="stepcard"></div>
+      <div class="qnav"><button class="btn" id="stepPrev">Назад</button><button class="btn main" id="stepNext">Далі</button></div>
+    </div>
+  </section>
+
+  <!-- ===== 3. Події ===== -->
+  <section id="t2">
+    <div class="theory">
+      <h2>Як події впливають на модель?</h2>
+      <p class="lead">Інформаційна модель дає змогу аналізувати та прогнозувати поведінку систем під впливом різних подій. Події, що впливають на модель, можуть бути залежними або незалежними.</p>
+      <div class="facts">
+        <div><b>Незалежні події</b><span>відбуваються самостійно й не залежать від інших подій у системі. Вони вносять нові значення в модель, є зовнішніми стимулами й часто задають початкові умови.</span></div>
+        <div><b>Залежні події</b><span>відбуваються через іншу подію і пов'язані з нею. Вони взаємодіють з іншими змінними моделі, викликають «ланцюгові реакції», і їх можна прогнозувати за правилами або алгоритмами.</span></div>
+      </div>
+    </div>
+    <div class="bench">
+      <h3>Ланцюгова реакція</h3>
+      <p class="hint">Обери модель і запусти незалежну подію. Подивись, які залежні події вона викличе.</p>
+      <div class="btns" id="chainBtns"></div>
+      <div class="legend"><span><i class="ind"></i>незалежна подія</span><span><i></i>залежна подія</span></div>
+      <div class="chain" id="chain"></div>
+      <div class="btns"><button class="btn main" id="chainRun">Запустити подію</button></div>
+      <div class="log" id="chainLog"></div>
+    </div>
+    <div class="bench">
+      <h3>Перевір себе: залежна чи незалежна?</h3>
+      <div class="quiz" id="quiz1"></div>
+    </div>
+  </section>
+
+  <!-- ===== 4. Причина і наслідок ===== -->
+  <section id="t3">
+    <div class="theory">
+      <h2>Причина і наслідок</h2>
+      <div class="def">У подіях завжди є причина та наслідок. <dfn>Причина</dfn> - це явище чи група взаємодіючих явищ, що передує іншим та викликає їх. <dfn>Наслідком</dfn> називається явище, викликане діями причини.</div>
+    </div>
+    <div class="subtabs" role="tablist">
+      <button class="on" data-sub="s1">Як підтвердити зв'язок</button>
+      <button data-sub="s2">Експеримент із рослиною</button>
+      <button data-sub="s3">Що причина, а що наслідок?</button>
+    </div>
+    <div class="sub on" id="s1">
+      <p>У готовій моделі причинно-наслідкові зв'язки можна підтвердити кількома способами:</p>
+      <div class="ways">
+        <details open><summary>1. Експериментальний метод</summary><div>Змінюється тільки одна змінна (причина), щоб спостерігати, як це вплине на іншу (наслідок). Наприклад, у моделі росту рослини змінюємо кількість води і спостерігаємо за ростом. Якщо при більшому поливі рослина росте швидше, зв'язок підтверджується.</div></details>
+        <details><summary>2. Аналіз даних</summary><div>Закономірності між змінними досліджують за допомогою обчислень. Наприклад, у моделі продажів магазину перевіряємо, чи залежить кількість продажів від знижок. Якщо зі збільшенням знижок продажі зростають, зв'язок підтверджується.</div></details>
+        <details><summary>3. Побудова логічного алгоритму</summary><div>Алгоритм дає змогу передбачити наслідок на підставі причини. Наприклад, у моделі погоди: якщо температура повітря нижча за 0 °C, прогнозується утворення льоду. Зіставлення з реальними даними підтверджує зв'язок.</div></details>
+        <details><summary>4. Моделювання на тестових даних</summary><div>Перевіряють, чи модель поводиться передбачувано за різних значень змінних. Наприклад, якщо при ввімкненні червоного світла всі автомобілі зупиняються, це підтверджує зв'язок «червоне світло - зупинка».</div></details>
+        <details><summary>5. Спостереження в реальному середовищі</summary><div>Наприклад, якщо при збільшенні кількості поїздів пасажири швидше досягають своїх пунктів призначення, це підтверджує зв'язок.</div></details>
+      </div>
+    </div>
+    <div class="sub" id="s2">
+      <div class="bench">
+        <h3>Експериментальний метод: від чого залежить ріст рослини?</h3>
+        <p class="hint">Почни зі звичайних умов і зміни <b>лише одне</b> значення. Потім спробуй змінити обидва й подумай, чи можна тепер назвати причину.</p>
+        <div class="ctrls">
+          <div class="ncell"><div class="nlab"><span class="addr">B1</span>💧 Полив, мл на день</div><div class="nrow"><button class="pm" data-d="-1" aria-label="Зменшити">−</button><input type="number" id="water" min="0" max="300" step="25" value="100" inputmode="numeric"><button class="pm" data-d="1" aria-label="Збільшити">+</button></div><div class="quick" data-v="0,50,100,200,300"></div></div>
+          <div class="ncell"><div class="nlab"><span class="addr">B2</span>☀️ Світло, годин на день</div><div class="nrow"><button class="pm" data-d="-1" aria-label="Зменшити">−</button><input type="number" id="light" min="0" max="16" step="2" value="8" inputmode="numeric"><button class="pm" data-d="1" aria-label="Збільшити">+</button></div><div class="quick" data-v="0,4,8,12,16"></div></div>
+        </div>
+        <div class="stage"><svg id="plantSvg" viewBox="0 0 700 300" role="img" aria-label="Висота рослини за 7 днів"></svg></div>
+        <div class="note" id="plantNote"></div>
+        <div class="btns" style="margin-top:10px"><button class="btn" id="plantReset">Звичайні умови</button></div>
+      </div>
+    </div>
+    <div class="sub" id="s3">
+      <div class="bench">
+        <h3>Обери причину</h3>
+        <div class="quiz" id="quiz2"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 5. Комп'ютерне моделювання ===== -->
+  <section id="t4">
+    <div class="theory">
+      <h2>Для чого використовується комп'ютерне моделювання?</h2>
+      <p class="lead">Моделі, що досліджуються за допомогою комп'ютера, можуть описувати різні об'єкти (мости, архітектурні споруди, літаки) та імітувати їх функціонування і перебіг процесів, пов'язаних із ними.</p>
+      <div class="facts">
+        <div><b>🏗️ Без доступу до об'єкта</b><span>можна вивчити властивості ще не споруджених будинків, мостів, літаків, двигунів і зменшити матеріальні та часові витрати.</span></div>
+        <div><b>🌋 Те, що не відтворити</b><span>рух материків, землетруси, народження нової зірки, зміна напрямків морських підводних течій.</span></div>
+        <div><b>🔥 Небезпечні експерименти</b><span>пожежі на підприємствах, зіткнення автомобілів чи поїздів - деталі цих процесів отримують без шкоди для людей.</span></div>
+        <div><b>👩‍🔬 Разом із фахівцями</b><span>спеціальні програми створюють програмісти разом із фізиками, географами, біологами.</span></div>
+      </div>
+    </div>
+    <div class="bench">
+      <h3>Як вивчити результати та ризики зміни стану моделі?</h3>
+      <p class="hint">Унаслідок зміни значень властивостей отримують кілька прийомів дослідження об'єктів реального світу. Обери прийом.</p>
+      <div class="btns" id="techBtns"></div>
+      <div class="stepcard" id="techCard"></div>
+    </div>
+  </section>
+
+  <!-- ===== 6. Комп'ютерний експеримент ===== -->
+  <section id="t5">
+    <div class="theory">
+      <h2>Як реалізовують комп'ютерний експеримент?</h2>
+      <p class="lead">Існують різні програми для створення та дослідження інформаційних моделей: табличні процесори, середовища програмування (Scratch, Python), спеціальні симулятори. Одну й ту саму задачу можна розв'язати різними програмами. Вибір залежить від мети моделі, знань і вмінь дослідника та можливостей середовища.</p>
+      <div class="def"><dfn>Комп'ютерний експеримент</dfn> - це дослідження моделі на комп'ютері: змінюємо вхідні дані (параметри) і спостерігаємо, як змінюється результат.</div>
+    </div>
+    <div class="bench">
+      <h3>Експеримент «Кидок м'яча»: під яким кутом м'яч полетить найдалі?</h3>
+      <p class="hint">Модель: м'яч кидають із землі, опір повітря не враховуємо. Залиш ту саму швидкість і змінюй лише кут. Кожен запуск записується в таблицю.</p>
+      <div class="ctrls">
+        <div class="ncell"><div class="nlab"><span class="addr">B1</span>Кут кидка, °</div><div class="nrow"><button class="pm" data-d="-1" aria-label="Зменшити">−</button><input type="number" id="angle" min="10" max="80" step="5" value="30" inputmode="numeric"><button class="pm" data-d="1" aria-label="Збільшити">+</button></div><div class="quick" data-v="15,30,45,60,75"></div></div>
+        <div class="ncell"><div class="nlab"><span class="addr">B2</span>Швидкість, м/с</div><div class="nrow"><button class="pm" data-d="-1" aria-label="Зменшити">−</button><input type="number" id="speed" min="10" max="25" step="1" value="20" inputmode="numeric"><button class="pm" data-d="1" aria-label="Збільшити">+</button></div><div class="quick" data-v="10,15,20,25"></div></div>
+      </div>
+      <div class="btns"><button class="btn main" id="throwBtn">Кинути</button><button class="btn" id="clearRuns">Очистити таблицю</button></div>
+      <div class="stage"><svg id="ballSvg" viewBox="0 0 700 330" role="img" aria-label="Траєкторія польоту м'яча"></svg></div>
+      <table class="runs" id="runs"><thead><tr><th>№</th><th>Кут, °</th><th>Швидкість, м/с</th><th>Дальність, м</th><th>Висота, м</th></tr></thead><tbody></tbody></table>
+      <div class="note ok" id="ballNote" hidden></div>
+    </div>
+    <div class="bench">
+      <h3>Етапи комп'ютерного експерименту</h3>
+      <div class="ways">
+        <details open><summary>1. Мета</summary><div>Що хочемо дізнатися? <i>Під яким кутом м'яч полетить найдалі.</i></div></details>
+        <details><summary>2. Модель</summary><div>Об'єкти, параметри, правила. <i>М'яч; кут і швидкість; закони руху тіла, кинутого під кутом.</i></div></details>
+        <details><summary>3. Програма</summary><div>Обираємо середовище й реалізуємо модель. <i>Табличний процесор, Python або готовий симулятор.</i></div></details>
+        <details><summary>4. Експеримент</summary><div>Змінюємо один параметр і записуємо результати. <i>Кут 10°, 20°, 30°… за тієї самої швидкості.</i></div></details>
+        <details><summary>5. Аналіз</summary><div>Шукаємо закономірність і перевіряємо, чи модель відповідає дійсності. <i>Найдалі - під кутом 45°; кути 30° і 60° дають однакову дальність.</i></div></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent, text) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; if (parent) parent.appendChild(e); return e; }
+const fmt = (x, d = 1) => x.toFixed(d).replace('.', ',');
+
+/* ---------- вкладки ---------- */
+function openTab(id) {
+  $$('nav button').forEach(b => b.classList.toggle('on', b.dataset.tab === id));
+  $$('main > section').forEach(s => s.classList.toggle('on', s.id === id));
+  const b = $(`nav button[data-tab="${id}"]`); if (b) b.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  window.scrollTo({ top: 0 });
+}
+$$('nav button').forEach(b => b.onclick = () => openTab(b.dataset.tab));
+$$('[data-go]').forEach(b => b.onclick = () => openTab(b.dataset.go));
+$$('.subtabs button').forEach(b => b.onclick = () => {
+  const box = b.closest('section');
+  box.querySelectorAll('.subtabs button').forEach(x => x.classList.toggle('on', x === b));
+  box.querySelectorAll('.sub').forEach(s => s.classList.toggle('on', s.id === b.dataset.sub));
+});
+function btnGroup(host, items, onPick) {
+  host.innerHTML = '';
+  items.forEach((it, i) => { const b = document.createElement('button'); b.className = 'btn'; b.textContent = it.label;
+    b.onclick = () => { host.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b)); onPick(it, i); }; host.appendChild(b); });
+  return host.querySelectorAll('button');
+}
+
+/* ---------- клітинки з числами ---------- */
+function num(sel) { const e = $(sel), v = parseFloat(String(e.value).replace(',', '.')); return Math.min(+e.max, Math.max(+e.min, isNaN(v) ? +e.min : v)); }
+function syncQuick() { $$('.ncell').forEach(c => { const v = c.querySelector('input').value; c.querySelectorAll('.quick button').forEach(b => b.classList.toggle('on', b.textContent === String(v))); }); }
+$$('.ncell').forEach(c => {
+  const inp = c.querySelector('input'), step = +inp.step, q = c.querySelector('.quick');
+  const set = v => { inp.value = Math.min(+inp.max, Math.max(+inp.min, v)); inp.dispatchEvent(new Event('input')); };
+  c.querySelectorAll('.pm').forEach(b => b.onclick = () => set(num('#' + inp.id) + step * b.dataset.d));
+  q.dataset.v.split(',').forEach(v => { const b = document.createElement('button'); b.textContent = v; b.onclick = () => set(+v); q.appendChild(b); });
+  inp.addEventListener('change', () => set(num('#' + inp.id)));
+});
+
+/* ---------- складові моделі ---------- */
+const PARTS = [
+  { k: 'obj', label: "Об'єкти", t: "<b>Об'єкти</b> - елементи системи, з яких складається модель: товари, покупці, склад." },
+  { k: 'par', label: 'Параметри', t: "<b>Параметри</b> - властивості об'єктів, які мають значення: ціна, кількість на складі, кількість покупців." },
+  { k: 'rel', label: "Зв'язки", t: "<b>Зв'язки</b> показують, як зміна одного параметра впливає на інший: більше покупців - товар закінчується швидше." },
+  { k: 'rul', label: 'Правила', t: "<b>Правила</b> - алгоритми взаємодії об'єктів: «якщо булочок менше 10, то замовити доставку»." },
+];
+btnGroup($('#partBtns'), PARTS, p => {
+  $('#model').classList.add('focus');
+  $$('.mpart').forEach(m => m.classList.toggle('pick', m.dataset.p === p.k));
+  $('#mexplain').innerHTML = p.t;
+});
+
+/* ---------- етапи ---------- */
+const STEPS = [
+  ["Визначення об'єкта дослідження", "Обираємо, що будемо моделювати. Наприклад: <b>рух автомобілів на перехресті</b>."],
+  ['Збір даних', 'Визначаємо параметри: <b>кількість автомобілів, швидкість, інтервал роботи світлофора</b>.'],
+  ['Створення структури', 'Формуємо зв\'язки та правила взаємодії: <b>якщо зелений сигнал, то автомобілі рухаються</b>.'],
+  ['Моделювання', 'Реалізуємо модель у програмі: <b>MS Excel, Scratch, Python</b>, інші або спеціалізовані симулятори.'],
+  ['Аналіз та перевірка', 'Перевіряємо, <b>чи модель відповідає реальній ситуації</b>: чи утворюються затори там, де вони є насправді.'],
+];
+let step = 0;
+STEPS.forEach((s, i) => { const b = document.createElement('button'); b.innerHTML = `<b>${i + 1}</b>${s[0]}`; b.onclick = () => showStep(i); $('#steps').appendChild(b); });
+function showStep(i) {
+  step = i;
+  $$('#steps button').forEach((b, j) => { b.classList.toggle('on', j === i); b.classList.toggle('done', j < i); });
+  $('#stepcard').innerHTML = `<h3>${i + 1}. ${STEPS[i][0]}</h3><p>${STEPS[i][1]}</p>`;
+  $('#stepPrev').disabled = i === 0; $('#stepNext').disabled = i === STEPS.length - 1;
+}
+$('#stepPrev').onclick = () => showStep(Math.max(0, step - 1));
+$('#stepNext').onclick = () => showStep(Math.min(STEPS.length - 1, step + 1));
+showStep(0);
+
+/* ---------- ланцюжок подій ---------- */
+const CHAINS = [
+  { label: '🛒 Магазин', nodes: ['Різке похолодання', 'Зростає попит на теплий одяг', 'Збільшуються продажі курток', 'Зменшуються запаси на складі', 'Магазин замовляє доставку'] },
+  { label: '🚦 Перехрестя', nodes: ['Світлофор перемикається на зелене', 'Автомобілі починають рух', 'Черга на перехресті зменшується', 'Пішоходи чекають на своєму переході'] },
+  { label: '🌦️ Погода', nodes: ['Температура падає нижче 0 °C', 'Вода на дорогах замерзає', 'Утворюється ожеледиця', 'Автомобілі знижують швидкість'] },
+];
+let chain = CHAINS[0], timers = [];
+function drawChain() {
+  timers.forEach(clearTimeout); timers = [];
+  const host = $('#chain'); host.innerHTML = ''; $('#chainLog').textContent = '';
+  chain.nodes.forEach((t, i) => {
+    if (i) { const a = document.createElement('span'); a.className = 'arr'; a.textContent = '➜'; host.appendChild(a); }
+    const n = document.createElement('div'); n.className = 'node' + (i ? '' : ' ind'); n.textContent = t; host.appendChild(n);
+  });
+}
+const cb = btnGroup($('#chainBtns'), CHAINS, c => { chain = c; drawChain(); });
+cb[0].classList.add('on'); drawChain();
+$('#chainRun').onclick = () => {
+  drawChain();
+  const items = [...$('#chain').children];
+  items.forEach((n, i) => timers.push(setTimeout(() => n.classList.add('lit'), i * 330)));
+  timers.push(setTimeout(() => { $('#chainLog').textContent = `Одна незалежна подія викликала ${chain.nodes.length - 1} залежні події. Це і є «ланцюгова реакція».`; }, items.length * 330));
+};
+
+/* ---------- тест ---------- */
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function quiz(host, all) {
+  let i = 0, score = 0, items = shuffle(all);
+  function draw() {
+    if (i >= items.length) {
+      host.innerHTML = `<div class="qcard"><div class="qtext">Готово! Правильних відповідей: <span class="score">${score} з ${items.length}</span></div><button class="btn main">Пройти ще раз</button></div>`;
+      host.querySelector('button').onclick = () => { i = 0; score = 0; items = shuffle(all); draw(); }; return;
+    }
+    const it = items[i];
+    host.innerHTML = `<div class="qcard"><div class="qnum">Питання ${i + 1} з ${items.length}</div><div class="qtext">${it.q}</div><div class="opts"></div><p class="why"></p><div class="qnav"><button class="btn main" hidden>Далі</button><span class="score">Бали: ${score}</span></div></div>`;
+    const opts = host.querySelector('.opts'), why = host.querySelector('.why'), next = host.querySelector('.qnav .btn');
+    it.o.forEach((o, j) => { const b = document.createElement('button'); b.textContent = o; opts.appendChild(b);
+      b.onclick = () => {
+        const ok = j === it.a; if (ok) score++;
+        opts.querySelectorAll('button').forEach((x, k) => { x.disabled = true; if (k === it.a) x.classList.add('ok'); });
+        if (!ok) b.classList.add('bad');
+        why.className = 'why ' + (ok ? 'ok' : 'bad'); why.textContent = (ok ? '✔ Правильно. ' : '✘ Ні. ') + it.w;
+        host.querySelector('.score').textContent = `Бали: ${score}`; next.hidden = false; next.focus();
+      }; });
+    next.onclick = () => { i++; draw(); };
+  }
+  draw();
+}
+const DI = ['Залежна', 'Незалежна'];
+quiz($('#quiz1'), [
+  { q: 'Модель «Магазин»: доставка нових товарів на склад.', o: DI, a: 1, w: 'Доставка не залежить від кількості покупців у магазині, вона вносить нові значення в модель.' },
+  { q: 'Модель «Магазин»: кількість товарів на складі зменшується.', o: DI, a: 0, w: 'Це наслідок події «збільшення продажів».' },
+  { q: 'Модель «Погода»: різке падіння температури через атмосферне явище.', o: DI, a: 1, w: 'Це зовнішній стимул, він не залежить від інших подій моделі.' },
+  { q: 'Модель «Погода»: утворюється лід.', o: DI, a: 0, w: 'Лід утворюється через подію «зниження температури».' },
+  { q: 'Модель «Транспорт»: аварія на дорозі блокує рух.', o: DI, a: 1, w: 'Аварія не залежить від роботи світлофора.' },
+  { q: 'Модель «Транспорт»: світлофор перемикається на зелене, і автомобілі починають рух.', o: DI, a: 0, w: 'Рух автомобілів викликаний сигналом світлофора.' },
+]);
+quiz($('#quiz2'), [
+  { q: 'Що тут причина? «Підтоплення будинків» і «підвищення рівня води в річці».', o: ['Підтоплення будинків', 'Підвищення рівня води'], a: 1, w: 'Вода піднялася - і через це підтопило будинки.' },
+  { q: 'Що тут причина? «Зростання попиту на теплий одяг» і «різке похолодання».', o: ['Зростання попиту', 'Різке похолодання'], a: 1, w: 'Похолодання передує попиту і викликає його.' },
+  { q: 'Що тут причина? «Запуск відео на YouTube» і «збільшення використання інтернету».', o: ['Запуск відео', 'Збільшення використання інтернету'], a: 0, w: 'Відео завантажується з мережі, тому трафік зростає.' },
+  { q: 'Учні одночасно збільшили полив і освітлення, і рослина виросла вища. Що можна сказати?', o: ['Причина - полив', 'Причина - світло', 'Не можна визначити'], a: 2, w: 'Змінили дві змінні одночасно, тому не відомо, яка з них викликала наслідок.' },
+]);
+
+/* ---------- рослина ---------- */
+const BASE = { w: 100, l: 8 };
+function growthDay(w, l) {
+  const fw = w <= 200 ? w / 200 : Math.max(0, 1 - (w - 200) / 150);   // забагато води теж шкодить
+  const fl = Math.min(l, 14) / 14;
+  return 0.15 + 1.6 * fw * fl;
+}
+function drawPlant() {
+  const w = num('#water'), l = num('#light'); syncQuick();
+  const svg = $('#plantSvg'); svg.innerHTML = '';
+  const L = 60, B = 260, T = 20, R = 680, maxH = 12, sx = (R - L) / 7, sy = (B - T) / maxH;
+  for (let v = 0; v <= maxH; v += 3) { el('line', { x1: L, x2: R, y1: B - v * sy, y2: B - v * sy, stroke: '#E3ECE6' }, svg); el('text', { x: L - 8, y: B - v * sy + 5, 'text-anchor': 'end', 'font-size': 13, fill: '#4F6357' }, svg, v); }
+  el('text', { x: 14, y: 14, 'font-size': 13, fill: '#4F6357' }, svg, 'см');
+  const gb = growthDay(BASE.w, BASE.l), g = growthDay(w, l);
+  for (let d = 1; d <= 7; d++) {
+    const x = L + (d - 0.5) * sx, h0 = gb * d, h = Math.min(maxH, g * d);
+    el('rect', { x: x - 26, y: B - h0 * sy, width: 20, height: h0 * sy, fill: '#C9DDD0', rx: 3 }, svg);
+    el('rect', { x: x - 2, y: B - h * sy, width: 24, height: h * sy, fill: '#2E8B57', rx: 3 }, svg);
+    el('text', { x, y: B + 20, 'text-anchor': 'middle', 'font-size': 13, fill: '#4F6357' }, svg, 'День ' + d);
+  }
+  el('rect', { x: L + 10, y: T, width: 14, height: 10, fill: '#C9DDD0' }, svg); el('text', { x: L + 30, y: T + 10, 'font-size': 13, fill: '#4F6357' }, svg, 'звичайні умови');
+  el('rect', { x: L + 250, y: T, width: 14, height: 10, fill: '#2E8B57' }, svg); el('text', { x: L + 270, y: T + 10, 'font-size': 13, fill: '#4F6357' }, svg, 'твій експеримент');
+  const n = $('#plantNote'), cw = w !== BASE.w, cl = l !== BASE.l, h7 = fmt(g * 7), b7 = fmt(gb * 7);
+  if (cw && cl) { n.className = 'note warn'; n.innerHTML = `Змінено <b>дві змінні</b> одночасно. Висота за тиждень: ${h7} см, але тепер не можна сказати, що саме стало причиною.`; }
+  else if (cw || cl) { n.className = 'note ok'; n.innerHTML = `Змінено лише ${cw ? 'полив' : 'світло'}. За тиждень: ${h7} см замість ${b7} см. Різниця викликана саме ${cw ? 'поливом' : 'світлом'}${cw && w > 200 ? ' (забагато води теж шкодить!)' : ''}.`; }
+  else { n.className = 'note ok'; n.innerHTML = `Звичайні умови: за тиждень рослина виросла на ${b7} см. Тепер зміни одне значення.`; }
+}
+['#water', '#light'].forEach(s => $(s).oninput = drawPlant);
+$('#plantReset').onclick = () => { $('#water').value = BASE.w; $('#light').value = BASE.l; drawPlant(); };
+drawPlant();
+
+/* ---------- прийоми дослідження ---------- */
+const TECH = [
+  { label: '🔮 Прогнозування', t: '<h3>Прогнозування нових результатів</h3><p>Зміна параметрів дає змогу оцінити, як система поведеться в умовах, у яких раніше не була. Наприклад, зміна кількості транспорту на дорозі дає змогу прогнозувати, чи стане рух швидшим.</p>' },
+  { label: '⚙️ Оптимізація', t: '<h3>Оптимізація системи</h3><p>Під час дослідження моделі можна знайти найкращі параметри для ефективної роботи системи. Наприклад, встановити оптимальний час роботи світлофорів, щоб зменшити затори.</p>' },
+  { label: '🌪️ Екстремальні умови', t: '<h3>Вивчення впливу екстремальних умов</h3><p>Експериментальна модель показує, як система працює в умовах криз чи аномалій. Наприклад, у системі розподілу електроенергії можна встановити перебої внаслідок стихійного лиха.</p>' },
+  { label: '❓ «Що буде, якщо…»', t: '<h3>Аналіз сценаріїв «що буде, якщо…»</h3><p>Вивчення наслідків різних дій допомагає передбачити можливі ризики. Наприклад, що відбудеться з кліматом, якщо рівень викидів вуглекислого газу збільшиться на 10 %.</p>' },
+];
+const tb = btnGroup($('#techBtns'), TECH, t => $('#techCard').innerHTML = t.t);
+tb[0].click();
+
+/* ---------- кидок м'яча ---------- */
+const g = 9.8, SC = 10, GX = 20, GY = 310;
+let runs = [], anim = null;
+function sceneBase() {
+  const svg = $('#ballSvg'); svg.innerHTML = '';
+  el('rect', { x: 0, y: GY, width: 700, height: 20, fill: '#CFE6D7' }, svg);
+  for (let m = 0; m <= 65; m += 10) { el('line', { x1: GX + m * SC, x2: GX + m * SC, y1: GY, y2: GY + 6, stroke: '#4F6357' }, svg); el('text', { x: GX + m * SC, y: GY + 18, 'text-anchor': 'middle', 'font-size': 11, fill: '#4F6357' }, svg, m + ' м'); }
+  runs.forEach(r => el('path', { d: path(r.a, r.v), fill: 'none', stroke: '#C9DDD0', 'stroke-width': 2 }, svg));
+  return svg;
+}
+function path(a, v) {
+  const r = a * Math.PI / 180, T = 2 * v * Math.sin(r) / g; let d = '';
+  for (let k = 0; k <= 40; k++) { const t = T * k / 40, x = v * Math.cos(r) * t, y = v * Math.sin(r) * t - g * t * t / 2; d += (k ? 'L' : 'M') + (GX + x * SC).toFixed(1) + ' ' + (GY - y * SC).toFixed(1); }
+  return d;
+}
+function updLabels() { syncQuick(); }
+function preview() {
+  updLabels(); const svg = sceneBase(); const a = num('#angle') * Math.PI / 180;
+  el('line', { x1: GX, y1: GY, x2: GX + 50 * Math.cos(a), y2: GY - 50 * Math.sin(a), stroke: '#F2B705', 'stroke-width': 4, 'stroke-linecap': 'round' }, svg);
+  el('circle', { cx: GX, cy: GY - 7, r: 7, fill: '#C0392B' }, svg);
+}
+function drawRuns() {
+  const tb = $('#runs tbody'); tb.innerHTML = '';
+  const same = runs.filter(r => r.v === runs.at(-1)?.v), best = same.length ? Math.max(...same.map(r => r.R)) : -1;
+  runs.forEach((r, i) => { const tr = document.createElement('tr'); if (r.v === runs.at(-1).v && r.R === best && same.length > 2) tr.className = 'best';
+    tr.innerHTML = `<td>${i + 1}</td><td>${r.a}</td><td>${r.v}</td><td>${fmt(r.R)}</td><td>${fmt(r.H)}</td>`; tb.appendChild(tr); });
+  const n = $('#ballNote'), angles = new Set(same.map(r => r.a));
+  if (angles.size >= 4) { const b = same.find(r => r.R === best); n.hidden = false; n.innerHTML = `За швидкості ${b.v} м/с найдалі полетів м'яч під кутом <b>${b.a}°</b> (${fmt(b.R)} м). ${angles.has(45) ? 'Модель підтверджує: найбільша дальність - під кутом 45°.' : 'Спробуй ще кут 45°.'}`; }
+  else n.hidden = true;
+}
+$('#throwBtn').onclick = () => {
+  if (anim) return;
+  $('#throwBtn').disabled = true;
+  const a = num('#angle'), v = num('#speed'), r = a * Math.PI / 180;
+  const T = 2 * v * Math.sin(r) / g, R = v * v * Math.sin(2 * r) / g, H = (v * Math.sin(r)) ** 2 / (2 * g);
+  const svg = sceneBase(), trail = el('path', { d: '', fill: 'none', stroke: '#2E8B57', 'stroke-width': 3 }, svg), ball = el('circle', { r: 7, fill: '#C0392B' }, svg);
+  let t0 = null, d = ''; const dur = 1400;
+  const fin = () => { el('text', { x: GX + R * SC, y: GY - 12, 'text-anchor': 'middle', 'font-size': 14, 'font-weight': 700, fill: '#1E5E3A' }, svg, fmt(R) + ' м'); runs.push({ a, v, R, H }); drawRuns(); anim = null; $('#throwBtn').disabled = false; };
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) { anim = 1; trail.setAttribute('d', path(a, v)); ball.setAttribute('cx', GX + R * SC); ball.setAttribute('cy', GY - 7); fin(); return; }
+  function frame(ts) {
+    if (t0 == null) t0 = ts; const k = Math.min(1, (ts - t0) / dur), t = T * k;
+    const x = GX + v * Math.cos(r) * t * SC, y = GY - (v * Math.sin(r) * t - g * t * t / 2) * SC;
+    d += (d ? 'L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1); trail.setAttribute('d', d);
+    ball.setAttribute('cx', x); ball.setAttribute('cy', Math.min(y, GY - 7));
+    if (k < 1) anim = requestAnimationFrame(frame); else fin();
+  }
+  anim = requestAnimationFrame(frame);
+};
+$('#clearRuns').onclick = () => { runs = []; drawRuns(); preview(); };
+['#angle', '#speed'].forEach(s => $(s).oninput = () => { if (!anim) preview(); else updLabels(); });
+preview();
+</script>
+</body>
+</html>
