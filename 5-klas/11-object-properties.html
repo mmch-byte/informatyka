@@ -7,7 +7,7 @@
 <style>
   :root {
     --forest: #1E5E3A; --leaf: #2E8B57; --paper: #F2F8F4; --bench: #E2EFE6; --ink: #17261D;
-    --sun: #F2B705; --red: #C0392B; --muted: #4F6357; --line: #C9DDD0;
+    --sun: #F2B705; --red: #C0392B; --muted: #4F6357; --line: #C9DDD0; --scr: #4C97FF;
     --display: "Bahnschrift", "DIN Alternate", "Segoe UI Semibold", "Arial Narrow", sans-serif;
     --text: "Segoe UI", "Noto Sans", Roboto, Arial, sans-serif;
   }
@@ -25,17 +25,17 @@
   .strip::before, .strip::after { content: ""; position: absolute; left: 0; right: 0; height: 10px;
     background: radial-gradient(circle at 9px 5px, var(--paper) 3.2px, transparent 3.6px) 0 0 / 22px 10px repeat-x; min-width: 1240px; }
   .strip::before { top: 6px; } .strip::after { bottom: 6px; }
-  nav { display: flex; gap: 10px; max-width: 1060px; margin: 0 auto; padding: 0 20px; min-width: max-content; }
-  nav button { font: inherit; cursor: pointer; border: 0; padding: 8px 8px 10px; width: 164px; text-align: left;
+  nav.film { display: flex; gap: 10px; max-width: 1060px; margin: 0 auto; padding: 0 20px; min-width: max-content; }
+  nav.film button { font: inherit; cursor: pointer; border: 0; padding: 8px 8px 10px; width: 164px; text-align: left;
     background: #163F28; color: #CFE6D7; border-radius: 4px; display: flex; flex-direction: column; gap: 8px; }
-  nav .thumb { position: relative; height: 84px; border-radius: 2px; overflow: hidden; background: #0F2E1C; display: grid; place-items: center; font-size: 2.4rem; }
-  nav .thumb svg { width: 100%; height: 100%; display: block; }
-  nav .cap { display: flex; gap: 8px; align-items: baseline; font-size: .88rem; line-height: 1.25; }
-  nav .cap b { font-family: var(--display); color: var(--sun); font-weight: 600; }
-  nav button.on { background: var(--paper); color: var(--ink); }
-  nav button.on .cap b { color: var(--leaf); }
-  nav button:not(.on) .thumb > * { opacity: .75; filter: saturate(.6); }
-  nav button:not(.on):hover { background: #1F5536; }
+  nav.film .thumb { position: relative; height: 84px; border-radius: 2px; overflow: hidden; background: #0F2E1C; display: grid; place-items: center; font-size: 2.4rem; }
+  nav.film .thumb svg { width: 100%; height: 100%; display: block; }
+  nav.film .cap { display: flex; gap: 8px; align-items: baseline; font-size: .88rem; line-height: 1.25; }
+  nav.film .cap b { font-family: var(--display); color: var(--sun); font-weight: 600; }
+  nav.film button.on { background: var(--paper); color: var(--ink); }
+  nav.film button.on .cap b { color: var(--leaf); }
+  nav.film button:not(.on) .thumb > * { opacity: .75; filter: saturate(.6); }
+  nav.film button:not(.on):hover { background: #1F5536; }
 
   /* ---------- загальне ---------- */
   main { max-width: 1060px; margin: 0 auto; padding: 34px 20px 60px; }
@@ -45,22 +45,25 @@
   p { margin: 0 0 12px; max-width: 70ch; }
   .lead { font-size: 1.1rem; }
   dfn { font-style: normal; font-weight: 700; color: var(--forest); }
-  .def { margin: 18px 0; padding: 14px 18px; background: #fff; border-radius: 6px; max-width: 76ch; box-shadow: inset 4px 0 0 var(--leaf); }
+  .def { margin: 0 0 18px; padding: 14px 18px; background: #fff; border-radius: 6px; max-width: 76ch; box-shadow: inset 4px 0 0 var(--leaf); }
   .btn { font: inherit; font-size: 1rem; font-weight: 600; cursor: pointer; border-radius: 8px; padding: 8px 16px;
     border: 2px solid var(--leaf); background: #fff; color: var(--forest); }
   .btn:hover { background: #E6F3EA; }
   .btn.on { background: var(--leaf); color: #fff; }
-  .btn:disabled { opacity: .4; cursor: default; }
+  .btn.go { background: var(--leaf); color: #fff; }
+  .btn.go:hover { background: #26764A; }
+  .btn:disabled { opacity: .35; cursor: default; background: #fff; color: var(--forest); }
   .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-  .theory { margin-bottom: 34px; }
   .bench { background: var(--bench); border-radius: 14px; padding: 24px; }
-  .bench > h3 { font-size: 1.35rem; margin-bottom: 16px; }
   .hide { display: none !important; }
-  .subtabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .subtabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .subtabs .btn { font-size: 1.05rem; }
   .vf { position: relative; }
   .vf::before, .vf::after { content: ""; position: absolute; width: 24px; height: 24px; pointer-events: none; z-index: 2; }
   .vf::before { top: 7px; left: 7px; border-top: 4px solid var(--sun); border-left: 4px solid var(--sun); }
   .vf::after { bottom: 7px; right: 7px; border-bottom: 4px solid var(--sun); border-right: 4px solid var(--sun); }
+  .lbl { font-size: .85rem; color: var(--muted); font-weight: 600; display: block; margin-bottom: 4px; }
+  .say { font-family: var(--display); color: var(--forest); font-size: 1.05rem; min-height: 1.5em; }
 
   /* ---------- Мета ---------- */
   .goals { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--forest); max-width: 880px; }
@@ -72,33 +75,40 @@
   .goals .gtxt { font-size: 1.12rem; }
   .goals .go { font-family: var(--display); color: var(--leaf); font-weight: 600; white-space: nowrap; }
 
-  /* ---------- 1. Виконавці ---------- */
-  .qa { list-style: none; margin: 0 0 8px; padding: 0; max-width: 860px; border-top: 2px solid var(--forest); }
-  .qa li { border-bottom: 1px solid var(--line); padding: 12px 0; }
-  .qa .q { display: grid; grid-template-columns: 1fr auto; gap: 14px; align-items: center; font-weight: 600; }
-  .qa .q .btn { font-size: .85rem; padding: 5px 12px; white-space: nowrap; }
-  .qa .a { margin-top: 8px; padding: 8px 14px; background: #fff; border-radius: 6px; box-shadow: inset 4px 0 0 var(--leaf); }
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px; }
-  .item { position: relative; background: #fff; padding: 12px 12px 14px; border-radius: 3px;
-    box-shadow: 0 1px 0 var(--line), 0 6px 14px -8px rgba(23, 38, 29, .35); display: flex; flex-direction: column; gap: 10px; }
-  .item .name { flex: 1; font-weight: 600; font-size: .95rem; line-height: 1.35; padding-right: 30px; }
-  .item .choice { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-  .item .choice button { font: inherit; font-size: .9rem; font-weight: 700; padding: 7px 2px; border-radius: 6px; cursor: pointer; background: #fff; border: 2px solid; }
-  .item .yes { color: var(--leaf); border-color: var(--leaf); }
-  .item .no { color: var(--red); border-color: var(--red); }
-  .item:not(.done) .yes:hover { background: var(--leaf); color: #fff; }
-  .item:not(.done) .no:hover { background: var(--red); color: #fff; }
-  .item.done .choice button { opacity: .3; cursor: default; }
-  .item.done .choice button.answer { opacity: 1; color: #fff; }
-  .item.done .yes.answer { background: var(--leaf); } .item.done .no.answer { background: var(--red); }
-  .item .why { display: none; font-size: .84rem; color: var(--muted); line-height: 1.3; }
-  .item.done .why { display: block; }
-  .badge { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 50%; display: none; place-items: center; color: #fff; font-weight: 800; font-size: .9rem; }
-  .right .badge { display: grid; background: var(--leaf); } .wrong .badge { display: grid; background: var(--red); }
-  .scorebar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
-  .score { font-family: var(--display); font-size: 1.12rem; color: var(--forest); white-space: nowrap; }
-  .pbar { flex: 1; min-width: 140px; height: 10px; background: #fff; border-radius: 99px; overflow: hidden; }
-  .pbar i { display: block; height: 100%; width: 0; background: var(--leaf); transition: width .3s; }
+  /* ---------- 1. Питання ---------- */
+  .qlay { display: grid; grid-template-columns: 220px 1fr; gap: 22px; align-items: start; }
+  .qnav { display: flex; flex-direction: column; gap: 6px; position: sticky; top: 10px; }
+  .qnav button { font: inherit; font-size: .92rem; text-align: left; cursor: pointer; border: 2px solid transparent; border-radius: 8px; background: #fff; color: var(--ink);
+    padding: 8px 10px; display: grid; grid-template-columns: 30px 1fr; gap: 6px; align-items: center; line-height: 1.25; }
+  .qnav button b { font-family: var(--display); font-size: 1.2rem; color: var(--leaf); }
+  .qnav button:hover { border-color: #A9D3B8; }
+  .qnav button.on { background: var(--leaf); color: #fff; } .qnav button.on b { color: var(--sun); }
+  .qpage { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 0 0 1px var(--line); min-width: 0; }
+  .qq { font-family: var(--display); font-weight: 600; color: var(--forest); font-size: 1.3rem; line-height: 1.25; margin: 0 0 14px; }
+  .qnum { display: inline-block; font-size: .9rem; color: var(--muted); margin-bottom: 4px; }
+  .ans { margin-top: 14px; padding: 12px 16px; background: #F2F8F4; border-radius: 6px; box-shadow: inset 4px 0 0 var(--leaf); font-size: 1.05rem; }
+  .qfoot { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; margin-top: 16px; }
+  .envs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+  .env { background: #F7FAF8; border-radius: 10px; padding: 10px; box-shadow: 0 0 0 1px var(--line); display: flex; flex-direction: column; gap: 8px; }
+  .env h4 { margin: 0; font-family: var(--display); font-weight: 600; color: var(--forest); font-size: 1.05rem; }
+  .env .who { font-size: .9rem; } .env .who b { color: var(--forest); }
+  .env svg.scn { width: 100%; height: auto; display: block; background: #fff; border-radius: 6px; box-shadow: 0 0 0 1px #DCE6E0; }
+  .cmds { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; }
+  .cmds li { font-size: .78rem; font-weight: 600; padding: 3px 9px; border-radius: 6px; background: #E6EEE9; color: var(--ink); transition: transform .15s; }
+  .cmds.scratch { flex-direction: column; align-items: flex-start; gap: 2px; }
+  .cmds.scratch li { color: #fff; border-radius: 4px 10px 10px 4px; }
+  .cmds .ev { background: #E6A700; } .cmds .lk { background: #9966FF; } .cmds .mo { background: var(--scr); }
+  .cmds li.cur { outline: 3px solid var(--sun); transform: scale(1.06); }
+  .cmds li.loop { background: #FFAB19; color: #fff; }
+  .bigscn { width: 100%; height: auto; display: block; background: #fff; border-radius: 8px; box-shadow: 0 0 0 1px var(--line); touch-action: none; }
+  .pad { display: grid; grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(2, 44px); gap: 6px; }
+  .pad button { font: inherit; font-size: 1.3rem; font-weight: 700; border-radius: 8px; border: 2px solid var(--leaf); background: #fff; color: var(--forest); cursor: pointer; }
+  .pad button:hover { background: #E6F3EA; }
+  .pad .up { grid-column: 2; } .pad .lf { grid-column: 1; grid-row: 2; } .pad .dn { grid-column: 2; grid-row: 2; } .pad .rt { grid-column: 3; grid-row: 2; }
+  .hyp { display: flex; flex-direction: column; gap: 6px; }
+  .hyp button { font: inherit; font-size: .95rem; text-align: left; padding: 8px 12px; border-radius: 8px; border: 2px solid var(--line); background: #fff; cursor: pointer; color: var(--ink); }
+  .hyp button.on { border-color: var(--leaf); background: #E6F3EA; font-weight: 600; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; align-items: start; }
   .scheme { display: grid; gap: 12px; max-width: 760px; }
   .pair { display: grid; grid-template-columns: 170px 1fr 220px; gap: 14px; align-items: center; background: #fff; padding: 10px 14px; border-radius: 8px; }
   .pair .con { font-family: var(--display); font-weight: 600; font-size: 1.1rem; color: var(--forest); }
@@ -106,12 +116,16 @@
   .pair .res { font-size: .95rem; }
   .pair.ok { box-shadow: inset 4px 0 0 var(--leaf); } .pair.ok .res { color: var(--leaf); font-weight: 600; }
   .pair.bad { box-shadow: inset 4px 0 0 var(--red); } .pair.bad .res { color: var(--red); }
+  @keyframes blinkc { 50% { opacity: 0; } }
+  .blink { animation: blinkc 1s steps(1) infinite; }
 
   /* ---------- 2. Властивості ---------- */
-  .props { list-style: none; margin: 8px 0 16px; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; max-width: 900px; }
-  .props li { display: grid; grid-template-columns: 120px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
-  .props b { font-family: var(--display); font-weight: 600; color: var(--forest); }
-  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; max-width: 900px; margin-top: 8px; }
+  .plist { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .prop { display: grid; grid-template-columns: 150px 1fr; gap: 14px; align-items: center; background: #fff; border-radius: 10px; padding: 10px; box-shadow: 0 0 0 1px var(--line); }
+  .prop svg { width: 150px; height: 94px; display: block; background: #F7FAF8; border-radius: 6px; }
+  .prop b { display: block; font-family: var(--display); font-weight: 600; color: var(--forest); font-size: 1.15rem; }
+  .prop span { font-size: .95rem; }
+  .facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin-top: 20px; }
   .facts div { padding: 4px 22px; border-left: 3px solid var(--leaf); }
   .facts b { display: block; font-family: var(--display); font-weight: 600; color: var(--forest); font-size: 1.08rem; margin-bottom: 4px; }
   .facts span { font-size: .95rem; }
@@ -123,7 +137,6 @@
   .selbox { display: none; }
   .panel { background: #fff; border-radius: 8px; padding: 14px; box-shadow: 0 0 0 1px var(--line); display: flex; flex-direction: column; gap: 12px; }
   .prow { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: flex-start; }
-  .lbl { font-size: .85rem; color: var(--muted); font-weight: 600; display: block; margin-bottom: 4px; }
   .nm { font: inherit; font-size: 1rem; padding: 5px 10px; border: 2px solid #CBD6CF; border-radius: 20px; width: 170px; }
   .cell { display: inline-flex; align-items: center; border: 2px solid #CBD6CF; border-radius: 20px; overflow: hidden; background: #fff; }
   .cell input { font: inherit; font-size: 1rem; width: 4.2em; border: 0; text-align: center; padding: 4px 0; -moz-appearance: textfield; }
@@ -133,7 +146,7 @@
   .presets { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
   .presets button { font: inherit; font-size: .8rem; padding: 2px 9px; border-radius: 12px; border: 1px solid var(--leaf); background: #fff; color: var(--forest); cursor: pointer; }
   .presets button:hover { background: #E6F3EA; }
-  .seg { display: inline-flex; border: 2px solid #CBD6CF; border-radius: 20px; overflow: hidden; }
+  .seg { display: inline-flex; flex-wrap: wrap; border: 2px solid #CBD6CF; border-radius: 20px; overflow: hidden; }
   .seg button { font: inherit; font-size: .9rem; border: 0; background: #fff; color: var(--ink); padding: 5px 11px; cursor: pointer; }
   .seg button + button { border-left: 1px solid #CBD6CF; }
   .seg button.on { background: var(--leaf); color: #fff; }
@@ -143,18 +156,33 @@
   @keyframes flash { from { box-shadow: 0 0 0 4px var(--sun); } to { box-shadow: 0 0 0 0 transparent; } }
 
   /* ---------- 3. Дії ---------- */
-  .acts { list-style: none; padding: 0; margin: 8px 0 0; max-width: 900px; border-top: 2px solid var(--forest); }
-  .acts li { display: grid; grid-template-columns: 52px 210px 1fr; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
-  .acts .ico { font-size: 1.7rem; text-align: center; }
-  .acts b { font-family: var(--display); font-weight: 600; color: var(--forest); }
+  .acards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+  .acard { background: #fff; border-radius: 10px; padding: 12px; box-shadow: 0 0 0 1px var(--line); display: flex; flex-direction: column; gap: 8px; }
+  .acard h4 { margin: 0; font-family: var(--display); font-weight: 600; color: var(--forest); font-size: 1.15rem; }
+  .acard svg { width: 100%; height: auto; display: block; border-radius: 6px; background: #F7FAF8; }
+  .acard ol { margin: 0; padding-left: 22px; font-size: .9rem; }
+  .acard ol li { color: var(--muted); }
+  .acard ol li.cur { color: var(--ink); font-weight: 700; }
+  .acard .btn { align-self: flex-start; font-size: .9rem; padding: 5px 14px; }
+  .pop { animation: popin .45s ease-out; transform-box: fill-box; transform-origin: center; }
+  @keyframes popin { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .ring { animation: ringp 1s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes ringp { 50% { transform: scale(1.18); } }
+  .drawline { stroke-dasharray: 400; stroke-dashoffset: 400; animation: drawl 1.4s ease-out forwards; }
+  @keyframes drawl { to { stroke-dashoffset: 0; } }
+  .fillin { opacity: 0; animation: fadein .4s 1.3s forwards; }
+  @keyframes fadein { to { opacity: 1; } }
+  .slot > * { opacity: 0; animation: slot 1.2s steps(1) infinite; }
+  .slot > :nth-child(2) { animation-delay: .3s; } .slot > :nth-child(3) { animation-delay: .6s; } .slot > :nth-child(4) { animation-delay: .9s; }
+  @keyframes slot { 0% { opacity: 1; } 25% { opacity: 0; } }
   .sprites { background: #fff; border-radius: 8px; box-shadow: 0 0 0 1px var(--line); padding: 12px; }
   .slist { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 10px; min-height: 104px; }
   .tile { position: relative; font: inherit; border: 2px solid #CBD6CF; border-radius: 8px; background: #fff; padding: 4px 4px 2px; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; }
   .tile svg { width: 56px; height: 56px; }
   .tile span { font-size: .75rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .tile.sel { border-color: #4C97FF; background: #E9F1FC; }
-  .tile.new { animation: pop .4s ease-out; }
-  @keyframes pop { from { transform: scale(.6); } to { transform: scale(1); } }
+  .tile.sel { border-color: var(--scr); background: #E9F1FC; }
+  .tile.new { animation: pop2 .4s ease-out; }
+  @keyframes pop2 { from { transform: scale(.6); } to { transform: scale(1); } }
   .addbar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
   .addbar .btn { font-size: .88rem; padding: 6px 12px; }
   .lib { margin-top: 12px; background: #F6FAF7; border-radius: 8px; padding: 10px; }
@@ -162,19 +190,29 @@
   .lib h3 { font-size: 1rem; margin-bottom: 8px; }
 
   /* ---------- 4. Редактор ---------- */
-  .steps { list-style: none; counter-reset: s; padding: 0; margin: 12px 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 920px; }
+  .steps { list-style: none; counter-reset: s; padding: 0; margin: 12px 0 26px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 920px; }
   .steps li { counter-increment: s; padding: 10px 18px 10px 0; border-top: 3px solid var(--leaf); font-size: .98rem; }
   .steps li::before { content: counter(s); display: block; font-family: var(--display); font-size: 1.9rem; font-weight: 600; color: var(--leaf); line-height: 1.2; }
-  .paint { display: grid; grid-template-columns: 120px 1fr; gap: 16px; align-items: start; background: #fff; border-radius: 8px; padding: 14px; box-shadow: 0 0 0 1px var(--line); }
-  .pal { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-  .pal button { width: 52px; height: 52px; border-radius: 8px; border: 2px solid transparent; background: #fff; cursor: pointer; display: grid; place-items: center; }
-  .pal button:hover { background: #E9F1FC; }
-  .pal button.on { background: #4C97FF; } .pal button.on svg * { stroke: #fff; } .pal button.on svg .f { fill: #fff; }
-  .pal svg { width: 30px; height: 30px; }
-  .canvasArea { display: flex; flex-direction: column; gap: 10px; }
-  .toolname { font-family: var(--display); font-size: 1.15rem; color: var(--forest); min-height: 1.6em; }
-  .modebtn { align-self: flex-start; font: inherit; font-size: .9rem; font-weight: 600; background: #4C97FF; color: #fff; border: 0; border-radius: 6px; padding: 6px 14px; cursor: pointer; }
+  .ed { background: #fff; border-radius: 10px; box-shadow: 0 0 0 1px var(--line); padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+  .edtop { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; }
+  .sw { display: flex; flex-wrap: wrap; gap: 5px; }
+  .sw button { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #C9D3CE; cursor: pointer; padding: 0; }
+  .sw button.on { outline: 3px solid var(--scr); outline-offset: 2px; }
+  .edtxt { font: inherit; font-size: .95rem; padding: 4px 10px; border: 2px solid #CBD6CF; border-radius: 16px; width: 150px; }
+  .edmain { display: grid; grid-template-columns: 116px 1fr; gap: 10px; align-items: start; }
+  .edpal { display: grid; grid-template-columns: 52px 52px; gap: 6px; }
+  .edpal button { width: 52px; height: 52px; border-radius: 8px; border: 2px solid transparent; background: #fff; cursor: pointer; display: grid; place-items: center; }
+  .edpal button:hover { background: #E9F1FC; }
+  .edpal button.on { background: var(--scr); } .edpal button.on svg * { stroke: #fff; } .edpal button.on svg .f { fill: #fff; }
+  .edpal svg { width: 30px; height: 30px; }
+  .edarea { position: relative; aspect-ratio: 4 / 3; border-radius: 6px; overflow: hidden; box-shadow: 0 0 0 1px #D5DDD8;
+    background: repeating-conic-gradient(#E1E7E3 0 25%, #fff 0 50%) 0 0 / 20px 20px; touch-action: none; user-select: none; }
+  .edarea canvas, .edarea svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .edarea svg { cursor: crosshair; }
+  .edbot { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+  .modebtn { font: inherit; font-size: .95rem; font-weight: 600; background: var(--scr); color: #fff; border: 0; border-radius: 6px; padding: 7px 16px; cursor: pointer; }
   .modebtn:hover { background: #3C7FE0; }
+  .tip { font-size: .95rem; color: var(--muted); }
   .both { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   .both figure { margin: 0; }
   .both figcaption { font-family: var(--display); font-weight: 600; color: var(--forest); margin: 0 0 6px; font-size: 1.1rem; }
@@ -183,6 +221,16 @@
   .both canvas { image-rendering: pixelated; }
 
   /* ---------- 5. Що змінилося ---------- */
+  .scorebar { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+  .score { font-family: var(--display); font-size: 1.12rem; color: var(--forest); white-space: nowrap; }
+  .pbar { flex: 1; min-width: 140px; height: 10px; background: #fff; border-radius: 99px; overflow: hidden; }
+  .pbar i { display: block; height: 100%; width: 0; background: var(--leaf); transition: width .3s; }
+  .item { position: relative; background: #fff; padding: 12px 12px 14px; border-radius: 3px;
+    box-shadow: 0 1px 0 var(--line), 0 6px 14px -8px rgba(23, 38, 29, .35); display: flex; flex-direction: column; gap: 10px; }
+  .item .why { display: none; font-size: .84rem; color: var(--muted); line-height: 1.3; }
+  .item.done .why { display: block; }
+  .badge { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 50%; display: none; place-items: center; color: #fff; font-weight: 800; font-size: .9rem; }
+  .right .badge { display: grid; background: var(--leaf); } .wrong .badge { display: grid; background: var(--red); }
   .qgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
   .qcard .pair2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .qcard figure { margin: 0; }
@@ -197,31 +245,37 @@
   .qcard.done .opts button.miss { opacity: 1; background: var(--red); border-color: var(--red); color: #fff; }
 
   @media (max-width: 860px) {
-    .ide, .paint { grid-template-columns: 1fr; }
-    .props, .facts, .steps, .both { grid-template-columns: 1fr; }
+    .qlay { grid-template-columns: 1fr; }
+    .qnav { flex-direction: row; overflow-x: auto; position: static; padding-bottom: 4px; }
+    .qnav button { flex: none; width: 150px; }
+    .ide, .two, .edmain { grid-template-columns: 1fr; }
+    .plist, .facts, .steps, .both { grid-template-columns: 1fr; }
     .facts div { margin-bottom: 10px; }
-    .pal { grid-template-columns: repeat(5, 52px); }
-    .acts li { grid-template-columns: 44px 1fr; } .acts li span:last-child { grid-column: 2; }
+    .edpal { grid-template-columns: repeat(auto-fill, 52px); }
   }
   @media (max-width: 600px) {
     html, body { font-size: 17px; }
     .title h1 { font-size: 1.5rem; }
-    nav button { width: 136px; } nav .thumb { height: 64px; font-size: 2rem; }
+    nav.film button { width: 136px; } nav.film .thumb { height: 64px; font-size: 2rem; }
     main { padding-top: 24px; }
-    .bench { padding: 14px; }
+    .bench { padding: 12px; }
+    .qpage { padding: 12px; }
     .goals button { grid-template-columns: 44px 1fr; } .goals .go { display: none; }
-    .qa .q { grid-template-columns: 1fr; }
     .pair { grid-template-columns: 1fr; gap: 6px; }
-    .props li { grid-template-columns: 96px 1fr; }
-    .qgrid { grid-template-columns: 1fr; }
-    .grid { grid-template-columns: 1fr; }
-    .pal { grid-template-columns: repeat(4, 52px); }
+    .prop { grid-template-columns: 1fr; } .prop svg { width: 100%; height: auto; }
+    .qgrid, .acards { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
+    <radialGradient id="gCatO" cx=".38" cy=".3" r=".85"><stop offset="0" stop-color="#FFD39E"/><stop offset=".55" stop-color="#F39A3D"/><stop offset="1" stop-color="#B8611A"/></radialGradient>
+    <radialGradient id="gCatG" cx=".38" cy=".3" r=".85"><stop offset="0" stop-color="#EEF1F4"/><stop offset=".55" stop-color="#9AA3AE"/><stop offset="1" stop-color="#5E6670"/></radialGradient>
+    <radialGradient id="gCatB" cx=".38" cy=".3" r=".85"><stop offset="0" stop-color="#E2B48A"/><stop offset=".55" stop-color="#9B6239"/><stop offset="1" stop-color="#5A3A22"/></radialGradient>
+    <radialGradient id="gRobot" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#EEF4FA"/><stop offset=".55" stop-color="#9DB3C8"/><stop offset="1" stop-color="#4D6378"/></radialGradient>
+    <radialGradient id="gShell" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#B9E07A"/><stop offset=".6" stop-color="#5E9E36"/><stop offset="1" stop-color="#2F5E1A"/></radialGradient>
+    <radialGradient id="gSkin" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#D6EFA8"/><stop offset="1" stop-color="#6FA34A"/></radialGradient>
     <radialGradient id="gCupR" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#FF8A7A"/><stop offset=".55" stop-color="#D9412F"/><stop offset="1" stop-color="#8E2418"/></radialGradient>
     <radialGradient id="gCupB" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#8FC7FF"/><stop offset=".55" stop-color="#3D82D6"/><stop offset="1" stop-color="#1F4C8C"/></radialGradient>
     <radialGradient id="gCoffee" cx=".4" cy=".4" r=".7"><stop offset="0" stop-color="#C99566"/><stop offset="1" stop-color="#6B3F1F"/></radialGradient>
@@ -238,15 +292,17 @@
     <linearGradient id="gBlock" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFB547"/><stop offset="1" stop-color="#E0761A"/></linearGradient>
     <radialGradient id="gSun" cx=".4" cy=".35" r=".75"><stop offset="0" stop-color="#FFF6B0"/><stop offset=".6" stop-color="#FFC928"/><stop offset="1" stop-color="#E98A0C"/></radialGradient>
     <radialGradient id="gFlower" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#FFD1EC"/><stop offset="1" stop-color="#D34A9B"/></radialGradient>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#4C97FF"/></marker>
+    <marker id="arrG" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#2E8B57"/></marker>
   </defs>
 </svg>
 
 <header>
   <div class="title"><h1>Об'єкти та їхні властивості. Зміна властивостей об'єктів. Дії над об'єктами</h1><span>Інформатика, 5 клас, урок №11</span></div>
   <div class="strip">
-    <nav aria-label="Частини уроку">
+    <nav class="film" aria-label="Частини уроку">
       <button class="on" data-tab="t0"><span class="thumb">🎯</span><span class="cap"><b>1</b>Мета уроку</span></button>
-      <button data-tab="t1"><span class="thumb">🎭</span><span class="cap"><b>2</b>Середовища й виконавці</span></button>
+      <button data-tab="t1"><span class="thumb" id="th1"></span><span class="cap"><b>2</b>Середовища й виконавці</span></button>
       <button data-tab="t2"><span class="thumb" id="th2"></span><span class="cap"><b>3</b>Властивості виконавця</span></button>
       <button data-tab="t3"><span class="thumb" id="th3"></span><span class="cap"><b>4</b>Дії над об'єктами</span></button>
       <button data-tab="t4"><span class="thumb">🖌️</span><span class="cap"><b>5</b>Графічний редактор</span></button>
@@ -263,29 +319,28 @@
       <li><button data-go="t1"><span class="ico">🎭</span><span class="gtxt">поміркуємо, які середовища та виконавці вам відомі;</span><span class="go">Відкрити</span></button></li>
       <li><button data-go="t2"><span class="ico">⚙️</span><span class="gtxt">пригадаємо, які бувають властивості виконавців;</span><span class="go">Відкрити</span></button></li>
       <li><button data-go="t3"><span class="ico">🏪</span><span class="gtxt">створимо вивіску для кафе у середовищі Скретч;</span><span class="go">Відкрити</span></button></li>
-      <li><button data-go="t4"><span class="ico">🖌️</span><span class="gtxt">пригадаємо, як можна змінювати наявні образи спрайтів чи створювати власні у вбудованому графічному редакторі середовища Скретч;</span><span class="go">Відкрити</span></button></li>
+      <li><button data-go="t4" data-sub="tools"><span class="ico">🖌️</span><span class="gtxt">пригадаємо, як можна змінювати наявні образи спрайтів чи створювати власні у вбудованому графічному редакторі середовища Скретч;</span><span class="go">Відкрити</span></button></li>
       <li><button data-go="t4" data-sub="vr"><span class="ico">🔎</span><span class="gtxt">з'ясуємо різницю між векторним та растровим зображеннями.</span><span class="go">Відкрити</span></button></li>
     </ul>
   </section>
 
   <!-- ===== 1. Середовища й виконавці ===== -->
   <section id="t1">
-    <div class="theory">
-      <h2>Обговоріть проблему</h2>
-      <p class="lead">У вікнах комп'ютерних програм є <dfn>об'єкти</dfn>: вікна, кнопки, малюнки. А в середовищах виконання алгоритмів є <dfn>об'єкти-виконавці</dfn>, якими можна керувати.</p>
-      <ul class="qa" id="qa"></ul>
+    <h2>Обговоріть проблему</h2>
+    <p class="lead">У вікнах комп'ютерних програм є <dfn>об'єкти</dfn>: вікна, кнопки, малюнки. А в середовищах виконання алгоритмів є <dfn>об'єкти-виконавці</dfn>, якими можна керувати.</p>
+    <div class="subtabs">
+      <button class="btn on" data-sg="s1" data-sk="qs">Питання</button>
+      <button class="btn" data-sg="s1" data-sk="sc">Розглянь схему</button>
     </div>
-    <div class="bench">
-      <h3>Спробуй сам</h3>
-      <div class="subtabs">
-        <button class="btn on" data-sub1="tf">Істинні твердження</button>
-        <button class="btn" data-sub1="sc">Розглянь схему</button>
+    <div id="s1-qs">
+      <div class="qlay">
+        <div class="qnav" id="qnav"></div>
+        <div class="qpage" id="qpage"></div>
       </div>
-      <div id="sub-tf">
-        <div class="scorebar"><div class="score" id="tfScore"></div><div class="pbar"><i id="tfBar"></i></div><button class="btn" id="tfReset">Почати знову</button></div>
-        <div class="grid" id="tfGrid"></div>
-      </div>
-      <div id="sub-sc" class="hide">
+    </div>
+    <div id="s1-sc" class="hide">
+      <div class="bench">
+        <h3>Розглянь схему</h3>
         <p>Ти вже знаєш, що означають поняття на схемі. Обери, з чого складається кожне з них.</p>
         <div class="scheme" id="scheme"></div>
       </div>
@@ -294,66 +349,62 @@
 
   <!-- ===== 2. Властивості ===== -->
   <section id="t2">
-    <div class="theory">
-      <h2>Властивості виконавця в середовищі Скретч</h2>
-      <div class="def">Виконавець у середовищі Скретч є <dfn>об'єктом</dfn> і має свої <dfn>властивості</dfn>: ім'я, тип видимості, позицію по горизонталі від центра (x), по вертикалі від центра (y), розмір, початковий напрямок руху, вигляд (образ).</div>
-      <ul class="props">
-        <li><b>Спрайт</b><span>ім'я об'єкта</span></li>
-        <li><b>x</b><span>позиція по горизонталі від центра сцени</span></li>
-        <li><b>y</b><span>позиція по вертикалі від центра сцени</span></li>
-        <li><b>Показати</b><span>тип видимості: видно чи сховано</span></li>
-        <li><b>Розмір</b><span>розмір у відсотках, звичайний - 100</span></li>
-        <li><b>Напрям</b><span>початковий напрямок руху</span></li>
-        <li><b>Образ</b><span>вигляд об'єкта</span></li>
-      </ul>
-      <p class="lead"><dfn>Значення властивостей</dfn> виконавця можна змінити.</p>
+    <h2>Властивості виконавця в середовищі Скретч</h2>
+    <div class="subtabs">
+      <button class="btn on" data-sg="s2" data-sk="info">Властивості</button>
+      <button class="btn" data-sg="s2" data-sk="lab">Конструктор</button>
+    </div>
+    <div id="s2-info">
+      <div class="def">Виконавець у середовищі Скретч є <dfn>об'єктом</dfn> і має свої <dfn>властивості</dfn>: ім'я, тип видимості, позицію по горизонталі від центра (x), по вертикалі від центра (y), розмір, початковий напрямок руху, вигляд (образ). <dfn>Значення властивостей</dfn> виконавця можна змінити.</div>
+      <div class="plist" id="plist"></div>
       <div class="facts">
         <div><b>Напрям</b><span>Значення напрямку задають поворотом стрілки. Стиль обертання буває: навколо, ліворуч-праворуч, не обертати.</span></div>
         <div><b>Виконавці без подій</b><span>У проєкті можуть бути виконавці, з якими не відбуватиметься жодної події. Їх використовують як елемент оформлення сцени або об'єкт, на який мають «реагувати» інші виконавці.</span></div>
       </div>
     </div>
-    <div class="bench">
-      <h3>Спробуй сам: зміни властивості спрайта</h3>
-      <div class="ide">
-        <div class="stage vf" id="st2"></div>
-        <div class="panel" id="panel2"></div>
+    <div id="s2-lab" class="hide">
+      <div class="bench">
+        <div class="ide">
+          <div class="stage vf" id="st2"></div>
+          <div class="panel" id="panel2"></div>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ===== 3. Дії ===== -->
   <section id="t3">
-    <div class="theory">
-      <h2>Дії над об'єктами</h2>
-      <p class="lead">Виконавця на сцені можна <dfn>дублювати</dfn>, <dfn>видаляти</dfn> та <dfn>додавати новий</dfn>.</p>
-      <ul class="acts">
-        <li><span class="ico">📄</span><b>Дублювати</b><span>правою кнопкою миші на спрайті, команда дублювати: з'являється копія з тими самими властивостями</span></li>
-        <li><span class="ico">🗑️</span><b>Видалити</b><span>смітничок у кутку вибраного спрайта</span></li>
-        <li><span class="ico">📚</span><b>Додати з бібліотеки</b><span>кнопка «Обрати спрайт»</span></li>
-        <li><span class="ico">✨</span><b>Випадково обраний</b><span>додати новий випадково обраний об'єкт</span></li>
-        <li><span class="ico">🖌️</span><b>Намалювати</b><span>намалювати об'єкт у графічному редакторі</span></li>
-        <li><span class="ico">💾</span><b>З комп'ютера</b><span>додати новий об'єкт із файлу на комп'ютері</span></li>
-      </ul>
+    <h2>Дії над об'єктами</h2>
+    <p class="lead">Виконавця на сцені можна <dfn>дублювати</dfn>, <dfn>видаляти</dfn> та <dfn>додавати новий</dfn>.</p>
+    <div class="subtabs">
+      <button class="btn on" data-sg="s3" data-sk="all">Усі дії</button>
+      <button class="btn" data-sg="s3" data-sk="how">Як це працює</button>
     </div>
-    <div class="bench">
-      <h3>Спробуй сам: склади вивіску для кафе</h3>
-      <div class="ide">
-        <div class="stage vf" id="st3"></div>
-        <div class="sprites">
-          <span class="lbl">Спрайти</span>
-          <div class="slist" id="slist"></div>
-          <div class="addbar">
-            <button class="btn" id="aDup">📄 Дублювати</button>
-            <button class="btn" id="aDel">🗑️ Видалити</button>
-            <button class="btn" id="aReset">Почати знову</button>
+    <div id="s3-all">
+      <div class="row" style="margin-bottom:14px"><button class="btn go" id="playAll">Показати всі</button></div>
+      <div class="acards" id="acards"></div>
+    </div>
+    <div id="s3-how" class="hide">
+      <div class="bench">
+        <h3>Склади вивіску для кафе</h3>
+        <div class="ide">
+          <div class="stage vf" id="st3"></div>
+          <div class="sprites">
+            <span class="lbl">Спрайти</span>
+            <div class="slist" id="slist"></div>
+            <div class="addbar">
+              <button class="btn" id="aDup">📄 Дублювати</button>
+              <button class="btn" id="aDel">🗑️ Видалити</button>
+              <button class="btn" id="aReset">Почати знову</button>
+            </div>
+            <div class="addbar">
+              <button class="btn" id="aLib">📚 З бібліотеки</button>
+              <button class="btn" id="aRnd">✨ Випадковий</button>
+              <button class="btn" id="aPaint">🖌️ Намалювати</button>
+              <button class="btn" id="aFile">💾 З комп'ютера</button>
+            </div>
+            <div class="lib hide" id="libBox"><h3 id="libTitle"></h3><div class="slist" id="libList"></div></div>
           </div>
-          <div class="addbar">
-            <button class="btn" id="aLib">📚 З бібліотеки</button>
-            <button class="btn" id="aRnd">✨ Випадковий</button>
-            <button class="btn" id="aPaint">🖌️ Намалювати</button>
-            <button class="btn" id="aFile">💾 З комп'ютера</button>
-          </div>
-          <div class="lib hide" id="libBox"><h3 id="libTitle"></h3><div class="slist" id="libList"></div></div>
         </div>
       </div>
     </div>
@@ -361,33 +412,38 @@
 
   <!-- ===== 4. Графічний редактор ===== -->
   <section id="t4">
-    <div class="theory">
-      <h2>Графічний редактор у Скретчі</h2>
-      <div class="def">У середовищі Скретч вбудовано <dfn>графічний редактор</dfn>, за допомогою якого можна змінювати наявні образи спрайтів чи створювати власні.</div>
-      <ol class="steps">
-        <li>Виділи спрайт і перейди на вкладку <b>Образи</b>.</li>
-        <li>Поточний образ об'єкта займе робочу область вікна редактора.</li>
-        <li>Зміни зображення інструментами редактора. Кнопка внизу перемикає векторний і растровий редактори.</li>
-      </ol>
+    <h2>Графічний редактор у Скретчі</h2>
+    <div class="def">У середовищі Скретч вбудовано <dfn>графічний редактор</dfn>, за допомогою якого можна змінювати наявні образи спрайтів чи створювати власні.</div>
+    <ol class="steps">
+      <li>Виділи спрайт і перейди на вкладку <b>Образи</b>.</li>
+      <li>Поточний образ об'єкта займе робочу область вікна редактора.</li>
+      <li>Зміни зображення інструментами редактора. Кнопка внизу перемикає векторний і растровий редактори.</li>
+    </ol>
+    <div class="subtabs">
+      <button class="btn on" data-sg="s4" data-sk="tools">Інструменти малювання</button>
+      <button class="btn" data-sg="s4" data-sk="vr">Вектор і растр</button>
     </div>
-    <div class="bench">
-      <h3>Спробуй сам</h3>
-      <div class="subtabs">
-        <button class="btn on" data-sub4="tools">Інструменти малювання</button>
-        <button class="btn" data-sub4="vr">Вектор і растр</button>
-      </div>
-      <div id="sub-tools">
-        <p>Досліди інструменти векторного і растрового редакторів. Знайди подібні інструменти в обох режимах.</p>
-        <div class="paint">
-          <div class="pal" id="pal"></div>
-          <div class="canvasArea">
-            <div class="toolname" id="toolName"></div>
-            <div class="row"><span class="lbl" style="margin:0">Зараз відкрито:</span><b id="modeName"></b></div>
-            <button class="modebtn" id="modeBtn"></button>
-          </div>
+    <div id="s4-tools">
+      <div class="ed">
+        <div class="edtop">
+          <div><span class="lbl">Колір</span><div class="sw" id="edSw"></div></div>
+          <div><span class="lbl">Товщина</span><span class="seg" id="edSize"><button data-sz="4">тонка</button><button data-sz="10">середня</button><button data-sz="20">товста</button></span></div>
+          <div id="edTxtBox" class="hide"><span class="lbl">Напис</span><input class="edtxt" id="edTxt" value="Яблуко" aria-label="Напис"></div>
+          <div class="row"><button class="btn" id="edUndo">Скасувати</button><button class="btn" id="edReset">Почати знову</button></div>
+        </div>
+        <div class="edmain">
+          <div class="edpal" id="edPal"></div>
+          <div class="edarea" id="edArea"><canvas id="edCan" width="960" height="720"></canvas><svg id="edSvg" viewBox="0 0 480 360"></svg></div>
+        </div>
+        <div class="edbot">
+          <button class="modebtn" id="edMode"></button>
+          <span>Зараз відкрито: <b id="edModeName"></b></span>
+          <span class="tip" id="edTip"></span>
         </div>
       </div>
-      <div id="sub-vr" class="hide">
+    </div>
+    <div id="s4-vr" class="hide">
+      <div class="bench">
         <p><dfn>Векторне зображення</dfn> складається з фігур: ліній, кіл, прямокутників. Кожну фігуру можна вибрати й змінити окремо, а під час збільшення малюнок лишається чітким. <dfn>Растрове зображення</dfn> складається з крапок-пікселів: під час збільшення стають помітні квадратики.</p>
         <div class="row" style="margin-bottom:14px"><span class="lbl" style="margin:0">Збільшення:</span><span class="seg" id="zoomSeg"></span></div>
         <div class="both">
@@ -400,10 +456,8 @@
 
   <!-- ===== 5. Що змінилося ===== -->
   <section id="t5">
-    <div class="theory">
-      <h2>Яка властивість змінилася?</h2>
-      <p class="lead">Порівняй, яким спрайт був і яким став. Обери властивість, значення якої змінили.</p>
-    </div>
+    <h2>Яка властивість змінилася?</h2>
+    <p class="lead">Порівняй, яким спрайт був і яким став. Обери властивість, значення якої змінили.</p>
     <div class="bench">
       <div class="scorebar"><div class="score" id="qScore"></div><div class="pbar"><i id="qBar"></i></div><button class="btn" id="qReset">Почати знову</button></div>
       <div class="qgrid" id="qGrid"></div>
@@ -412,20 +466,79 @@
 </main>
 
 <script>
-/* ---------- вкладки ---------- */
+const $ = id => document.getElementById(id);
+const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const wrapDir = d => { d = ((d + 180) % 360 + 360) % 360 - 180; return d === -180 ? 180 : d; };
+const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+/* ---------- анімації з можливістю зупинити ---------- */
+const TOK = {};
+const stopAnim = key => { TOK[key] = (TOK[key] || 0) + 1; };
+const wait = (key, ms) => new Promise((res, rej) => { const t = TOK[key]; setTimeout(() => TOK[key] === t ? res() : rej('stop'), RM ? 0 : ms); });
+const tween = (key, ms, f) => new Promise((res, rej) => {
+  const t = TOK[key], t0 = Date.now();
+  if (RM) { f(1); res(); return; }
+  (function step() { if (TOK[key] !== t) { rej('stop'); return; } const p = Math.min(1, (Date.now() - t0) / ms); f(p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2); if (p < 1) setTimeout(step, 30); else res(); })();
+});
+async function play(key, fn) { stopAnim(key); try { await fn(); } catch (e) { if (e !== 'stop') throw e; } }
+
+/* ---------- вкладки і підсторінки ---------- */
 function openTab(id) {
-  document.querySelectorAll('nav button').forEach(x => x.classList.toggle('on', x.dataset.tab === id));
+  document.querySelectorAll('nav.film button').forEach(x => x.classList.toggle('on', x.dataset.tab === id));
   document.querySelectorAll('section').forEach(s => s.classList.toggle('on', s.id === id));
-  const f = document.querySelector(`nav [data-tab="${id}"]`); if (f) f.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  const f = document.querySelector(`nav.film [data-tab="${id}"]`); if (f) f.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   window.scrollTo(0, 0);
 }
-document.querySelectorAll('nav button').forEach(b => b.addEventListener('click', () => openTab(b.dataset.tab)));
-document.querySelectorAll('[data-go]').forEach(g => g.addEventListener('click', () => { openTab(g.dataset.go); if (g.dataset.sub) sub4(g.dataset.sub); else if (g.dataset.go === 't4') sub4('tools'); }));
-const $ = id => document.getElementById(id);
-function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+document.querySelectorAll('nav.film button').forEach(b => b.addEventListener('click', () => openTab(b.dataset.tab)));
+const SUBHOOK = {};
+function showSub(g, k) {
+  document.querySelectorAll(`[data-sg="${g}"]`).forEach(b => {
+    b.classList.toggle('on', b.dataset.sk === k);
+    const p = $(`${g}-${b.dataset.sk}`); if (p) p.classList.toggle('hide', b.dataset.sk !== k);
+  });
+  if (SUBHOOK[g]) SUBHOOK[g](k);
+}
+document.querySelectorAll('[data-sg]').forEach(b => b.addEventListener('click', () => showSub(b.dataset.sg, b.dataset.sk)));
+document.querySelectorAll('[data-go]').forEach(g => g.addEventListener('click', () => { openTab(g.dataset.go); if (g.dataset.sub) showSub('s4', g.dataset.sub); }));
 
-/* ---------- малюнки спрайтів (центр у 0,0, приблизно 90 x 90) ---------- */
+/* ---------- малюнки (центр у 0,0, приблизно 100 x 100) ---------- */
+function catArt(c, pose) {
+  const dark = { O: '#B8611A', G: '#5E6670', B: '#5A3A22' }[c], mid = { O: '#E8892B', G: '#8E98A3', B: '#8A5A36' }[c], g = `url(#gCat${c})`;
+  const eyes = pose === 2
+    ? `<path d="M-14 -15 q5 -6 10 0 M4 -15 q5 -6 10 0" stroke="#2B2B2B" stroke-width="3" fill="none" stroke-linecap="round"/>`
+    : `<ellipse cx="-9" cy="-15" rx="4.2" ry="5.6" fill="#2B2B2B"/><ellipse cx="9" cy="-15" rx="4.2" ry="5.6" fill="#2B2B2B"/><circle cx="-7.6" cy="-17" r="1.6" fill="#fff"/><circle cx="10.4" cy="-17" r="1.6" fill="#fff"/>`;
+  const tail = pose === 2 ? 'M19 24 q24 2 26 -32' : 'M19 28 q30 6 27 -18';
+  const paw = pose === 2 ? `<ellipse cx="-26" cy="2" rx="7" ry="11" fill="${g}" transform="rotate(35 -26 2)"/>` : `<ellipse cx="-17" cy="30" rx="7" ry="6" fill="${mid}"/>`;
+  return `<path d="${tail}" stroke="${mid}" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <ellipse cx="-11" cy="40" rx="9" ry="5.5" fill="${mid}"/><ellipse cx="11" cy="40" rx="9" ry="5.5" fill="${mid}"/>
+    <ellipse cx="0" cy="20" rx="23" ry="21" fill="${g}"/><ellipse cx="0" cy="25" rx="12" ry="13" fill="#FFF0DC" opacity=".9"/>${paw}
+    <path d="M-21 -24 L-23 -47 L-5 -35z" fill="${g}"/><path d="M21 -24 L23 -47 L5 -35z" fill="${g}"/>
+    <path d="M-18 -28 L-19 -41 L-9 -34z" fill="#F4A6B4"/><path d="M18 -28 L19 -41 L9 -34z" fill="#F4A6B4"/>
+    <circle cx="0" cy="-12" r="24" fill="${g}"/>
+    <path d="M-6 -34 q2 6 0 10 M0 -36 v10 M6 -34 q-2 6 0 10" stroke="${dark}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="0" cy="-2" rx="11" ry="8" fill="#FFF0DC" opacity=".9"/>${eyes}
+    <path d="M-3 -6 h6 l-3 3.5z" fill="#E36F86"/>
+    <path d="M-5 0 q2.5 3 5 0 q2.5 3 5 0" stroke="#6B3A1A" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+    <path d="M-12 -3 l-15 -3 M-12 0 l-15 2 M12 -3 l15 -3 M12 0 l15 2" stroke="${dark}" stroke-width="1.2" opacity=".7"/>`;
+}
+const ROBOT = `<rect x="-17" y="-33" width="34" height="9" rx="3" fill="#2F3640"/><rect x="-17" y="24" width="34" height="9" rx="3" fill="#2F3640"/>
+  <rect x="-25" y="-26" width="50" height="52" rx="13" fill="url(#gRobot)"/><rect x="5" y="-18" width="13" height="36" rx="5" fill="#1E2A36"/>
+  <circle cx="11.5" cy="-8" r="4" fill="#5CE1FF"/><circle cx="11.5" cy="8" r="4" fill="#5CE1FF"/><circle cx="-11" cy="0" r="6" fill="#F2B705"/><circle cx="-12.5" cy="-1.5" r="2" fill="#fff" opacity=".7"/>`;
+const TURTLE = `<ellipse cx="15" cy="-20" rx="8" ry="5.5" fill="url(#gSkin)"/><ellipse cx="15" cy="20" rx="8" ry="5.5" fill="url(#gSkin)"/>
+  <ellipse cx="-15" cy="-20" rx="8" ry="5.5" fill="url(#gSkin)"/><ellipse cx="-15" cy="20" rx="8" ry="5.5" fill="url(#gSkin)"/>
+  <path d="M-26 0 l-10 -4 l0 8z" fill="#6FA34A"/><ellipse cx="31" cy="0" rx="11" ry="9" fill="url(#gSkin)"/><circle cx="35" cy="-4" r="1.8" fill="#222"/><circle cx="35" cy="4" r="1.8" fill="#222"/>
+  <ellipse cx="0" cy="0" rx="27" ry="22" fill="url(#gShell)"/>
+  <path d="M-8 -9 h16 l7 9 l-7 9 h-16 l-7 -9z M-8 -9 l-7 -10 M8 -9 l7 -10 M-8 9 l-7 10 M8 9 l7 10 M-15 0 h-11 M15 0 h11" stroke="#2F5E1A" stroke-width="2" fill="none" opacity=".8"/>`;
+const CAR = `<rect x="-24" y="-24" width="13" height="7" rx="2" fill="#222"/><rect x="11" y="-24" width="13" height="7" rx="2" fill="#222"/>
+  <rect x="-24" y="17" width="13" height="7" rx="2" fill="#222"/><rect x="11" y="17" width="13" height="7" rx="2" fill="#222"/>
+  <rect x="-30" y="-19" width="60" height="38" rx="11" fill="url(#gCupR)"/><rect x="5" y="-14" width="11" height="28" rx="3" fill="#BFE3FF"/>
+  <rect x="-20" y="-13" width="8" height="26" rx="3" fill="#BFE3FF"/><rect x="-10" y="-15" width="13" height="30" rx="4" fill="#C43226"/>
+  <circle cx="28" cy="-12" r="2.6" fill="#FFF3A0"/><circle cx="28" cy="12" r="2.6" fill="#FFF3A0"/>`;
+const STAR = `<path d="M0 -20 L5.9 -8.1 L19 -6.2 L9.5 3.1 L11.8 16.2 L0 10 L-11.8 16.2 L-9.5 3.1 L-19 -6.2 L-5.9 -8.1z" fill="#F2B705" stroke="#C98F00" stroke-width="2" stroke-linejoin="round"/>`;
 const ART = {
+  cat1: catArt('O', 1), cat2: catArt('O', 2), cat1g: catArt('G', 1), cat1b: catArt('B', 1),
   cup1: `<ellipse cx="0" cy="34" rx="44" ry="10" fill="url(#gSaucer)" stroke="#9AA8A1" stroke-width="1.5"/>
     <path d="M28 -4 q22 0 20 16 q-2 14 -22 14" fill="none" stroke="#A82E20" stroke-width="7" stroke-linecap="round"/>
     <path d="M-32 -12 h64 l-6 40 q-2 8 -12 8 h-28 q-10 0 -12 -8z" fill="url(#gCupR)"/>
@@ -450,20 +563,20 @@ const ART = {
     <circle cx="-10" cy="-10" r="8" fill="url(#gPep)"/><circle cx="14" cy="-4" r="7" fill="url(#gPep)"/><circle cx="0" cy="18" r="6" fill="url(#gPep)"/>
     <circle cx="-22" cy="-20" r="2.5" fill="#3E8E2E"/><circle cx="20" cy="-20" r="2.5" fill="#3E8E2E"/><circle cx="8" cy="6" r="2.5" fill="#3E8E2E"/>`,
   cake1: `<ellipse cx="0" cy="36" rx="42" ry="8" fill="url(#gSaucer)" stroke="#9AA8A1" stroke-width="1.5"/>
-    <path d="M-34 -6 h68 v36 q0 6 -6 6 h-56 q-6 0 -6 -6z" fill="url(#gCake)"/>
-    <path d="M-34 10 h68" stroke="#E8869E" stroke-width="5"/>
+    <path d="M-34 -6 h68 v36 q0 6 -6 6 h-56 q-6 0 -6 -6z" fill="url(#gCake)"/><path d="M-34 10 h68" stroke="#E8869E" stroke-width="5"/>
     <path d="M-36 -6 q6 10 12 0 q6 10 12 0 q6 10 12 0 q6 10 12 0 q6 10 12 0 q6 10 12 0 v-8 h-72z" fill="#FFF8F2"/>
     <circle cx="0" cy="-20" r="9" fill="url(#gCherry)"/><path d="M2 -28 q4 -10 12 -12" stroke="#3E6B22" stroke-width="2.5" fill="none"/>`,
   cake2: `<ellipse cx="0" cy="36" rx="42" ry="8" fill="url(#gSaucer)" stroke="#9AA8A1" stroke-width="1.5"/>
-    <path d="M-34 -6 h68 v36 q0 6 -6 6 h-56 q-6 0 -6 -6z" fill="url(#gCakeC)"/>
-    <path d="M-34 10 h68" stroke="#F3D9B8" stroke-width="5"/>
+    <path d="M-34 -6 h68 v36 q0 6 -6 6 h-56 q-6 0 -6 -6z" fill="url(#gCakeC)"/><path d="M-34 10 h68" stroke="#F3D9B8" stroke-width="5"/>
     <path d="M-36 -6 q6 10 12 0 q6 10 12 0 q6 10 12 0 q6 10 12 0 q6 10 12 0 q6 10 12 0 v-8 h-72z" fill="#4A2814"/>
     <circle cx="0" cy="-20" r="9" fill="url(#gCherry)"/><path d="M2 -28 q4 -10 12 -12" stroke="#3E6B22" stroke-width="2.5" fill="none"/>`,
-  sun1: `<g stroke="#F2A20C" stroke-width="6" stroke-linecap="round">${[0,45,90,135,180,225,270,315].map(a => `<line x1="0" y1="-32" x2="0" y2="-44" transform="rotate(${a})"/>`).join('')}</g>
+  sun1: `<g stroke="#F2A20C" stroke-width="6" stroke-linecap="round">${[0, 45, 90, 135, 180, 225, 270, 315].map(a => `<line x1="0" y1="-32" x2="0" y2="-44" transform="rotate(${a})"/>`).join('')}</g>
     <circle r="26" fill="url(#gSun)"/><circle cx="-9" cy="-4" r="3" fill="#7A4A0A"/><circle cx="9" cy="-4" r="3" fill="#7A4A0A"/><path d="M-10 8 q10 9 20 0" stroke="#7A4A0A" stroke-width="3" fill="none" stroke-linecap="round"/>`,
   flower1: `<path d="M0 10 v34" stroke="#3E8E2E" stroke-width="5"/><path d="M0 34 q-18 -6 -22 -18 q16 0 22 14z" fill="url(#gLeaf)"/>
-    <g>${[0,60,120,180,240,300].map(a => `<ellipse cx="0" cy="-20" rx="11" ry="17" fill="url(#gFlower)" transform="rotate(${a} 0 -2)"/>`).join('')}</g><circle cx="0" cy="-2" r="10" fill="url(#gSun)"/>`,
+    <g>${[0, 60, 120, 180, 240, 300].map(a => `<ellipse cx="0" cy="-20" rx="11" ry="17" fill="url(#gFlower)" transform="rotate(${a} 0 -2)"/>`).join('')}</g><circle cx="0" cy="-2" r="10" fill="url(#gSun)"/>`,
+  heart: `<path d="M0 30 C-40 4 -36 -30 -14 -30 C-4 -30 0 -20 0 -16 C0 -20 4 -30 14 -30 C36 -30 40 4 0 30z" fill="#E0362A" stroke="#8E2418" stroke-width="3"/>`,
   empty: `<rect x="-30" y="-30" width="60" height="60" rx="6" fill="none" stroke="#9AA8A1" stroke-width="2" stroke-dasharray="6 5"/>`,
+  robot: ROBOT, turtle: TURTLE, car: CAR,
 };
 const block = ch => `<rect x="-30" y="-36" width="64" height="76" rx="8" fill="#7A3B08" opacity=".35"/>
   <rect x="-34" y="-40" width="64" height="76" rx="8" fill="url(#gBlock)"/>
@@ -471,7 +584,9 @@ const block = ch => `<rect x="-30" y="-36" width="64" height="76" rx="8" fill="#
   <text x="-2" y="20" text-anchor="middle" font-family="Bahnschrift, Arial Black, sans-serif" font-weight="700" font-size="56" fill="#3A1A04">${ch}</text>`;
 const art = c => c.startsWith('L:') ? block(c.slice(2)) : ART[c];
 const icon = (c, s = 56) => `<svg viewBox="-50 -50 100 100" width="${s}" height="${s}" aria-hidden="true">${art(c)}</svg>`;
-$('th2').innerHTML = `<svg viewBox="-60 -50 120 100" preserveAspectRatio="xMidYMid slice"><rect x="-60" y="-50" width="120" height="100" fill="#fff"/>${art('cup1')}</svg>`;
+const put = (c, x, y, k = 1) => `<g transform="translate(${x} ${y}) scale(${k})">${art(c)}</g>`;
+$('th1').innerHTML = `<svg viewBox="-80 -55 160 110" preserveAspectRatio="xMidYMid slice"><rect x="-80" y="-55" width="160" height="110" fill="#fff"/>${put('cat1', -38, 4, .85)}${put('robot', 36, 8, .8)}</svg>`;
+$('th2').innerHTML = `<svg viewBox="-60 -55 120 110" preserveAspectRatio="xMidYMid slice"><rect x="-60" y="-55" width="120" height="110" fill="#fff"/>${art('cat1')}</svg>`;
 $('th3').innerHTML = `<svg viewBox="-150 -60 300 120" preserveAspectRatio="xMidYMid slice"><rect x="-150" y="-60" width="300" height="120" fill="#fff"/><g transform="translate(-105 0) scale(.8)">${block('C')}</g><g transform="translate(-35 0) scale(.8)">${block('A')}</g><g transform="translate(35 0) scale(.8)">${block('F')}</g><g transform="translate(105 0) scale(.8)">${block('E')}</g></svg>`;
 
 /* сцена 480 x 360, центр у (0,0), y угору */
@@ -483,61 +598,267 @@ function spriteSvg(s, extra = '') {
   t += ` scale(${s.size / 100})`;
   return `<g class="spr" data-i="${extra}" transform="${t}"><rect class="selbox" x="-50" y="-50" width="100" height="100" rx="6" fill="none" stroke="#4C97FF" stroke-width="3" stroke-dasharray="7 5"/>${art(s.costumes[s.c])}</g>`;
 }
-const stageBg = `<rect x="-240" y="-180" width="480" height="360" fill="#fff"/><g stroke="#EEF3F0" stroke-width="1">${[-200,-160,-120,-80,-40,40,80,120,160,200].map(v => `<line x1="${v}" y1="-180" x2="${v}" y2="180"/>`).join('')}${[-160,-120,-80,-40,40,80,120,160].map(v => `<line x1="-240" y1="${v}" x2="240" y2="${v}"/>`).join('')}</g><line x1="-240" y1="0" x2="240" y2="0" stroke="#DCE6E0" stroke-width="2"/><line x1="0" y1="-180" x2="0" y2="180" stroke="#DCE6E0" stroke-width="2"/>`;
+const stageBg = `<rect x="-240" y="-180" width="480" height="360" fill="#fff"/><g stroke="#EEF3F0" stroke-width="1">${[-200, -160, -120, -80, -40, 40, 80, 120, 160, 200].map(v => `<line x1="${v}" y1="-180" x2="${v}" y2="180"/>`).join('')}${[-160, -120, -80, -40, 40, 80, 120, 160].map(v => `<line x1="-240" y1="${v}" x2="240" y2="${v}"/>`).join('')}</g><line x1="-240" y1="0" x2="240" y2="0" stroke="#DCE6E0" stroke-width="2"/><line x1="0" y1="-180" x2="0" y2="180" stroke="#DCE6E0" stroke-width="2"/>`;
 function svgPoint(svg, e) { const r = svg.getBoundingClientRect(); return { x: Math.round((e.clientX - r.left) / r.width * 480 - 240), y: Math.round(180 - (e.clientY - r.top) / r.height * 360) }; }
-const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
-const wrapDir = d => { d = ((d + 180) % 360 + 360) % 360 - 180; return d === -180 ? 180 : d; };
+const bubble = (x, y, t) => `<g transform="translate(${x} ${y})"><path d="M0 0 h${t.length * 9 + 22} a8 8 0 0 1 8 8 v18 a8 8 0 0 1 -8 8 h-${t.length * 9 - 2} l-10 10 l2 -10 h-14 a8 8 0 0 1 -8 -8 v-18 a8 8 0 0 1 8 -8z" fill="#fff" stroke="#9AA8A1" stroke-width="2"/><text x="${(t.length * 9 + 22) / 2}" y="23" text-anchor="middle" font-size="16" font-weight="600" font-family="Segoe UI, Arial" fill="#333">${t}</text></g>`;
 
-/* ---------- 1. Обговоріть проблему ---------- */
-const QA = [
-  ['Чи в кожному середовищі виконання алгоритмів існують виконавці?', 'Так. Алгоритм завжди хтось або щось виконує: у Скретчі - спрайти, у грі - персонажі.'],
-  ['Які середовища та виконавці вам відомі?', 'Скретч і його спрайти, навчальні ігри з персонажами, які рухаються за командами.'],
-  ['Діяльністю яких виконавців вам доводилось управляти в комп\'ютерних іграх?', 'Героями ігор: персонажем, автомобілем, літаком. Ними керують клавішами або мишею.'],
-  ['Які виконавці існують в інших комп\'ютерних програмах?', 'Вказівник миші, курсор у текстовому редакторі, фігури в графічному редакторі.'],
-  ['Які властивості в них можна виділити?', 'Ім\'я, розмір, колір, положення на екрані, напрям руху, вигляд.'],
-  ['Які властивості можна змінювати? Від чого це залежить?', 'Положення, розмір, напрям, вигляд, видимість. Що саме можна змінити, залежить від середовища: які інструменти й команди воно має.'],
-  ['Сформулюйте припущення, істинність якого можна буде перевірити.', 'Наприклад: «Якщо збільшити значення властивості Розмір, спрайт стане більшим». Перевір на вкладці «Властивості виконавця».'],
+/* ======================= 1. ПИТАННЯ ======================= */
+const Q = [
+  { s: 'Чи є виконавці?', q: 'Чи в кожному середовищі виконання алгоритмів існують виконавці?', a: 'Так. Алгоритм завжди хтось або щось виконує: у Скретчі - спрайти, у лабіринті - робот, у середовищі Черепашки - черепашка.' },
+  { s: 'Які середовища?', q: 'Які середовища та виконавці вам відомі?', a: 'Скретч і його спрайти, навчальні лабіринти з роботом, середовище Черепашки, яка малює, комп\'ютерні ігри з героями.' },
+  { s: 'Виконавці в іграх', q: 'Діяльністю яких виконавців вам доводилось управляти в комп\'ютерних іграх?', a: 'Героями ігор: персонажем, автомобілем, літаком. Ними керують клавішами або мишею.' },
+  { s: 'Інші програми', q: 'Які виконавці існують в інших комп\'ютерних програмах?', a: 'Курсор у текстовому редакторі, олівець і пензель у графічному редакторі, вказівник миші на робочому столі.' },
+  { s: 'Властивості', q: 'Які властивості в них можна виділити?', a: 'Ім\'я, положення на екрані, розмір, напрям руху, вигляд і колір.' },
+  { s: 'Що можна змінити?', q: 'Які властивості можна змінювати? Від чого це залежить?', a: 'Положення, розмір, напрям, вигляд, видимість. Що саме можна змінити, залежить від середовища: які інструменти й команди воно має.' },
+  { s: 'Припущення', q: 'Сформулюйте припущення, істинність якого можна буде перевірити.', a: 'Наприклад: «Якщо збільшити значення властивості Розмір, спрайт стане більшим». Перевірити можна на вкладці «Властивості виконавця», у конструкторі.' },
 ];
-$('qa').innerHTML = QA.map((q, i) => `<li><div class="q"><span>${q[0]}</span><button class="btn" data-qa="${i}">Показати відповідь</button></div><div class="a hide" id="qa${i}">${q[1]}</div></li>`).join('');
-document.querySelectorAll('[data-qa]').forEach(b => b.addEventListener('click', () => {
-  const a = $('qa' + b.dataset.qa), hidden = a.classList.toggle('hide');
-  b.textContent = hidden ? 'Показати відповідь' : 'Сховати відповідь';
-}));
-function sub1(k) {
-  document.querySelectorAll('[data-sub1]').forEach(b => b.classList.toggle('on', b.dataset.sub1 === k));
-  $('sub-tf').classList.toggle('hide', k !== 'tf'); $('sub-sc').classList.toggle('hide', k !== 'sc');
-}
-document.querySelectorAll('[data-sub1]').forEach(b => b.addEventListener('click', () => sub1(b.dataset.sub1)));
+let curQ = 0;
+$('qnav').innerHTML = Q.map((q, i) => `<button data-q="${i}"><b>${i + 1}</b><span>${q.s}</span></button>`).join('');
+$('qnav').addEventListener('click', e => { const b = e.target.closest('[data-q]'); if (b) showQ(+b.dataset.q); });
 
-const TF = [
-  ['Об\'єкт, у якому відкривається комп\'ютерна програма, - це вікно.', true, 'Кожна програма відкривається у своєму вікні.'],
-  ['Елементи інтерфейсу вікна комп\'ютерної програми - графічні об\'єкти.', true, 'Кнопки, меню, смуги прокручування - це графічні об\'єкти.'],
-  ['Користувач управляє елементами вікна програми.', true, 'Він натискає кнопки, відкриває меню, перетягує смуги.'],
-  ['У середовищі виконання алгоритмів виконавці мають свій графічний образ - спрайт.', true, 'У Скретчі кожен виконавець має образ.'],
-  ['Управляти спрайтом у середовищі Скретч може користувач за допомогою миші або складеного алгоритму.', true, 'Спрайт можна перетягнути мишею або запустити для нього скрипт.'],
-  ['Виконавцем у Скретчі може бути лише кіт.', false, 'Можна обрати будь-який спрайт з бібліотеки або намалювати свій.'],
-  ['Значення властивостей спрайта змінити не можна.', false, 'Ім\'я, x, y, розмір, напрям, образ можна змінити.'],
-  ['Якщо спрайт сховати (властивість Показати), його не видно на сцені, але він лишається в проєкті.', true, 'Спрайт лишається в списку спрайтів, його можна показати знову.'],
+const SCENE = [];
+function showQ(i) {
+  for (let k = 0; k < Q.length; k++) stopAnim('q' + k);
+  curQ = i;
+  document.querySelectorAll('#qnav button').forEach(b => b.classList.toggle('on', +b.dataset.q === i));
+  const q = Q[i], sc = SCENE[i];
+  $('qpage').innerHTML = `<span class="qnum">Питання ${i + 1} з ${Q.length}</span><p class="qq">${q.q}</p>
+    <div id="scn">${sc.html()}</div>
+    <div class="qfoot"><div class="row">${sc.run ? '<button class="btn go" id="qRun">Запустити</button>' : ''}<button class="btn" id="qAns">Показати відповідь</button></div>
+    <div class="row">${i > 0 ? '<button class="btn" id="qPrev">Попереднє питання</button>' : ''}${i < Q.length - 1 ? '<button class="btn" id="qNext">Наступне питання</button>' : ''}</div></div>
+    <div class="ans hide" id="qA">${q.a}</div>`;
+  if (sc.init) sc.init();
+  if ($('qRun')) $('qRun').addEventListener('click', () => play('q' + i, sc.run));
+  $('qAns').addEventListener('click', e => { const h = $('qA').classList.toggle('hide'); e.target.textContent = h ? 'Показати відповідь' : 'Сховати відповідь'; });
+  if ($('qPrev')) $('qPrev').addEventListener('click', () => showQ(i - 1));
+  if ($('qNext')) $('qNext').addEventListener('click', () => showQ(i + 1));
+}
+const hl = (listId, k) => { const l = $(listId); if (l) [...l.children].forEach((li, j) => li.classList.toggle('cur', j === k)); };
+const setT = (id, t) => { const e = $(id); if (e) e.setAttribute('transform', t); };
+
+/* --- 1. Три середовища: Скретч, лабіринт, Черепашка --- */
+const MAZE_WALL = [[1, 2], [3, 3], [4, 1], [2, 0], [5, 2], [5, 3], [0, 0]];
+const mazeSvg = id => `<svg class="scn" viewBox="0 0 240 160">${[...Array(6)].map((_, c) => [...Array(4)].map((_, r) => `<rect x="${c * 40 + 1}" y="${r * 40 + 1}" width="38" height="38" rx="4" fill="${MAZE_WALL.some(w => w[0] === c && w[1] === r) ? '#7A9A84' : '#EEF3F0'}"/>`).join('')).join('')}
+  <g id="${id}star" transform="translate(140 60) scale(.8)">${STAR}</g><g id="${id}rob" transform="translate(20 140) scale(.55)">${ROBOT}</g></svg>`;
+function envHtml(p) {
+  return `<div class="envs">
+    <div class="env"><h4>Скретч</h4><svg class="scn" viewBox="0 0 240 160"><rect width="240" height="160" fill="#fff"/><g id="${p}bub"></g><g id="${p}cat" transform="translate(60 105) scale(.6)">${ART.cat1}</g></svg>
+      <ul class="cmds scratch" id="${p}c1"><li class="ev">коли 🏁 натиснуто</li><li class="lk">сказати Привіт! 2 секунд</li><li class="mo">перемістити на 100 кроків</li></ul>
+      <div class="who">Виконавець: <b>кіт-спрайт</b></div></div>
+    <div class="env"><h4>Лабіринт</h4>${mazeSvg(p)}
+      <ul class="cmds" id="${p}c2"><li>вперед</li><li>вперед</li><li>ліворуч</li><li>вперед</li><li>вперед</li><li>праворуч</li><li>вперед</li></ul>
+      <div class="who">Виконавець: <b>робот</b></div></div>
+    <div class="env"><h4>Черепашка</h4><svg class="scn" viewBox="0 0 240 160"><rect width="240" height="160" fill="#fff"/><path id="${p}trail" d="" stroke="#2E7CD6" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><g id="${p}tur" transform="translate(70 30) scale(.5)">${TURTLE}</g></svg>
+      <ul class="cmds" id="${p}c3"><li class="loop">повторити 4 рази</li><li>вперед 100</li><li>праворуч 90</li></ul>
+      <div class="who">Виконавець: <b>черепашка</b></div></div>
+  </div>`;
+}
+async function runScratch(key, p) {
+  setT(p + 'cat', 'translate(60 105) scale(.6)'); $(p + 'bub').innerHTML = '';
+  hl(p + 'c1', 0); await wait(key, 700);
+  hl(p + 'c1', 1); $(p + 'bub').innerHTML = `<g transform="scale(.8)">${bubble(80, 20, 'Привіт!')}</g>`; await wait(key, 2000);
+  $(p + 'bub').innerHTML = ''; hl(p + 'c1', 2);
+  await tween(key, 900, k => setT(p + 'cat', `translate(${60 + 110 * k} 105) scale(.6)`));
+  hl(p + 'c1', -1);
+}
+async function runMaze(key, p) {
+  let c = 0, r = 3, a = 0; const draw = (x, y, ang) => setT(p + 'rob', `translate(${x} ${y}) rotate(${ang}) scale(.55)`);
+  draw(20, 140, 0); setT(p + 'star', 'translate(140 60) scale(.8)');
+  const cmds = ['f', 'f', 'l', 'f', 'f', 'r', 'f'];
+  await wait(key, 300);
+  for (let i = 0; i < cmds.length; i++) {
+    hl(p + 'c2', i);
+    if (cmds[i] === 'f') {
+      const dc = Math.round(Math.cos(a * Math.PI / 180)), dr = Math.round(Math.sin(a * Math.PI / 180)), c0 = c, r0 = r; c += dc; r += dr;
+      await tween(key, 450, k => draw(20 + 40 * (c0 + dc * k), 20 + 40 * (r0 + dr * k), a));
+    } else { const a0 = a; a += cmds[i] === 'l' ? -90 : 90; await tween(key, 350, k => draw(20 + 40 * c, 20 + 40 * r, a0 + (a - a0) * k)); }
+    await wait(key, 120);
+  }
+  hl(p + 'c2', -1);
+  await tween(key, 400, k => setT(p + 'star', `translate(140 60) scale(${.8 + .6 * Math.sin(k * Math.PI)})`));
+}
+async function runTurtle(key, p) {
+  let x = 70, y = 30, a = 0; const pts = [[x, y]], tr = $(p + 'trail');
+  const draw = () => setT(p + 'tur', `translate(${x} ${y}) rotate(${a}) scale(.5)`);
+  tr.setAttribute('d', ''); draw(); await wait(key, 300);
+  for (let s = 0; s < 4; s++) {
+    hl(p + 'c3', 1); const x0 = x, y0 = y, dx = Math.round(Math.cos(a * Math.PI / 180)) * 100, dy = Math.round(Math.sin(a * Math.PI / 180)) * 100;
+    await tween(key, 650, k => { x = x0 + dx * k; y = y0 + dy * k; tr.setAttribute('d', 'M' + pts.map(q => q.join(' ')).join(' L') + ` L${x} ${y}`); draw(); });
+    pts.push([x, y]);
+    hl(p + 'c3', 2); const a0 = a; await tween(key, 350, k => { a = a0 + 90 * k; draw(); });
+  }
+  hl(p + 'c3', -1);
+}
+SCENE[0] = {
+  html: () => envHtml('e1'),
+  run: async () => { await Promise.all([runScratch('q0', 'e1'), runMaze('q0', 'e1'), runTurtle('q0', 'e1')]); },
+};
+
+/* --- 2. Відомі середовища: галерея --- */
+SCENE[1] = {
+  html: () => `<div class="envs" style="grid-template-columns: repeat(2, minmax(0, 1fr))">
+    ${[['Скретч', 'cat1', 'спрайти', 'рухаються, говорять, змінюють образ'], ['Лабіринт', 'robot', 'робот', 'іде вперед і повертає'], ['Черепашка', 'turtle', 'черепашка', 'іде й малює лінії'], ['Комп\'ютерна гра', 'car', 'герой гри: машинка', 'їде туди, куди скаже гравець']]
+      .map(([t, c, w, d], i) => `<div class="env"><h4>${t}</h4><svg class="scn" viewBox="0 0 240 140"><rect width="240" height="140" fill="#fff"/>${i === 2 ? '<path id="g2trail" d="" stroke="#2E7CD6" stroke-width="4" fill="none" stroke-linecap="round"/>' : ''}<g id="g2a${i}" transform="translate(70 75) scale(.7)">${art(c)}</g></svg><div class="who">Виконавець: <b>${w}</b></div><div class="who">Що вміє: ${d}</div></div>`).join('')}
+  </div>`,
+  init: () => { setT('g2a1', 'translate(70 75) scale(.55)'); setT('g2a2', 'translate(50 75) scale(.45)'); setT('g2a3', 'translate(40 75) scale(.6)'); },
+  run: async () => {
+    $('g2trail').setAttribute('d', '');
+    await tween('q1', 1600, k => {
+      setT('g2a0', `translate(${70 + 90 * k} ${75 - 40 * Math.abs(Math.sin(k * Math.PI * 2))}) scale(.7)`);
+      setT('g2a1', `translate(${70 + 100 * Math.min(1, k * 1.6)} 75) rotate(${k > .65 ? -90 * (k - .65) / .35 : 0}) scale(.55)`);
+      setT('g2a2', `translate(${50 + 130 * k} 75) scale(.45)`); $('g2trail').setAttribute('d', `M50 75 L${50 + 130 * k} 75`);
+      setT('g2a3', `translate(${40 + 160 * k} ${75 + 25 * Math.sin(k * Math.PI * 2)}) rotate(${45 * Math.cos(k * Math.PI * 2)}) scale(.6)`);
+    });
+  },
+};
+
+/* --- 3. Гра: керуй машинкою --- */
+const G3 = { c: 0, r: 5, a: 0, sc: 0, sx: 7, sy: 2 };
+SCENE[2] = {
+  html: () => `<svg class="bigscn" id="g3" viewBox="0 0 480 240"></svg>
+    <div class="row" style="margin-top:12px; gap:18px; align-items:flex-start">
+      <div class="pad"><button class="up" data-mv="up" aria-label="Вгору">↑</button><button class="lf" data-mv="lf" aria-label="Ліворуч">←</button><button class="dn" data-mv="dn" aria-label="Вниз">↓</button><button class="rt" data-mv="rt" aria-label="Праворуч">→</button></div>
+      <div style="flex:1; min-width:200px"><span class="lbl">Керуй машинкою кнопками або стрілками на клавіатурі. Збирай зірки.</span><p class="say" id="g3s"></p></div></div>`,
+  init: () => { G3.c = 0; G3.r = 5; G3.a = 0; G3.sc = 0; carBusy = false; newStar(); drawG3(); document.querySelectorAll('[data-mv]').forEach(b => b.addEventListener('click', () => moveCar(b.dataset.mv))); },
+};
+function newStar() { do { G3.sx = Math.floor(Math.random() * 12); G3.sy = Math.floor(Math.random() * 6); } while (G3.sx === G3.c && G3.sy === G3.r); }
+function drawG3(px, py) {
+  const svg = $('g3'); if (!svg) return;
+  const x = px ?? 20 + 40 * G3.c, y = py ?? 20 + 40 * G3.r;
+  svg.innerHTML = `<rect width="480" height="240" fill="#DDEFD3"/>${[...Array(12)].map((_, c) => [...Array(6)].map((_, r) => `<rect x="${c * 40 + 1}" y="${r * 40 + 1}" width="38" height="38" rx="5" fill="${(c + r) % 2 ? '#CFE6C3' : '#D8ECCD'}"/>`).join('')).join('')}
+    <g transform="translate(${20 + 40 * G3.sx} ${20 + 40 * G3.sy}) scale(.9)">${STAR}</g><g transform="translate(${x} ${y}) rotate(${G3.a}) scale(.55)">${CAR}</g>`;
+  $('g3s').textContent = `Зібрано зірок: ${G3.sc}. Виконавець - машинка, а керуєш нею ти.`;
+}
+let carBusy = false;
+async function moveCar(d) {
+  if (carBusy) return;
+  const D = { up: [0, -1, -90], dn: [0, 1, 90], lf: [-1, 0, 180], rt: [1, 0, 0] }[d];
+  const c1 = clamp(G3.c + D[0], 0, 11), r1 = clamp(G3.r + D[1], 0, 5); G3.a = D[2];
+  carBusy = true; const c0 = G3.c, r0 = G3.r;
+  try { await tween('q2', 160, k => drawG3(20 + 40 * (c0 + (c1 - c0) * k), 20 + 40 * (r0 + (r1 - r0) * k))); } catch (e) { carBusy = false; return; }
+  G3.c = c1; G3.r = r1; carBusy = false;
+  if (G3.c === G3.sx && G3.r === G3.sy) { G3.sc++; newStar(); }
+  drawG3();
+}
+document.addEventListener('keydown', e => {
+  if (!$('t1').classList.contains('on') || curQ !== 2 || $('s1-qs').classList.contains('hide')) return;
+  const m = { ArrowUp: 'up', ArrowDown: 'dn', ArrowLeft: 'lf', ArrowRight: 'rt' }[e.key];
+  if (m) { e.preventDefault(); moveCar(m); }
+});
+
+/* --- 4. Виконавці в інших програмах --- */
+const win = (title, body) => `<rect x="4" y="4" width="232" height="152" rx="8" fill="#fff" stroke="#B9C6BF" stroke-width="2"/><rect x="4" y="4" width="232" height="26" rx="8" fill="#E6EEE9"/><rect x="4" y="20" width="232" height="10" fill="#E6EEE9"/>
+  <text x="14" y="22" font-size="13" font-weight="600" font-family="Segoe UI, Arial" fill="#3A4A40">${title}</text><circle cx="222" cy="17" r="5" fill="#E36F5E"/><circle cx="206" cy="17" r="5" fill="#F2C14E"/>${body}`;
+const PTR = `<path d="M0 0 L0 22 L6 16 L10 26 L14 24 L10 14 L18 14z" fill="#fff" stroke="#222" stroke-width="1.8" stroke-linejoin="round"/>`;
+const PENCIL = `<g><path d="M0 0 L6 -16 L30 -40 L40 -30 L16 -6z" fill="#F2B705" stroke="#8A6200" stroke-width="1.5"/><path d="M0 0 L6 -16 L16 -6z" fill="#F3D9B8"/><path d="M0 0 L2.5 -6.5 L6.5 -2.5z" fill="#333"/><path d="M30 -40 L40 -30 L44 -34 Q46 -38 42 -42 L38 -44 Q34 -46 32 -42z" fill="#F08AA0"/></g>`;
+SCENE[3] = {
+  html: () => `<div class="envs">
+    <div class="env"><h4>Текстовий редактор</h4><svg class="scn" viewBox="0 0 240 160">${win('Документ', '<text id="o1t" x="16" y="62" font-size="17" font-family="Segoe UI, Arial" fill="#222"></text><rect id="o1c" class="blink" x="16" y="47" width="2.5" height="20" fill="#222"/>')}</svg><div class="who">Виконавець: <b>курсор</b>. Він ставить літери туди, де стоїть.</div></div>
+    <div class="env"><h4>Графічний редактор</h4><svg class="scn" viewBox="0 0 240 160">${win('Малюнок', '<path id="o2p" d="M24 120 C60 50 90 50 120 100 S180 150 214 70" stroke="#2E7CD6" stroke-width="5" fill="none" stroke-linecap="round"/><g id="o2pen" transform="translate(24 120)">' + PENCIL + '</g>')}</svg><div class="who">Виконавець: <b>олівець</b>. Він малює там, де його ведуть.</div></div>
+    <div class="env"><h4>Робочий стіл</h4><svg class="scn" viewBox="0 0 240 160"><rect width="240" height="160" rx="8" fill="#2F6E8E"/><g id="o3w"><rect x="50" y="30" width="150" height="90" rx="8" fill="#fff"/><text x="125" y="64" text-anchor="middle" font-size="14" font-family="Segoe UI, Arial" fill="#222">Зберегти файл?</text><rect id="o3b" x="95" y="80" width="60" height="26" rx="6" fill="#4C97FF"/><text x="125" y="98" text-anchor="middle" font-size="14" font-weight="700" font-family="Segoe UI, Arial" fill="#fff">OK</text></g><g id="o3p" transform="translate(20 130)">${PTR}</g></svg><div class="who">Виконавець: <b>вказівник миші</b>. Він натискає кнопки.</div></div>
+  </div>`,
+  init: () => { const p = $('o2p'), L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; },
+  run: async () => {
+    const T = 'Сьогодні урок!', t = $('o1t'), cur = $('o1c'), p = $('o2p'), L = p.getTotalLength(), w = $('o3w'), b = $('o3b');
+    t.textContent = ''; cur.setAttribute('x', 16); p.style.strokeDashoffset = L; w.style.opacity = 1; b.setAttribute('fill', '#4C97FF'); setT('o3p', 'translate(20 130)');
+    const typing = (async () => { for (let i = 1; i <= T.length; i++) { await wait('q3', 160); t.textContent = T.slice(0, i); cur.setAttribute('x', 18 + t.getComputedTextLength()); } })();
+    const drawing = tween('q3', 2400, k => { p.style.strokeDashoffset = L * (1 - k); const q = p.getPointAtLength(L * k); setT('o2pen', `translate(${q.x} ${q.y})`); });
+    const click = (async () => {
+      await tween('q3', 1200, k => setT('o3p', `translate(${20 + 105 * k} ${130 - 36 * k})`));
+      b.setAttribute('fill', '#1F5FB8'); await wait('q3', 300); b.setAttribute('fill', '#4C97FF');
+      await tween('q3', 500, k => { w.style.opacity = 1 - k; });
+      await wait('q3', 900); w.style.opacity = 1;
+    })();
+    await Promise.all([typing, drawing, click]);
+  },
+};
+
+/* --- 5. Властивості виконавця --- */
+let q5k = 'name';
+SCENE[4] = {
+  html: () => `<svg class="bigscn" id="q5" viewBox="0 0 480 270"></svg>
+    <div class="row" style="margin-top:12px"><span class="lbl" style="margin:0">Покажи властивість:</span><span class="seg" id="q5seg">
+      <button data-p="name">Ім'я</button><button data-p="pos">Положення</button><button data-p="size">Розмір</button><button data-p="dir">Напрям</button><button data-p="look">Вигляд</button></span></div>`,
+  init: () => { $('q5seg').addEventListener('click', e => { const b = e.target.closest('[data-p]'); if (b) { q5k = b.dataset.p; play('q4', drawQ5); } }); q5k = 'name'; play('q4', drawQ5); },
+};
+async function drawQ5() {
+  document.querySelectorAll('#q5seg button').forEach(b => b.classList.toggle('on', b.dataset.p === q5k));
+  const cx = 320, cy = 150, base = (c = 'cat1') => `<rect width="480" height="270" fill="#fff"/>` + put(c, cx, cy, 1);
+  const tag = (x, y, t) => `<g><rect x="${x - t.length * 5.2 - 12}" y="${y - 16}" width="${t.length * 10.4 + 24}" height="30" rx="15" fill="#fff" stroke="#4C97FF" stroke-width="2.5"/><text x="${x}" y="${y + 5}" text-anchor="middle" font-size="17" font-weight="700" font-family="Segoe UI, Arial" fill="#1E3A5F">${t}</text></g>`;
+  const svg = $('q5');
+  if (q5k === 'name') svg.innerHTML = base() + tag(cx, 64, 'Ім\'я: Котик');
+  if (q5k === 'pos') svg.innerHTML = `<rect width="480" height="270" fill="#fff"/><line x1="0" y1="135" x2="476" y2="135" stroke="#9AA8A1" stroke-width="2" marker-end="url(#arrG)"/><line x1="240" y1="270" x2="240" y2="4" stroke="#9AA8A1" stroke-width="2" marker-end="url(#arrG)"/>
+    <text x="462" y="126" font-size="16" font-weight="700" fill="#2E8B57">x</text><text x="248" y="18" font-size="16" font-weight="700" fill="#2E8B57">y</text><circle cx="240" cy="135" r="4" fill="#2E8B57"/><text x="222" y="154" font-size="14" fill="#4F6357">0</text>`
+    + `<line x1="${cx}" y1="85" x2="${cx}" y2="135" stroke="#4C97FF" stroke-width="2" stroke-dasharray="6 5"/><line x1="${cx}" y1="85" x2="240" y2="85" stroke="#4C97FF" stroke-width="2" stroke-dasharray="6 5"/>` + put('cat1', cx, 85, .8)
+    + tag(cx, 160, 'x: 80') + tag(185, 85, 'y: 50');
+  if (q5k === 'size') { for (const k of [.5, 1, 1.5]) { svg.innerHTML = `<rect width="480" height="270" fill="#fff"/>` + put('cat1', 240, 125, k) + `<rect x="${240 - 50 * k}" y="${125 - 50 * k}" width="${100 * k}" height="${100 * k}" fill="none" stroke="#4C97FF" stroke-width="2" stroke-dasharray="7 5"/>` + tag(240, 250, `Розмір: ${k * 100}`); await wait('q4', 1000); } }
+  if (q5k === 'dir') { for (const d of [90, 180, -90, 0, 90]) { svg.innerHTML = `<rect width="480" height="270" fill="#fff"/><g transform="translate(240 125) rotate(${d - 90})">${art('cat1')}<line x1="0" y1="0" x2="95" y2="0" stroke="#4C97FF" stroke-width="4" marker-end="url(#arr)"/></g>` + tag(240, 250, `Напрям: ${d}`); await wait('q4', 1000); } }
+  if (q5k === 'look') { for (const [c, t] of [['cat1', 'Образ: образ1'], ['cat2', 'Образ: образ2'], ['cat1g', 'Інший колір'], ['cat1b', 'Інший колір'], ['cat1', 'Образ: образ1']]) { svg.innerHTML = base(c) + tag(cx, 250, t); await wait('q4', 1000); } }
+}
+
+/* --- 6. Що можна змінити: залежить від середовища --- */
+const Q6 = { env: 'scr', x: 240, k: 1, a: 0, col: 0 };
+const CCOL = ['cat1', 'cat1g', 'cat1b'];
+SCENE[5] = {
+  html: () => `<div class="row" style="margin-bottom:10px"><span class="lbl" style="margin:0">Середовище:</span><span class="seg" id="q6env"><button data-env="scr">Скретч</button><button data-env="maze">Лабіринт</button></span></div>
+    <svg class="bigscn" id="q6" viewBox="0 0 480 240"></svg>
+    <div class="row" style="margin-top:12px" id="q6btn"><button class="btn" data-c="big">Більше</button><button class="btn" data-c="small">Менше</button><button class="btn" data-c="left">Ліворуч</button><button class="btn" data-c="right">Праворуч</button><button class="btn" data-c="turn">Повернути</button><button class="btn" data-c="col">Інший колір</button></div>
+    <p class="say" id="q6s" style="margin-top:10px"></p>`,
+  init: () => {
+    Object.assign(Q6, { env: 'scr', x: 240, k: 1, a: 0, col: 0 });
+    $('q6env').addEventListener('click', e => { const b = e.target.closest('[data-env]'); if (b) { Object.assign(Q6, { env: b.dataset.env, x: b.dataset.env === 'maze' ? 220 : 240, k: 1, a: 0, col: 0 }); drawQ6(); } });
+    $('q6btn').addEventListener('click', e => {
+      const b = e.target.closest('[data-c]'); if (!b || b.disabled) return; const c = b.dataset.c, st = Q6.env === 'maze' ? 40 : 30;
+      if (c === 'big') Q6.k = Math.min(1.8, Q6.k + .2); if (c === 'small') Q6.k = Math.max(.5, Q6.k - .2);
+      if (c === 'left') Q6.x = clamp(Q6.x - st, 60, 420); if (c === 'right') Q6.x = clamp(Q6.x + st, 60, 420);
+      if (c === 'turn') Q6.a += Q6.env === 'maze' ? 90 : 45; if (c === 'col') Q6.col = (Q6.col + 1) % 3; drawQ6();
+    });
+    drawQ6();
+  },
+};
+function drawQ6() {
+  const m = Q6.env === 'maze';
+  document.querySelectorAll('#q6env button').forEach(b => b.classList.toggle('on', b.dataset.env === Q6.env));
+  document.querySelectorAll('#q6btn button').forEach(b => { b.disabled = m && ['big', 'small', 'col'].includes(b.dataset.c); });
+  $('q6').innerHTML = m
+    ? `<rect width="480" height="240" fill="#fff"/>${[...Array(12)].map((_, c) => [...Array(6)].map((_, r) => `<rect x="${c * 40 + 1}" y="${r * 40 + 1}" width="38" height="38" rx="4" fill="${r === 2 || r === 3 ? '#EEF3F0' : '#7A9A84'}"/>`).join('')).join('')}<g transform="translate(${Q6.x} 120) rotate(${Q6.a}) scale(.6)">${ROBOT}</g>`
+    : `<rect width="480" height="240" fill="#fff"/><g transform="translate(${Q6.x} 120) rotate(${Q6.a}) scale(${Q6.k})">${art(CCOL[Q6.col])}</g>`;
+  $('q6s').textContent = m ? 'У лабіринті можна змінити лише положення й напрям робота. Розмір і колір змінити не можна.' : 'У Скретчі можна змінити положення, розмір, напрям і вигляд кота.';
+}
+
+/* --- 7. Припущення --- */
+const HYP = [
+  { t: 'Якщо змінити Розмір зі 100 на 200, кіт стане вдвічі більшим.', p: 'Розмір', from: 100, to: 200 },
+  { t: 'Якщо змінити Напрям з 90 на 180, кіт повернеться на чверть оберту.', p: 'Напрям', from: 90, to: 180 },
+  { t: 'Якщо змінити y з 0 на 80, кіт підніметься вгору.', p: 'y', from: 0, to: 80 },
 ];
-let tfRight = 0;
-function tfShow() { $('tfScore').textContent = `Правильних відповідей: ${tfRight} з ${TF.length}`; $('tfBar').style.width = tfRight / TF.length * 100 + '%'; }
-function tfBuild() {
-  tfRight = 0; tfShow(); const g = $('tfGrid'); g.innerHTML = '';
-  shuffle(TF).forEach(([t, ok, why]) => {
-    const d = document.createElement('div'); d.className = 'item';
-    d.innerHTML = `<div class="badge"></div><div class="name">${t}</div><div class="choice"><button class="yes" data-v="1">Істинне</button><button class="no" data-v="0">Хибне</button></div><div class="why">${why}</div>`;
-    d.querySelectorAll('.choice button').forEach(btn => btn.addEventListener('click', () => {
-      if (d.classList.contains('done')) return;
-      const good = (btn.dataset.v === '1') === ok;
-      d.querySelector(ok ? '.yes' : '.no').classList.add('answer');
-      d.classList.add('done', good ? 'right' : 'wrong'); d.querySelector('.badge').textContent = good ? '✓' : '✗';
-      if (good) tfRight++; tfShow();
-    }));
-    g.appendChild(d);
-  });
+let q7h = 0;
+SCENE[6] = {
+  html: () => `<div class="two"><div><span class="lbl">Обери припущення</span><div class="hyp" id="q7h">${HYP.map((h, i) => `<button data-h="${i}">${h.t}</button>`).join('')}</div>
+    <div class="row" style="margin-top:12px"><button class="btn go" id="q7go">Перевірити</button></div><p class="say" id="q7s" style="margin-top:10px"></p></div>
+    <svg class="bigscn" id="q7" viewBox="50 10 380 285"></svg></div>`,
+  init: () => {
+    q7h = 0;
+    $('q7h').addEventListener('click', e => { const b = e.target.closest('[data-h]'); if (b) { q7h = +b.dataset.h; stopAnim('q6'); drawQ7(0); $('q7s').textContent = ''; markQ7(); } });
+    $('q7go').addEventListener('click', () => play('q6', runQ7)); markQ7(); drawQ7(0);
+  },
+};
+const markQ7 = () => document.querySelectorAll('#q7h button').forEach(b => b.classList.toggle('on', +b.dataset.h === q7h));
+function drawQ7(k) {
+  const h = HYP[q7h], v = h.from + (h.to - h.from) * k;
+  const size = h.p === 'Розмір' ? v : 100, dir = h.p === 'Напрям' ? v : 90, y = h.p === 'y' ? v : 0;
+  $('q7').innerHTML = `<rect width="480" height="300" fill="#fff"/><line x1="0" y1="150" x2="480" y2="150" stroke="#EEF3F0" stroke-width="2"/><line x1="240" y1="0" x2="240" y2="300" stroke="#EEF3F0" stroke-width="2"/>
+    <g transform="translate(240 ${150 - y}) rotate(${dir - 90}) scale(${size / 100})">${art('cat1')}</g><text x="58" y="286" font-size="17" font-weight="700" font-family="Segoe UI, Arial" fill="#1E5E3A">${h.p}: ${Math.round(v)}</text>`;
 }
-$('tfReset').addEventListener('click', tfBuild); tfBuild();
+async function runQ7() {
+  const h = HYP[q7h]; $('q7s').textContent = `Було: ${h.p} ${h.from}.`; drawQ7(0); await wait('q6', 600);
+  await tween('q6', 1100, k => drawQ7(k));
+  $('q7s').textContent = `Було: ${h.p} ${h.from}. Стало: ${h.p} ${h.to}. Припущення підтвердилося ✓`;
+}
+showQ(0);
+SUBHOOK.s1 = k => { if (k !== 'qs') for (let i = 0; i < Q.length; i++) stopAnim('q' + i); };
 
+/* --- схема --- */
 const SCH = [['План', 'Дії', 'План складається з дій.'], ['Інструкція', 'Речення', 'Інструкція складається з речень.'], ['Алгоритм', 'Команди', 'Алгоритм складається з команд.'], ['Виконавець', 'Система команд', 'Виконавець має свою систему команд.']];
 const OPTS = ['Дії', 'Речення', 'Команди', 'Система команд'];
 $('scheme').innerHTML = SCH.map((s, i) => `<div class="pair" id="pr${i}"><span class="con">${s[0]}</span><select data-sc="${i}" aria-label="${s[0]}"><option value="">обери…</option>${OPTS.map(o => `<option>${o}</option>`).join('')}</select><span class="res"></span></div>`).join('');
@@ -549,8 +870,21 @@ document.querySelectorAll('[data-sc]').forEach(sel => sel.addEventListener('chan
   res.textContent = good ? SCH[i][2] : 'Ні, подумай ще.';
 }));
 
-/* ---------- 2. Властивості ---------- */
-const S2 = { name: 'Чашка', x: 0, y: 0, show: true, size: 100, dir: 90, rot: 'all', c: 0, costumes: ['cup1', 'cup2'] };
+/* ======================= 2. ВЛАСТИВОСТІ ======================= */
+const pv = inner => `<svg viewBox="0 0 160 100"><rect width="160" height="100" fill="#F7FAF8"/>${inner}</svg>`;
+const ptag = (x, y, t) => `<rect x="${x - t.length * 3.6 - 8}" y="${y - 11}" width="${t.length * 7.2 + 16}" height="20" rx="10" fill="#fff" stroke="#4C97FF" stroke-width="1.8"/><text x="${x}" y="${y + 4}" text-anchor="middle" font-size="11.5" font-weight="700" font-family="Segoe UI, Arial" fill="#1E3A5F">${t}</text>`;
+const PROPS_INFO = [
+  ['Спрайт', 'ім\'я об\'єкта, наприклад Котик', pv(put('cat1', 80, 62, .62) + ptag(80, 14, 'Котик'))],
+  ['x', 'позиція по горизонталі від центра сцени: що більше x, то правіше', pv(`<line x1="6" y1="70" x2="154" y2="70" stroke="#9AA8A1" stroke-width="1.5" marker-end="url(#arrG)"/><circle cx="50" cy="70" r="3" fill="#2E8B57"/><text x="46" y="88" font-size="11" fill="#4F6357">0</text>` + put('cat1', 115, 40, .42) + `<line x1="50" y1="80" x2="112" y2="80" stroke="#4C97FF" stroke-width="2.5" marker-end="url(#arr)"/>` + ptag(124, 92, 'x: 80'))],
+  ['y', 'позиція по вертикалі від центра сцени: що більше y, то вище', pv(`<line x1="40" y1="96" x2="40" y2="4" stroke="#9AA8A1" stroke-width="1.5" marker-end="url(#arrG)"/><circle cx="40" cy="75" r="3" fill="#2E8B57"/>` + put('cat1', 92, 30, .42) + `<line x1="54" y1="75" x2="54" y2="34" stroke="#4C97FF" stroke-width="2.5" marker-end="url(#arr)"/>` + ptag(122, 80, 'y: 60'))],
+  ['Показати', 'тип видимості: спрайт видно або сховано', pv(put('cat1', 45, 50, .55) + `<g opacity=".18">${put('cat1', 117, 50, .55)}</g><rect x="88" y="18" width="58" height="64" rx="8" fill="none" stroke="#9AA8A1" stroke-dasharray="5 4"/><text x="45" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="#2E8B57">видно</text><text x="117" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="#C0392B">сховано</text>`)],
+  ['Розмір', 'розмір у відсотках, звичайний - 100', pv(put('cat1', 40, 60, .4) + put('cat1', 110, 48, .78) + `<text x="40" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="#4F6357">50</text><text x="110" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="#4F6357">100</text>`)],
+  ['Напрям', 'початковий напрямок руху: 90 - праворуч, 0 - вгору, 180 - вниз', pv(`<g transform="translate(60 46) rotate(90) scale(.55)">${art('cat1')}</g><line x1="60" y1="46" x2="60" y2="94" stroke="#4C97FF" stroke-width="3" marker-end="url(#arr)"/>` + ptag(122, 50, '180'))],
+  ['Образ', 'вигляд об\'єкта; в одного спрайта може бути кілька образів', pv(put('cat1', 45, 48, .58) + put('cat2', 117, 48, .58) + `<text x="45" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="#4F6357">образ1</text><text x="117" y="96" text-anchor="middle" font-size="11" font-weight="700" fill="#4F6357">образ2</text>`)],
+];
+$('plist').innerHTML = PROPS_INFO.map(([n, t, s]) => `<div class="prop">${s}<div><b>${n}</b><span>${t}</span></div></div>`).join('');
+
+const S2 = { name: 'Котик', x: 0, y: 0, show: true, size: 100, dir: 90, rot: 'all', c: 0, costumes: ['cat1', 'cat2'] };
 const P2 = {
   x: { min: -240, max: 240, step: 10, pre: [-150, 0, 150] },
   y: { min: -180, max: 180, step: 10, pre: [-100, 0, 100] },
@@ -569,7 +903,7 @@ $('panel2').innerHTML = `
   <div><span class="lbl">Образ</span><span class="seg"><button data-cos="0">образ1</button><button data-cos="1">образ2</button></span></div>`;
 function flash(id) { const e = $(id); if (!e) return; e.classList.remove('changed'); void e.offsetWidth; e.classList.add('changed'); }
 function draw2() {
-  $('st2').innerHTML = `<svg viewBox="-240 -180 480 360">${stageBg}${spriteSvg(S2, 0)}<text x="-232" y="172" font-size="16" fill="#7A8C81" font-family="Segoe UI, Arial">x: ${S2.x}  y: ${S2.y}</text></svg>`;
+  $('st2').innerHTML = `<svg viewBox="-240 -180 480 360">${stageBg}${spriteSvg(S2, 0)}<text id="st2xy" x="-232" y="172" font-size="16" fill="#7A8C81" font-family="Segoe UI, Arial">x: ${S2.x}  y: ${S2.y}</text></svg>`;
   ['x', 'y', 'size', 'dir'].forEach(k => { const inp = $('in-' + k); if (document.activeElement !== inp) inp.value = S2[k]; });
   const nm = $('in-name'); if (document.activeElement !== nm) nm.value = S2.name;
   document.querySelectorAll('[data-show]').forEach(b => b.classList.toggle('on', (b.dataset.show === '1') === S2.show));
@@ -581,7 +915,7 @@ function draw2() {
 }
 function set2(k, v) {
   const p = P2[k];
-  if (k === 'dir') v = wrapDir(Math.round(v)); else v = clamp(Math.round(v), p.min, p.max);
+  v = k === 'dir' ? wrapDir(Math.round(v)) : clamp(Math.round(v), p.min, p.max);
   if (S2[k] !== v) { S2[k] = v; draw2(); flash('c-' + k); } else draw2();
 }
 $('panel2').addEventListener('click', e => {
@@ -598,19 +932,74 @@ function bindDrag2() {
   const svg = $('st2').querySelector('svg'), g = svg.querySelector('.spr'); if (!g) return;
   g.addEventListener('pointerdown', e => {
     e.preventDefault(); const st = svgPoint(svg, e), ox = S2.x - st.x, oy = S2.y - st.y; svg.setPointerCapture(e.pointerId);
-    const mv = ev => { const p = svgPoint(svg, ev); S2.x = clamp(p.x + ox, -240, 240); S2.y = clamp(p.y + oy, -180, 180);
+    const mv = ev => {
+      const p = svgPoint(svg, ev); S2.x = clamp(p.x + ox, -240, 240); S2.y = clamp(p.y + oy, -180, 180);
       g.setAttribute('transform', g.getAttribute('transform').replace(/translate\([^)]*\)/, `translate(${S2.x} ${-S2.y})`));
-      $('in-x').value = S2.x; $('in-y').value = S2.y; svg.querySelector('text').textContent = `x: ${S2.x}  y: ${S2.y}`; };
+      $('in-x').value = S2.x; $('in-y').value = S2.y; $('st2xy').textContent = `x: ${S2.x}  y: ${S2.y}`;
+    };
     const up = () => { svg.removeEventListener('pointermove', mv); svg.removeEventListener('pointerup', up); draw2(); };
     svg.addEventListener('pointermove', mv); svg.addEventListener('pointerup', up);
   });
 }
 draw2();
 
-/* ---------- 3. Дії над об'єктами ---------- */
+/* ======================= 3. ДІЇ ======================= */
+/* мініатюри: сцена 300 x 128, список спрайтів унизу */
+const sp = (c, x, y, s = 44, cls = '') => `<g class="${cls}"><svg x="${x - s / 2}" y="${y - s / 2}" width="${s}" height="${s}" viewBox="-50 -50 100 100" overflow="visible">${art(c)}</svg></g>`;
+const BIN = (x, y, hot) => `<g${hot ? ' class="ring"' : ''}><circle cx="${x}" cy="${y}" r="9" fill="${hot ? '#C0392B' : '#4C97FF'}"/><path d="M${x - 4} ${y - 3} h8 M${x - 3} ${y - 3} v7 h6 v-7 M${x - 1.5} ${y - 5} h3" stroke="#fff" stroke-width="1.6" fill="none"/></g>`;
+function tl(i, c, label, sel = false, cls = '', bin = 0) {
+  const x = 8 + i * 54, y = 140;
+  return `<g class="${cls}"><rect x="${x}" y="${y}" width="48" height="62" rx="6" fill="${sel ? '#E9F1FC' : '#fff'}" stroke="${sel ? '#4C97FF' : '#C9D3CE'}" stroke-width="2"/>${sp(c, x + 24, y + 24, 36)}<text x="${x + 24}" y="${y + 56}" font-size="8" text-anchor="middle" font-family="Segoe UI, Arial" fill="#333">${label}</text>${sel ? BIN(x + 46, y + 2, bin === 2) : ''}</g>`;
+}
+const FRAME = inner => `<svg viewBox="0 0 300 210"><rect x="0" y="0" width="300" height="130" rx="6" fill="#fff" stroke="#D5DDD8"/><rect x="0" y="134" width="300" height="76" rx="6" fill="#EEF2F0"/>${inner}</svg>`;
+const ADDBTN = `<circle cx="276" cy="176" r="16" fill="#0FBD8C"/><path d="M276 168 v16 M268 176 h16" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`;
+const MENU = hot => {
+  const items = [['💾', 'Завантажити спрайт'], ['✨', 'Сюрприз'], ['🖌️', 'Намалювати'], ['🔍', 'Обрати']];
+  return `<rect x="262" y="12" width="28" height="146" rx="14" fill="#0FBD8C"/>` + items.map(([e, t], i) => {
+    const y = 28 + i * 34, on = i === hot;
+    return `<g${on ? ' class="ring"' : ''}><circle cx="276" cy="${y}" r="12" fill="${on ? '#0A8F69' : '#0FBD8C'}" stroke="#fff" stroke-width="${on ? 2.5 : 0}"/><text x="276" y="${y + 5}" font-size="13" text-anchor="middle">${e}</text></g>`
+      + (on ? `<rect x="${250 - t.length * 6.2}" y="${y - 11}" width="${t.length * 6.2 + 4}" height="22" rx="5" fill="#2B2B2B"/><text x="${252 - t.length * 3.1}" y="${y + 4}" font-size="11" text-anchor="middle" font-family="Segoe UI, Arial" fill="#fff">${t}</text>` : '');
+  }).join('');
+};
+const HEART_D = 'M190 96 C150 70 152 38 175 38 C185 38 190 48 190 52 C190 48 195 38 205 38 C228 38 230 70 190 96z';
+const ACTS = [
+  { t: '📄 Дублювати', st: ['Клацни правою кнопкою миші на спрайті', 'Обери «дублювати» - з\'явиться копія Літера-A2'], f: [
+    FRAME(sp('L:C', 80, 64, 64) + sp('L:A', 160, 64, 64) + tl(0, 'L:C', 'Літера-C') + tl(1, 'L:A', 'Літера-A', true) + ADDBTN),
+    FRAME(sp('L:C', 80, 64, 64) + sp('L:A', 160, 64, 64) + tl(0, 'L:C', 'Літера-C') + tl(1, 'L:A', 'Літера-A', true) + ADDBTN + `<g class="pop"><rect x="84" y="76" width="96" height="66" rx="6" fill="#fff" stroke="#9AA8A1"/><rect x="86" y="80" width="92" height="20" rx="4" fill="#4C97FF"/><text x="96" y="94" font-size="11" font-family="Segoe UI, Arial" fill="#fff">дублювати</text><text x="96" y="115" font-size="11" font-family="Segoe UI, Arial" fill="#333">експортувати</text><text x="96" y="134" font-size="11" font-family="Segoe UI, Arial" fill="#333">видалити</text></g>`),
+    FRAME(sp('L:C', 80, 64, 64) + sp('L:A', 160, 64, 64) + sp('L:A', 230, 64, 64, 'pop') + tl(0, 'L:C', 'Літера-C') + tl(1, 'L:A', 'Літера-A') + tl(2, 'L:A', 'Літера-A2', true, 'pop') + ADDBTN)] },
+  { t: '🗑️ Видалити', st: ['Вибери спрайт і натисни смітничок', 'Спрайт зник зі сцени і зі списку'], f: [
+    FRAME(sp('L:C', 90, 64, 64) + sp('L:A', 190, 64, 64) + tl(0, 'L:C', 'Літера-C') + tl(1, 'L:A', 'Літера-A', true, '', 1) + ADDBTN),
+    FRAME(sp('L:C', 90, 64, 64) + sp('L:A', 190, 64, 64) + tl(0, 'L:C', 'Літера-C') + tl(1, 'L:A', 'Літера-A', true, '', 2) + ADDBTN),
+    FRAME(sp('L:C', 90, 64, 64) + tl(0, 'L:C', 'Літера-C', true) + ADDBTN)] },
+  { t: '📚 З бібліотеки', st: ['Кнопка «Обрати спрайт» відкриває бібліотеку', 'Клацни малюнок - спрайт додано'], f: [
+    FRAME(sp('cup1', 110, 70, 70) + tl(0, 'cup1', 'Чашка', true) + ADDBTN),
+    FRAME(sp('cup1', 110, 70, 70) + tl(0, 'cup1', 'Чашка', true) + `<g class="ring">${ADDBTN}</g>` + `<g class="pop"><rect x="8" y="6" width="246" height="118" rx="8" fill="#F5F8FF" stroke="#4C97FF" stroke-width="2"/><text x="20" y="26" font-size="12" font-weight="700" font-family="Segoe UI, Arial" fill="#1E3A5F">Обрати спрайт</text>${['apple1', 'pizza1', 'cake1', 'L:K'].map((c, i) => `<rect x="${20 + i * 58}" y="38" width="50" height="62" rx="6" fill="#fff" stroke="${i === 0 ? '#4C97FF' : '#C9D3CE'}" stroke-width="${i === 0 ? 3 : 1.5}"/>` + sp(c, 45 + i * 58, 64, 38)).join('')}</g>`),
+    FRAME(sp('cup1', 110, 70, 70) + sp('apple1', 200, 66, 64, 'pop') + tl(0, 'cup1', 'Чашка') + tl(1, 'apple1', 'Яблуко', true, 'pop') + ADDBTN)] },
+  { t: '✨ Випадковий', st: ['Наведи на кнопку й обери «Сюрприз»', 'Скретч сам обрав випадковий спрайт'], f: [
+    FRAME(sp('cup1', 90, 70, 70) + tl(0, 'cup1', 'Чашка', true) + ADDBTN),
+    FRAME(sp('cup1', 90, 70, 70) + tl(0, 'cup1', 'Чашка', true) + MENU(1) + `<g class="slot">${['apple1', 'pizza1', 'cake1', 'L:K'].map(c => sp(c, 190, 66, 64)).join('')}</g>`),
+    FRAME(sp('cup1', 90, 70, 70) + sp('pizza1', 190, 66, 64, 'pop') + tl(0, 'cup1', 'Чашка') + tl(1, 'pizza1', 'Піца', true, 'pop') + ADDBTN)] },
+  { t: '🖌️ Намалювати', st: ['Наведи на кнопку й обери «Намалювати»', 'З\'являється порожній спрайт - малюй у вкладці «Образи»'], f: [
+    FRAME(sp('cup1', 90, 70, 70) + tl(0, 'cup1', 'Чашка', true) + ADDBTN),
+    FRAME(sp('cup1', 90, 70, 70) + tl(0, 'cup1', 'Чашка', true) + MENU(2)),
+    FRAME(sp('cup1', 90, 70, 70) + `<path class="drawline" d="${HEART_D}" fill="none" stroke="#8E2418" stroke-width="3"/><path class="fillin" d="${HEART_D}" fill="#E0362A" stroke="#8E2418" stroke-width="3"/>` + tl(0, 'cup1', 'Чашка') + tl(1, 'heart', 'Спрайт1', true, 'pop') + ADDBTN)] },
+  { t: '💾 З комп\'ютера', st: ['Обери «Завантажити спрайт»', 'Знайди файл на комп\'ютері - спрайт додано'], f: [
+    FRAME(sp('cup1', 90, 70, 70) + tl(0, 'cup1', 'Чашка', true) + ADDBTN),
+    FRAME(sp('cup1', 90, 70, 70) + tl(0, 'cup1', 'Чашка', true) + MENU(0) + `<g class="pop"><rect x="60" y="14" width="150" height="100" rx="6" fill="#fff" stroke="#9AA8A1"/><rect x="60" y="14" width="150" height="20" rx="6" fill="#E6EEE9"/><text x="70" y="28" font-size="11" font-weight="700" font-family="Segoe UI, Arial" fill="#333">📁 Мої малюнки</text><rect x="66" y="42" width="138" height="22" rx="4" fill="#4C97FF"/><text x="74" y="57" font-size="11" font-family="Segoe UI, Arial" fill="#fff">🖼️ сонце.png</text><text x="74" y="82" font-size="11" font-family="Segoe UI, Arial" fill="#333">🖼️ квітка.png</text></g>`),
+    FRAME(sp('cup1', 90, 70, 70) + sp('sun1', 190, 64, 70, 'pop') + tl(0, 'cup1', 'Чашка') + tl(1, 'sun1', 'сонце', true, 'pop') + ADDBTN)] },
+];
+$('acards').innerHTML = ACTS.map((a, i) => `<div class="acard"><h4>${a.t}</h4><div id="af${i}">${a.f[0]}</div><ol id="as${i}">${a.st.map(s => `<li>${s}</li>`).join('')}</ol><button class="btn" data-act="${i}">Показати</button></div>`).join('');
+async function runAct(i) {
+  const a = ACTS[i], key = 'act' + i;
+  $('af' + i).innerHTML = a.f[0]; hl('as' + i, -1); await wait(key, 400);
+  for (let k = 1; k < a.f.length; k++) { $('af' + i).innerHTML = a.f[k]; hl('as' + i, k - 1); await wait(key, k === 1 ? 1800 : 2200); }
+}
+$('acards').addEventListener('click', e => { const b = e.target.closest('[data-act]'); if (b) play('act' + b.dataset.act, () => runAct(+b.dataset.act)); });
+$('playAll').addEventListener('click', () => ACTS.forEach((_, i) => play('act' + i, () => runAct(i))));
+
 const LIB = [
   { name: 'Чашка', costumes: ['cup1', 'cup2'] }, { name: 'Яблуко', costumes: ['apple1', 'apple2'] },
-  { name: 'Піца', costumes: ['pizza1'] }, { name: 'Тістечко', costumes: ['cake1', 'cake2'] },
+  { name: 'Піца', costumes: ['pizza1'] }, { name: 'Тістечко', costumes: ['cake1', 'cake2'] }, { name: 'Котик', costumes: ['cat1', 'cat2'] },
   ...['A', 'C', 'E', 'F', 'K', 'O'].map(l => ({ name: 'Літера-' + l, costumes: ['L:' + l] })),
 ];
 const FILES = [{ name: 'сонце', costumes: ['sun1'] }, { name: 'квітка', costumes: ['flower1'] }];
@@ -637,21 +1026,17 @@ function bindDrag3(svg, g) {
     svg.querySelectorAll('.spr').forEach(o => o.classList.toggle('sel', o === g));
     document.querySelectorAll('#slist .tile').forEach(t => t.classList.toggle('sel', +t.dataset.t === i));
     const st = svgPoint(svg, e), ox = s.x - st.x, oy = s.y - st.y; svg.setPointerCapture(e.pointerId);
-    const mv = ev => { const p = svgPoint(svg, ev); s.x = clamp(p.x + ox, -240, 240); s.y = clamp(p.y + oy, -180, 180);
-      g.setAttribute('transform', g.getAttribute('transform').replace(/translate\([^)]*\)/, `translate(${s.x} ${-s.y})`)); };
+    const mv = ev => {
+      const p = svgPoint(svg, ev); s.x = clamp(p.x + ox, -240, 240); s.y = clamp(p.y + oy, -180, 180);
+      g.setAttribute('transform', g.getAttribute('transform').replace(/translate\([^)]*\)/, `translate(${s.x} ${-s.y})`));
+    };
     const up = () => { svg.removeEventListener('pointermove', mv); svg.removeEventListener('pointerup', up); draw3(); };
     svg.addEventListener('pointermove', mv); svg.addEventListener('pointerup', up);
   });
 }
-function add3(base, x, y) {
-  const s = mk(base, x, y, 80); s.name = uniqName(base.name); S3.push(s); sel3 = newIdx = S3.length - 1; draw3();
-}
+function add3(base, x, y) { const s = mk(base, x, y, 80); s.name = uniqName(base.name); S3.push(s); sel3 = newIdx = S3.length - 1; draw3(); }
 const rndPos = () => [Math.round(Math.random() * 360 - 180), Math.round(Math.random() * 240 - 120)];
-$('aDup').addEventListener('click', () => {
-  const s = S3[sel3]; if (!s) return;
-  const c = JSON.parse(JSON.stringify(s)); c.name = uniqName(s.name); [c.x, c.y] = rndPos();
-  S3.push(c); sel3 = newIdx = S3.length - 1; draw3();
-});
+$('aDup').addEventListener('click', () => { const s = S3[sel3]; if (!s) return; const c = JSON.parse(JSON.stringify(s)); c.name = uniqName(s.name); [c.x, c.y] = rndPos(); S3.push(c); sel3 = newIdx = S3.length - 1; draw3(); });
 $('aDel').addEventListener('click', () => { if (!S3.length) return; S3.splice(sel3, 1); sel3 = Math.max(0, Math.min(sel3, S3.length - 1)); draw3(); });
 function showLib(title, list) {
   $('libTitle').textContent = title; $('libBox').classList.remove('hide');
@@ -665,7 +1050,7 @@ $('aPaint').addEventListener('click', () => { $('libBox').classList.add('hide');
 $('aReset').addEventListener('click', () => { $('libBox').classList.add('hide'); reset3(); });
 reset3();
 
-/* ---------- 4. Графічний редактор ---------- */
+/* ======================= 4. МІНІРЕДАКТОР ======================= */
 const TI = {
   select: '<path d="M8 4 L8 26 L14 20 L18 28 L22 26 L18 18 L26 18z" class="f" fill="#575E75" stroke="#575E75" stroke-width="1.5" stroke-linejoin="round"/>',
   reshape: '<path d="M6 4 L6 22 L11 17 L15 25 L18 23 L14 16 L21 16z" class="f" fill="#575E75" stroke="#575E75" stroke-width="1.5" stroke-linejoin="round"/><circle cx="24" cy="24" r="4" fill="none" stroke="#575E75" stroke-width="2"/>',
@@ -678,35 +1063,254 @@ const TI = {
   rect: '<rect x="6" y="6" width="20" height="20" fill="none" stroke="#575E75" stroke-width="2.5"/>',
 };
 const TN = { select: 'Вибрати', reshape: 'Змінити форму', brush: 'Пензель', eraser: 'Гумка', fill: 'Заливка', text: 'Текст', line: 'Лінія', circle: 'Коло', rect: 'Прямокутник' };
+const TIPS = {
+  vec: { select: 'клацни фігуру й перетягни її', reshape: 'клацни фігуру й тягни її точки', brush: 'малюй, утримуючи кнопку миші', eraser: 'стирай частини малюнка', fill: 'клацни фігуру, щоб зафарбувати її', text: 'клацни там, де має бути напис', line: 'протягни мишею', circle: 'протягни мишею', rect: 'протягни мишею' },
+  ras: { select: 'обведи частину малюнка й перетягни її', brush: 'малюй, утримуючи кнопку миші', eraser: 'стирай частини малюнка', fill: 'клацни замкнену область', text: 'клацни там, де має бути напис', line: 'протягни мишею', circle: 'протягни мишею', rect: 'протягни мишею' },
+};
 const MODES = { vec: ['select', 'reshape', 'brush', 'eraser', 'fill', 'text', 'line', 'circle', 'rect'], ras: ['brush', 'line', 'circle', 'rect', 'text', 'fill', 'eraser', 'select'] };
-let mode = 'vec', tool = 'brush';
-function draw4() {
-  $('pal').innerHTML = MODES[mode].map(t => `<button data-tool="${t}" class="${t === tool ? 'on' : ''}" aria-label="${TN[t]}" title="${TN[t]}"><svg viewBox="0 0 32 32">${TI[t]}</svg></button>`).join('');
-  const inBoth = MODES.vec.includes(tool) && MODES.ras.includes(tool);
-  $('toolName').textContent = `${TN[tool]}: ${inBoth ? 'є в обох редакторах' : 'є лише у векторному редакторі'}`;
-  $('modeName').textContent = mode === 'vec' ? 'векторний редактор' : 'растровий редактор';
-  $('modeBtn').textContent = mode === 'vec' ? 'У растрове' : 'У векторне';
+const COLORS = ['#E0362A', '#F28C28', '#F2C81B', '#3DAA4A', '#2E7CD6', '#8E4FD0', '#7A4A2A', '#1F1F1F', '#FFFFFF'];
+const ED = { mode: 'vec', tool: 'fill', color: '#F2C81B', size: 10, shapes: [], erase: [], sel: -1, hist: [] };
+const edCan = $('edCan'), edCtx = edCan.getContext('2d', { willReadFrequently: true }), edSvg = $('edSvg');
+const shade = (hex, k) => { const n = parseInt(hex.slice(1), 16), f = v => Math.round(k < 0 ? v * (1 + k) : v + (255 - v) * k); return '#' + [n >> 16, (n >> 8) & 255, n & 255].map(v => f(v).toString(16).padStart(2, '0')).join(''); };
+const fx = v => (+v).toFixed(1);
+function smooth(pts, closed) {
+  const n = pts.length; if (!n) return '';
+  if (n === 1) return `M${fx(pts[0][0])} ${fx(pts[0][1])} l0.1 0`;
+  if (n === 2) return `M${fx(pts[0][0])} ${fx(pts[0][1])} L${fx(pts[1][0])} ${fx(pts[1][1])}`;
+  const g = i => closed ? pts[(i + n) % n] : pts[clamp(i, 0, n - 1)];
+  let d = `M${fx(pts[0][0])} ${fx(pts[0][1])}`;
+  for (let i = 0; i < (closed ? n : n - 1); i++) {
+    const p0 = g(i - 1), p1 = g(i), p2 = g(i + 1), p3 = g(i + 2);
+    d += ` C${fx(p1[0] + (p2[0] - p0[0]) / 6)} ${fx(p1[1] + (p2[1] - p0[1]) / 6)} ${fx(p2[0] - (p3[0] - p1[0]) / 6)} ${fx(p2[1] - (p3[1] - p1[1]) / 6)} ${fx(p2[0])} ${fx(p2[1])}`;
+  }
+  return d + (closed ? 'Z' : '');
 }
-$('pal').addEventListener('click', e => { const b = e.target.closest('[data-tool]'); if (b) { tool = b.dataset.tool; draw4(); } });
-$('modeBtn').addEventListener('click', () => { mode = mode === 'vec' ? 'ras' : 'vec'; if (!MODES[mode].includes(tool)) tool = 'brush'; draw4(); });
-draw4();
-function sub4(k) {
-  document.querySelectorAll('[data-sub4]').forEach(b => b.classList.toggle('on', b.dataset.sub4 === k));
-  $('sub-tools').classList.toggle('hide', k !== 'tools'); $('sub-vr').classList.toggle('hide', k !== 'vr');
-  if (k === 'vr') drawZoom();
+function edApple() {
+  return [
+    { t: 'blob', pts: [[240, 128], [205, 104], [162, 112], [140, 152], [146, 206], [176, 254], [214, 272], [240, 264], [266, 272], [304, 254], [334, 206], [340, 152], [318, 112], [275, 104]], fill: '#E0362A' },
+    { t: 'ellipse', cx: 196, cy: 162, rx: 13, ry: 24, fill: '#FF9C8A' },
+    { t: 'line', x1: 240, y1: 130, x2: 252, y2: 88, color: '#6B3F1F', w: 8 },
+    { t: 'blob', pts: [[256, 100], [276, 70], [318, 60], [306, 92]], fill: '#5DAA2E' },
+  ];
 }
-document.querySelectorAll('[data-sub4]').forEach(b => b.addEventListener('click', () => sub4(b.dataset.sub4)));
+function shapeSvg(s, i) {
+  const d = `data-i="${i}"`;
+  switch (s.t) {
+    case 'blob': return `<path ${d} d="${smooth(s.pts, true)}" fill="${s.fill}" stroke="${shade(s.fill, -.35)}" stroke-width="3"/>`;
+    case 'stroke': return `<path ${d} d="${smooth(s.pts, false)}" fill="none" stroke="${s.color}" stroke-width="${s.w}" stroke-linecap="round" stroke-linejoin="round"/>`;
+    case 'line': return `<line ${d} x1="${fx(s.x1)}" y1="${fx(s.y1)}" x2="${fx(s.x2)}" y2="${fx(s.y2)}" stroke="${s.color}" stroke-width="${s.w}" stroke-linecap="round"/>`;
+    case 'ellipse': return `<ellipse ${d} cx="${fx(s.cx)}" cy="${fx(s.cy)}" rx="${fx(s.rx)}" ry="${fx(s.ry)}" fill="${s.fill}" stroke="${shade(s.fill, -.35)}" stroke-width="3"/>`;
+    case 'rect': return `<rect ${d} x="${fx(s.x)}" y="${fx(s.y)}" width="${fx(s.w)}" height="${fx(s.h)}" fill="${s.fill}" stroke="${shade(s.fill, -.35)}" stroke-width="3"/>`;
+    case 'text': return `<text ${d} x="${fx(s.x)}" y="${fx(s.y)}" font-size="32" font-weight="700" font-family="Segoe UI, Arial, sans-serif" fill="${s.fill}">${esc(s.text)}</text>`;
+    case 'image': return `<image ${d} href="${s.href}" x="${fx(s.x)}" y="${fx(s.y)}" width="${fx(s.w)}" height="${fx(s.h)}" preserveAspectRatio="none"/>`;
+  }
+  return '';
+}
+/* гумка стирає лише те, що намальовано до неї */
+function vecInner() {
+  let inner = '', si = 0, defs = '';
+  ED.erase.forEach((e, k) => {
+    while (si < Math.min(e.n, ED.shapes.length)) { inner += shapeSvg(ED.shapes[si], si); si++; }
+    defs += `<mask id="edM${k}" maskUnits="userSpaceOnUse" x="-480" y="-360" width="1440" height="1080"><rect x="-480" y="-360" width="1440" height="1080" fill="#fff"/><path d="${smooth(e.pts, false)}" stroke="#000" stroke-width="${e.w}" fill="none" stroke-linecap="round" stroke-linejoin="round"/></mask>`;
+    inner = `<g mask="url(#edM${k})">${inner}</g>`;
+  });
+  while (si < ED.shapes.length) { inner += shapeSvg(ED.shapes[si], si); si++; }
+  return `<defs>${defs}</defs>${inner}`;
+}
+function nodesOf(s) {
+  if (s.t === 'blob') return s.pts.map((p, k) => [p[0], p[1], k]);
+  if (s.t === 'stroke') {
+    const st = Math.max(1, Math.ceil(s.pts.length / 12)), r = [];
+    for (let k = 0; k < s.pts.length; k += st) r.push([s.pts[k][0], s.pts[k][1], k]);
+    const L = s.pts.length - 1; if (r[r.length - 1][2] !== L) r.push([s.pts[L][0], s.pts[L][1], L]); return r;
+  }
+  if (s.t === 'line') return [[s.x1, s.y1, 0], [s.x2, s.y2, 1]];
+  if (s.t === 'ellipse') return [[s.cx + s.rx, s.cy, 0], [s.cx, s.cy + s.ry, 1], [s.cx - s.rx, s.cy, 2], [s.cx, s.cy - s.ry, 3]];
+  if (s.t === 'rect' || s.t === 'image') return [[s.x, s.y, 0], [s.x + s.w, s.y, 1], [s.x + s.w, s.y + s.h, 2], [s.x, s.y + s.h, 3]];
+  return [];
+}
+function setNode(s, k, x, y) {
+  if (s.t === 'blob' || s.t === 'stroke') s.pts[k] = [x, y];
+  else if (s.t === 'line') { if (k === 0) { s.x1 = x; s.y1 = y; } else { s.x2 = x; s.y2 = y; } }
+  else if (s.t === 'ellipse') { if (k % 2 === 0) s.rx = Math.max(4, Math.abs(x - s.cx)); else s.ry = Math.max(4, Math.abs(y - s.cy)); }
+  else if (s.t === 'rect' || s.t === 'image') {
+    const c = [[s.x, s.y], [s.x + s.w, s.y], [s.x + s.w, s.y + s.h], [s.x, s.y + s.h]][(k + 2) % 4];
+    s.x = Math.min(x, c[0]); s.y = Math.min(y, c[1]); s.w = Math.max(4, Math.abs(x - c[0])); s.h = Math.max(4, Math.abs(y - c[1]));
+  }
+}
+function moveShape(s, dx, dy) {
+  if (s.pts) s.pts = s.pts.map(p => [p[0] + dx, p[1] + dy]);
+  else if (s.t === 'line') { s.x1 += dx; s.y1 += dy; s.x2 += dx; s.y2 += dy; }
+  else if (s.t === 'ellipse') { s.cx += dx; s.cy += dy; }
+  else { s.x += dx; s.y += dy; }
+}
+let flt = null, drag = null;
+const BGRECT = '<rect width="480" height="360" fill="transparent"/>';
+function edRender(over = '') {
+  if (ED.mode === 'vec') {
+    edSvg.innerHTML = BGRECT + vecInner() + `<g pointer-events="none">${over}</g><g id="edSel" pointer-events="none"></g><g id="edNodes"></g>`;
+    const el = ED.sel >= 0 && edSvg.querySelector(`[data-i="${ED.sel}"]`);
+    if (el && (ED.tool === 'select' || ED.tool === 'reshape')) {
+      const b = el.getBBox();
+      $('edSel').innerHTML = `<rect x="${fx(b.x - 6)}" y="${fx(b.y - 6)}" width="${fx(b.width + 12)}" height="${fx(b.height + 12)}" fill="none" stroke="#4C97FF" stroke-width="2" stroke-dasharray="6 4"/>`;
+      if (ED.tool === 'reshape') $('edNodes').innerHTML = nodesOf(ED.shapes[ED.sel]).map(([x, y, k]) => `<circle data-node="${k}" cx="${fx(x)}" cy="${fx(y)}" r="7" fill="#fff" stroke="#4C97FF" stroke-width="2.5" style="cursor:move"/>`).join('');
+    }
+  } else {
+    edSvg.innerHTML = BGRECT + `<g pointer-events="none">${over}${flt ? `<rect x="${fx(flt.x)}" y="${fx(flt.y)}" width="${fx(flt.w)}" height="${fx(flt.h)}" fill="none" stroke="#4C97FF" stroke-width="2" stroke-dasharray="6 4"/>` : ''}</g>`;
+  }
+}
+function edUI() {
+  $('edPal').innerHTML = MODES[ED.mode].map(t => `<button data-tool="${t}" class="${t === ED.tool ? 'on' : ''}" aria-label="${TN[t]}" title="${TN[t]}"><svg viewBox="0 0 32 32">${TI[t]}</svg></button>`).join('');
+  $('edSw').innerHTML = COLORS.map(c => `<button data-col="${c}" class="${c === ED.color ? 'on' : ''}" style="background:${c}" aria-label="Колір ${c}"></button>`).join('');
+  document.querySelectorAll('#edSize button').forEach(b => b.classList.toggle('on', +b.dataset.sz === ED.size));
+  $('edTxtBox').classList.toggle('hide', ED.tool !== 'text');
+  $('edMode').textContent = ED.mode === 'vec' ? 'У растрове' : 'У векторне';
+  $('edModeName').textContent = ED.mode === 'vec' ? 'векторний редактор' : 'растровий редактор';
+  $('edTip').textContent = `${TN[ED.tool]}: ${TIPS[ED.mode][ED.tool]}`;
+  edCan.style.visibility = ED.mode === 'ras' ? 'visible' : 'hidden';
+}
+function edPush() {
+  ED.hist.push(ED.mode === 'vec' ? { m: 'vec', s: JSON.stringify({ shapes: ED.shapes, erase: ED.erase }) } : { m: 'ras', d: edCan.toDataURL() });
+  if (ED.hist.length > 25) ED.hist.shift();
+}
+function rasDraw(url, done) { const img = new Image(); img.onload = () => { edCtx.setTransform(1, 0, 0, 1, 0, 0); edCtx.clearRect(0, 0, 960, 720); edCtx.drawImage(img, 0, 0, 960, 720); done && done(); }; img.src = url; }
+$('edUndo').addEventListener('click', () => {
+  const h = ED.hist.pop(); if (!h) return; flt = null; ED.sel = -1;
+  if (h.m === 'vec') { const o = JSON.parse(h.s); ED.shapes = o.shapes; ED.erase = o.erase; ED.mode = 'vec'; if (!MODES.vec.includes(ED.tool)) ED.tool = 'brush'; edUI(); edRender(); }
+  else rasDraw(h.d, () => { ED.mode = 'ras'; if (!MODES.ras.includes(ED.tool)) ED.tool = 'brush'; edUI(); edRender(); });
+});
+function edResetAll() { ED.mode = 'vec'; ED.tool = 'fill'; ED.shapes = edApple(); ED.erase = []; ED.hist = []; ED.sel = -1; flt = null; drag = null; edCtx.setTransform(1, 0, 0, 1, 0, 0); edCtx.clearRect(0, 0, 960, 720); edUI(); edRender(); }
+$('edReset').addEventListener('click', edResetAll);
+$('edPal').addEventListener('click', e => { const b = e.target.closest('[data-tool]'); if (!b) return; flt = null; ED.tool = b.dataset.tool; if (ED.tool !== 'select' && ED.tool !== 'reshape') ED.sel = -1; edUI(); edRender(); });
+$('edSw').addEventListener('click', e => { const b = e.target.closest('[data-col]'); if (b) { ED.color = b.dataset.col; edUI(); } });
+$('edSize').addEventListener('click', e => { const b = e.target.closest('[data-sz]'); if (b) { ED.size = +b.dataset.sz; edUI(); } });
+$('edMode').addEventListener('click', () => {
+  edPush(); flt = null; ED.sel = -1;
+  if (ED.mode === 'vec') {
+    const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 480 360">${vecInner()}</svg>`;
+    rasDraw('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgStr), () => { ED.mode = 'ras'; if (!MODES.ras.includes(ED.tool)) ED.tool = 'brush'; edUI(); edRender(); });
+  } else {
+    edCtx.setTransform(1, 0, 0, 1, 0, 0);
+    const d = edCtx.getImageData(0, 0, 960, 720).data; let x0 = 960, y0 = 720, x1 = -1, y1 = -1;
+    for (let y = 0; y < 720; y++) for (let x = 0; x < 960; x++) if (d[(y * 960 + x) * 4 + 3] > 10) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+    ED.erase = []; ED.shapes = [];
+    if (x1 >= 0) {
+      const c = document.createElement('canvas'); c.width = x1 - x0 + 1; c.height = y1 - y0 + 1; c.getContext('2d').drawImage(edCan, x0, y0, c.width, c.height, 0, 0, c.width, c.height);
+      ED.shapes = [{ t: 'image', href: c.toDataURL(), x: x0 / 2, y: y0 / 2, w: c.width / 2, h: c.height / 2 }];
+    }
+    ED.mode = 'vec'; ED.tool = 'select'; ED.sel = ED.shapes.length ? 0 : -1; edUI(); edRender();
+  }
+});
+const edPt = e => { const r = edSvg.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * 480, (e.clientY - r.top) / r.height * 360]; };
+const addPt = (pts, q) => { const l = pts[pts.length - 1]; if (Math.hypot(q[0] - l[0], q[1] - l[1]) > 3) pts.push(q); };
+function mkShape(T, a, b) {
+  if (T === 'line') return { t: 'line', x1: a[0], y1: a[1], x2: b[0], y2: b[1], color: ED.color, w: ED.size };
+  if (T === 'circle') return { t: 'ellipse', cx: (a[0] + b[0]) / 2, cy: (a[1] + b[1]) / 2, rx: Math.abs(b[0] - a[0]) / 2, ry: Math.abs(b[1] - a[1]) / 2, fill: ED.color };
+  return { t: 'rect', x: Math.min(a[0], b[0]), y: Math.min(a[1], b[1]), w: Math.abs(b[0] - a[0]), h: Math.abs(b[1] - a[1]), fill: ED.color };
+}
+const bigEnough = s => s.t === 'line' ? Math.hypot(s.x2 - s.x1, s.y2 - s.y1) > 4 : s.t === 'ellipse' ? s.rx > 3 && s.ry > 3 : s.w > 4 && s.h > 4;
+function vecDown(p, ti, tn) {
+  const T = ED.tool;
+  if (T === 'select') {
+    if (ti) { const i = +ti.dataset.i; ED.sel = i; edPush(); let last = p; drag = { move: q => { moveShape(ED.shapes[i], q[0] - last[0], q[1] - last[1]); last = q; edRender(); } }; }
+    else ED.sel = -1;
+    edRender(); return;
+  }
+  if (T === 'reshape') {
+    if (tn && ED.sel >= 0) { const k = +tn.dataset.node; edPush(); drag = { move: q => { setNode(ED.shapes[ED.sel], k, q[0], q[1]); edRender(); } }; return; }
+    ED.sel = ti ? +ti.dataset.i : -1; edRender(); return;
+  }
+  ED.sel = -1;
+  if (T === 'brush') { edPush(); const s = { t: 'stroke', pts: [p], color: ED.color, w: ED.size }; ED.shapes.push(s); edRender(); drag = { move: q => { addPt(s.pts, q); edRender(); } }; return; }
+  if (T === 'eraser') { edPush(); const s = { pts: [p], w: ED.size * 2, n: ED.shapes.length }; ED.erase.push(s); edRender(); drag = { move: q => { addPt(s.pts, q); edRender(); } }; return; }
+  if (T === 'fill') { if (ti) { edPush(); const s = ED.shapes[+ti.dataset.i]; if (s.t === 'stroke' || s.t === 'line') s.color = ED.color; else if (s.t !== 'image') s.fill = ED.color; edRender(); } return; }
+  if (T === 'text') { edPush(); ED.shapes.push({ t: 'text', x: p[0], y: p[1], text: $('edTxt').value || 'Текст', fill: ED.color }); edRender(); return; }
+  drag = { move: q => edRender(shapeSvg(mkShape(T, p, q), -1)), up: q => { const s = mkShape(T, p, q); if (bigEnough(s)) { edPush(); ED.shapes.push(s); } edRender(); } };
+}
+function rctx() { edCtx.setTransform(2, 0, 0, 2, 0, 0); edCtx.globalCompositeOperation = 'source-over'; return edCtx; }
+function drawFlt() { edCtx.setTransform(1, 0, 0, 1, 0, 0); edCtx.putImageData(flt.base, 0, 0); edCtx.drawImage(flt.img, Math.round(flt.x * 2), Math.round(flt.y * 2)); edRender(); }
+function floodFill(p, hex) {
+  edCtx.setTransform(1, 0, 0, 1, 0, 0);
+  const W = 960, H = 720, x0 = Math.floor(p[0] * 2), y0 = Math.floor(p[1] * 2);
+  if (x0 < 0 || y0 < 0 || x0 >= W || y0 >= H) return;
+  const id = edCtx.getImageData(0, 0, W, H), d = id.data, n = parseInt(hex.slice(1), 16), fr = n >> 16, fg = (n >> 8) & 255, fb = n & 255;
+  const i0 = (y0 * W + x0) * 4, tr = d[i0], tg = d[i0 + 1], tb = d[i0 + 2], ta = d[i0 + 3];
+  if (ta >= 30 && Math.abs(tr - fr) + Math.abs(tg - fg) + Math.abs(tb - fb) < 12) return;
+  const match = i => ta < 30 ? d[i + 3] < 30 : d[i + 3] >= 30 && Math.abs(d[i] - tr) + Math.abs(d[i + 1] - tg) + Math.abs(d[i + 2] - tb) < 110;
+  const seen = new Uint8Array(W * H), st = [x0, y0];
+  while (st.length) {
+    const y = st.pop(), x = st.pop(); if (seen[y * W + x]) continue;
+    let xl = x, xr = x;
+    while (xl > 0 && !seen[y * W + xl - 1] && match((y * W + xl - 1) * 4)) xl--;
+    while (xr < W - 1 && !seen[y * W + xr + 1] && match((y * W + xr + 1) * 4)) xr++;
+    for (let i = xl; i <= xr; i++) {
+      const q = y * W + i; seen[q] = 1; d[q * 4] = fr; d[q * 4 + 1] = fg; d[q * 4 + 2] = fb; d[q * 4 + 3] = 255;
+      if (y > 0 && !seen[q - W] && match((q - W) * 4)) st.push(i, y - 1);
+      if (y < H - 1 && !seen[q + W] && match((q + W) * 4)) st.push(i, y + 1);
+    }
+  }
+  edCtx.putImageData(id, 0, 0);
+}
+function rasDown(p) {
+  const T = ED.tool;
+  if (T === 'select') {
+    if (flt && p[0] >= flt.x && p[0] <= flt.x + flt.w && p[1] >= flt.y && p[1] <= flt.y + flt.h) {
+      let last = p; drag = { move: q => { flt.x += q[0] - last[0]; flt.y += q[1] - last[1]; last = q; drawFlt(); } }; return;
+    }
+    flt = null; edRender();
+    drag = {
+      move: q => edRender(`<rect x="${fx(Math.min(p[0], q[0]))}" y="${fx(Math.min(p[1], q[1]))}" width="${fx(Math.abs(q[0] - p[0]))}" height="${fx(Math.abs(q[1] - p[1]))}" fill="rgba(76,151,255,.08)" stroke="#4C97FF" stroke-width="2" stroke-dasharray="6 4"/>`),
+      up: q => {
+        const x = Math.round(Math.min(p[0], q[0])), y = Math.round(Math.min(p[1], q[1])), w = Math.round(Math.abs(q[0] - p[0])), h = Math.round(Math.abs(q[1] - p[1]));
+        if (w < 5 || h < 5) { edRender(); return; }
+        edPush(); const img = document.createElement('canvas'); img.width = w * 2; img.height = h * 2;
+        img.getContext('2d').drawImage(edCan, x * 2, y * 2, w * 2, h * 2, 0, 0, w * 2, h * 2);
+        edCtx.setTransform(1, 0, 0, 1, 0, 0); edCtx.clearRect(x * 2, y * 2, w * 2, h * 2);
+        flt = { img, x, y, w, h, base: edCtx.getImageData(0, 0, 960, 720) }; drawFlt();
+      },
+    };
+    return;
+  }
+  flt = null;
+  if (T === 'brush' || T === 'eraser') {
+    edPush(); const c = rctx(); if (T === 'eraser') c.globalCompositeOperation = 'destination-out';
+    c.strokeStyle = ED.color; c.lineWidth = T === 'eraser' ? ED.size * 2 : ED.size; c.lineCap = c.lineJoin = 'round';
+    c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(p[0] + .1, p[1]); c.stroke(); let last = p;
+    drag = { move: q => { c.beginPath(); c.moveTo(last[0], last[1]); c.lineTo(q[0], q[1]); c.stroke(); last = q; }, up: () => { c.globalCompositeOperation = 'source-over'; } };
+    return;
+  }
+  if (T === 'fill') { edPush(); floodFill(p, ED.color); return; }
+  if (T === 'text') { edPush(); const c = rctx(); c.font = '700 32px Segoe UI, Arial, sans-serif'; c.fillStyle = ED.color; c.fillText($('edTxt').value || 'Текст', p[0], p[1]); return; }
+  drag = {
+    move: q => edRender(shapeSvg(mkShape(T, p, q), -1)),
+    up: q => {
+      const s = mkShape(T, p, q); edRender(); if (!bigEnough(s)) return; edPush(); const c = rctx();
+      if (s.t === 'line') { c.strokeStyle = s.color; c.lineWidth = s.w; c.lineCap = 'round'; c.beginPath(); c.moveTo(s.x1, s.y1); c.lineTo(s.x2, s.y2); c.stroke(); return; }
+      c.beginPath(); if (s.t === 'ellipse') c.ellipse(s.cx, s.cy, s.rx, s.ry, 0, 0, Math.PI * 2); else c.rect(s.x, s.y, s.w, s.h);
+      c.fillStyle = s.fill; c.fill(); c.strokeStyle = shade(s.fill, -.35); c.lineWidth = 3; c.stroke();
+    },
+  };
+}
+edSvg.addEventListener('pointerdown', e => {
+  e.preventDefault(); edSvg.setPointerCapture(e.pointerId);
+  const p = edPt(e), ti = e.target.closest('[data-i]'), tn = e.target.closest('[data-node]');
+  if (ED.mode === 'vec') vecDown(p, ti && +ti.dataset.i >= 0 ? ti : null, tn); else rasDown(p);
+});
+edSvg.addEventListener('pointermove', e => { if (drag) drag.move(edPt(e)); });
+const edUp = e => { if (drag) { const d = drag; drag = null; if (d.up) d.up(edPt(e)); } };
+edSvg.addEventListener('pointerup', edUp); edSvg.addEventListener('pointercancel', edUp);
+edResetAll();
 
-/* вектор і растр: те саме яблуко */
+/* --- вектор і растр: те саме яблуко --- */
 const ZOOMS = [1, 2, 4, 8]; let zoom = 1;
-const FOCUS = { x: -27, y: -27 }; // точка, яку збільшуємо (відблиск і край яблука)
+const FOCUS = { x: -27, y: -27 };
 $('zoomSeg').innerHTML = ZOOMS.map(z => `<button data-z="${z}">×${z}</button>`).join('');
 $('zoomSeg').addEventListener('click', e => { const b = e.target.closest('[data-z]'); if (b) { zoom = +b.dataset.z; drawZoom(); } });
 const appleFlat = `<path d="M0 -26 C-14 -40 -46 -34 -42 0 C-40 26 -20 44 0 38 C20 44 40 26 42 0 C46 -34 14 -40 0 -26z" fill="#E0362A" stroke="#7E1410" stroke-width="2"/>
   <path d="M0 -26 q2 -12 8 -18" stroke="#5B3A1E" stroke-width="5" fill="none" stroke-linecap="round"/>
   <path d="M6 -36 q16 -16 30 -8 q-12 14 -30 8z" fill="#5DAA2E" stroke="#2F7A1E" stroke-width="1.5"/>
   <ellipse cx="-20" cy="-12" rx="7" ry="11" fill="#FF9C8A" transform="rotate(25 -20 -12)"/>`;
-const RAS = 160; // растр 160 x 160 пікселів
+const RAS = 160;
 const rasSrc = document.createElement('canvas'); rasSrc.width = rasSrc.height = RAS;
 (function () {
   const img = new Image();
@@ -725,7 +1329,7 @@ function drawZoom() {
 }
 drawZoom();
 
-/* ---------- 5. Що змінилося ---------- */
+/* ======================= 5. ЩО ЗМІНИЛОСЯ ======================= */
 const PROPS = { x: 'x', y: 'y', size: 'Розмір', dir: 'Напрям', c: 'Образ', show: 'Показати' };
 const QS = [
   { b: { costumes: ['apple1', 'apple2'], x: -80, y: 0 }, k: 'x', v: 80, why: 'Яблуко перемістилося праворуч - змінилося значення x.' },
@@ -747,8 +1351,7 @@ function qBuild() {
   shuffle(QS).forEach(q => {
     const before = Object.assign({ show: true, size: 120, dir: 90, rot: 'all', c: 0 }, q.b);
     const after = Object.assign({}, before, { [q.k]: q.v });
-    const wrong = shuffle(Object.keys(PROPS).filter(k => k !== q.k)).slice(0, 2);
-    const opts = shuffle([q.k, ...wrong]);
+    const opts = shuffle([q.k, ...shuffle(Object.keys(PROPS).filter(k => k !== q.k)).slice(0, 2)]);
     const d = document.createElement('div'); d.className = 'item qcard';
     d.innerHTML = `<div class="badge"></div><div class="pair2"><figure><figcaption>Було</figcaption><div class="mini">${mini(before)}</div></figure><figure><figcaption>Стало</figcaption><div class="mini">${mini(after)}</div></figure></div>
       <div class="opts">${opts.map(k => `<button data-k="${k}">${PROPS[k]}</button>`).join('')}</div><div class="why">${q.why}</div>`;
